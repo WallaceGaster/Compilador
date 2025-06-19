@@ -578,9 +578,10 @@ class Parser:
         
         # else (opcional)
         if self.match('PALABRA_RESERVADA', 'else'):
+            else_token = self.current_token()  # <--- CAPTURAR TOKEN ANTES DE AVANZAR
             self.advance()
             else_block = self.lista_sentencias()
-            else_node = ASTNode("Else", line=self.current_token()[2], col=self.current_token()[3])
+            else_node = ASTNode("Else", line=else_token[2], col=else_token[3])
             else_node.add_child(else_block)
             node.add_child(else_node)
         
