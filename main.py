@@ -13,7 +13,7 @@ import re # Para las expresiones regulares del analizador léxico
 # Y todos los modulos de PyQt5 necesarios para la interfaz gráfica
 from PyQt5.QtCore import QRegularExpression, Qt, QProcess
 from PyQt5.QtGui import (
-    QSyntaxHighlighter, 
+    QSyntaxHighlighter,  
     QTextCharFormat, 
     QColor, 
     QFont,
@@ -420,7 +420,6 @@ class Parser:
         if not token:
             return None
             
-        # Verificar si es declaración de variable (empieza con tipo)
         if token[1] in ['int', 'float', 'bool']:
             return self.declaracion_variable()
         else:
@@ -511,31 +510,50 @@ class Parser:
         
     def incremento_sentencia(self):
         """incremento_sentencia → id OPERADOR_ARIT ('++' | '--') ;"""
-        node = ASTNode("INCREMENTO_SENTENCIA")
+        # Crear nodo de asignación
+        assign_node = ASTNode("ASIGNACION")
+    
+        # Obtener identificador
         token = self.current_token()
         if token and token[0] == 'IDENTIFICADOR':
-            node.add_child(ASTNode("ID", token[1], token[2], token[3]))
+            id_node = ASTNode("ID", token[1], token[2], token[3])
+            assign_node.add_child(id_node)
             self.advance()
         else:
             self.error("Se esperaba un identificador", token)
             return None
 
+        # Agregar operador de asignación
+        assign_node.add_child(ASTNode("ASIGN", "=", token[2], token[3]))
+    
+        # Obtener operador de incremento (++ o --)
         op_token = self.current_token()
         if op_token and op_token[0] == 'OPERADOR_ARIT' and op_token[1] in ['++', '--']:
-            node.add_child(ASTNode("OP_INCREMENTO", op_token[1], op_token[2], op_token[3]))
+            op = op_token[1]
             self.advance()
         else:
             self.error("Se esperaba '++' o '--'", op_token)
             return None
 
-        # Verificar el punto y coma
+        # Crear expresión equivalente: id = id ± 1
+        expr_node = ASTNode("EXPRESION_BINARIA")
+    
+        # Crear nodo operador con sus operandos como hijos
+        op_node = ASTNode("OPERADOR_ARIT", "+" if op == "++" else "-", op_token[2], op_token[3])
+        op_node.add_child(ASTNode("ID", token[1], token[2], token[3]))  # Operando izquierdo
+        op_node.add_child(ASTNode("NUM_ENTERO", "1", op_token[2], op_token[3]))  # Operando derecho
+
+        expr_node.add_child(op_node)
+        assign_node.add_child(expr_node)
+
+        # Verificar punto y coma final
         if self.match('SIMBOLOS', ';'):
-            node.add_child(ASTNode("PUNTO_COMA", ";", *self.current_token()[2:4]))
+            assign_node.add_child(ASTNode("PUNTO_COMA", ";", *self.current_token()[2:4]))
             self.advance()
         else:
             self.error("Se esperaba ';'", self.current_token())
 
-        return node
+        return assign_node
     
     # Implementaciones básicas de las estructuras (para evitar errores)
     def seleccion(self):
@@ -788,82 +806,117 @@ class Parser:
     
     def expression(self):
         """expression → expression_term [ log_op expression ]"""
-        node = ASTNode("EXPRESSION")
         left = self.expression_term()
-        if left:
-            node.add_child(left)
-        if self.current_token() and self.current_token()[1] in ['&&', '||']:
+        if not left:
+            return None
+        
+        node = left
+        
+        while self.current_token() and self.current_token()[1] in ['&&', '||']:
             op_token = self.current_token()
             self.advance()
             right = self.expression()
-            if right:
-                op_node = ASTNode("LOG_OP", op_token[1], op_token[2], op_token[3])
-                node.add_child(op_node)
-                node.add_child(right)
+            if not right:
+                break
+                
+            # Crear nodo binario con el operador como padre
+            op_node = ASTNode("EXPRESION_BINARIA", op_token[1], op_token[2], op_token[3])
+            op_node.add_child(node)
+            op_node.add_child(right)
+            node = op_node
+            
         return node
     
     def expression_term(self):
         """expression_term → expression_simple [ rel_op expression_simple ]"""
-        node = ASTNode("EXPRESSION_TERM")
         left = self.expression_simple()
-        if left:
-            node.add_child(left)
-        if self.current_token() and self.current_token()[1] in ['<', '<=', '>', '>=', '==', '!=']:
+        if not left:
+            return None
+        
+        node = left
+        
+        while self.current_token() and self.current_token()[1] in ['<', '<=', '>', '>=', '==', '!=']:
             op_token = self.current_token()
             self.advance()
             right = self.expression_simple()
-            if right:
-                op_node = ASTNode("REL_OP", op_token[1], op_token[2], op_token[3])
-                node.add_child(op_node)
-                node.add_child(right)
+            if not right:
+                break
+                
+            # Crear nodo binario con el operador como padre
+            op_node = ASTNode("EXPRESION_BINARIA", op_token[1], op_token[2], op_token[3])
+            op_node.add_child(node)
+            op_node.add_child(right)
+            node = op_node
+            
         return node
 
     def expression_simple(self):
         """expression_simple → expression_simple suma_op termino | termino"""
-        node = ASTNode("EXPRESSION_SIMPLE")
         left = self.termino()
-        if left:
-            node.add_child(left)
-        while self.current_token() and self.current_token()[1] in ['+', '-', '++', '--']:
+        if not left:
+            return None
+        
+        node = left
+        
+        while self.current_token() and self.current_token()[1] in ['+', '-']:
             op_token = self.current_token()
             self.advance()
             right = self.termino()
-            if right:
-                op_node = ASTNode("SUMA_OP", op_token[1], op_token[2], op_token[3])
-                node.add_child(op_node)
-                node.add_child(right)
+            if not right:
+                break
+                
+            # Crear nodo binario con el operador como padre
+            op_node = ASTNode("EXPRESION_BINARIA", op_token[1], op_token[2], op_token[3])
+            op_node.add_child(node)
+            op_node.add_child(right)
+            node = op_node
+            
         return node
 
     def termino(self):
         """termino → termino mult_op factor | factor"""
-        node = ASTNode("TERMINO")
         left = self.factor()
-        if left:
-            node.add_child(left)
+        if not left:
+            return None
+        
+        node = left
+        
         while self.current_token() and self.current_token()[1] in ['*', '/', '%']:
             op_token = self.current_token()
             self.advance()
             right = self.factor()
-            if right:
-                op_node = ASTNode("MULT_OP", op_token[1], op_token[2], op_token[3])
-                node.add_child(op_node)
-                node.add_child(right)
+            if not right:
+                break
+                
+            # Crear nodo binario con el operador como padre
+            op_node = ASTNode("EXPRESION_BINARIA", op_token[1], op_token[2], op_token[3])
+            op_node.add_child(node)
+            op_node.add_child(right)
+            node = op_node
+            
         return node
 
     def factor(self):
         """factor → componente | factor pot_op componente"""
-        node = ASTNode("FACTOR")
-        comp = self.componente()
-        if comp:
-            node.add_child(comp)
+        left = self.componente()
+        if not left:
+            return None
+        
+        node = left
+        
         while self.current_token() and self.current_token()[1] == '^':
             op_token = self.current_token()
             self.advance()
             right = self.componente()
-            if right:
-                op_node = ASTNode("POT_OP", op_token[1], op_token[2], op_token[3])
-                node.add_child(op_node)
-                node.add_child(right)
+            if not right:
+                break
+                
+            # Crear nodo binario con el operador como padre
+            op_node = ASTNode("EXPRESION_BINARIA", op_token[1], op_token[2], op_token[3])
+            op_node.add_child(node)
+            op_node.add_child(right)
+            node = op_node
+            
         return node
 
     def componente(self):
@@ -914,13 +967,16 @@ class Parser:
     
         # Operadores lógicos (unarios)
         elif self.match('OPERADOR_LOG', '!'):
-            op_node = ASTNode("OP_LOGICO", token[1], token[2], token[3])
+            op_token = self.current_token()
             self.advance()
             comp_node = self.componente()
-            if comp_node:
-                op_node.add_child(comp_node)
-                node.add_child(op_node)
-            return node
+            if not comp_node:
+                return None
+                
+            # Crear nodo unario con el operador como padre
+            unary_node = ASTNode("EXPRESION_UNARIA", op_token[1], op_token[2], op_token[3])
+            unary_node.add_child(comp_node)
+            return unary_node
     
         else:
             self.error("Componente inválido", token)

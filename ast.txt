@@ -1,0 +1,303 @@
+PROGRAMA
+  MAIN: main [Línea: 1, Col: 1]
+  LBRACE: { [Línea: 1, Col: 6]
+  LISTA_DECLARACION
+    DECLARACION_VAR
+      TIPO: int [Línea: 2, Col: 5]
+      IDENTIFICADORES
+        ID: x [Línea: 2, Col: 9]
+        ID: y [Línea: 2, Col: 12]
+        ID: z [Línea: 2, Col: 15]
+      PUNTO_COMA: ; [Línea: 2, Col: 16]
+    DECLARACION_VAR
+      TIPO: float [Línea: 3, Col: 5]
+      IDENTIFICADORES
+        ID: a [Línea: 3, Col: 11]
+        ID: b [Línea: 3, Col: 14]
+        ID: c [Línea: 3, Col: 17]
+      PUNTO_COMA: ; [Línea: 3, Col: 18]
+    ASIGNACION
+      ID: suma [Línea: 4, Col: 5]
+      ASIGN: = [Línea: 4, Col: 10]
+      SENT_EXPRESSION
+        COMPONENTE
+          NUMERO: 45 [Línea: 4, Col: 12]
+        PUNTO_COMA: ; [Línea: 4, Col: 14]
+    ASIGNACION
+      ID: x [Línea: 5, Col: 5]
+      ASIGN: = [Línea: 5, Col: 7]
+      SENT_EXPRESSION
+        COMPONENTE
+          NUMERO: 32.32 [Línea: 5, Col: 9]
+        PUNTO_COMA: ; [Línea: 5, Col: 14]
+    ASIGNACION
+      ID: x [Línea: 6, Col: 5]
+      ASIGN: = [Línea: 6, Col: 7]
+      SENT_EXPRESSION
+        COMPONENTE
+          NUMERO: 23 [Línea: 6, Col: 9]
+        PUNTO_COMA: ; [Línea: 6, Col: 11]
+    ASIGNACION
+      ID: y [Línea: 7, Col: 5]
+      ASIGN: = [Línea: 7, Col: 7]
+      SENT_EXPRESSION
+        EXPRESION_BINARIA: - [Línea: 7, Col: 15]
+          EXPRESION_BINARIA: + [Línea: 7, Col: 11]
+            COMPONENTE
+              NUMERO: 2 [Línea: 7, Col: 9]
+            COMPONENTE
+              NUMERO: 3 [Línea: 7, Col: 13]
+          COMPONENTE
+            NUMERO: 1 [Línea: 7, Col: 17]
+        PUNTO_COMA: ; [Línea: 7, Col: 18]
+    ASIGNACION
+      ID: z [Línea: 8, Col: 5]
+      ASIGN: = [Línea: 8, Col: 7]
+      SENT_EXPRESSION
+        EXPRESION_BINARIA: + [Línea: 8, Col: 11]
+          ID: y [Línea: 8, Col: 9]
+          COMPONENTE
+            NUMERO: 7 [Línea: 8, Col: 13]
+        PUNTO_COMA: ; [Línea: 8, Col: 14]
+    ASIGNACION
+      ID: y [Línea: 9, Col: 5]
+      ASIGN: = [Línea: 9, Col: 7]
+      SENT_EXPRESSION
+        EXPRESION_BINARIA: + [Línea: 9, Col: 11]
+          ID: y [Línea: 9, Col: 9]
+          COMPONENTE
+            NUMERO: 1 [Línea: 9, Col: 13]
+        PUNTO_COMA: ; [Línea: 9, Col: 14]
+    ASIGNACION
+      ID: a [Línea: 10, Col: 5]
+      ASIGN: = [Línea: 10, Col: 6]
+      SENT_EXPRESSION
+        EXPRESION_BINARIA: - [Línea: 10, Col: 22]
+          EXPRESION_BINARIA: + [Línea: 10, Col: 19]
+            EXPRESION_BINARIA: - [Línea: 10, Col: 13]
+              EXPRESION_BINARIA: + [Línea: 10, Col: 11]
+                COMPONENTE
+                  NUMERO: 24.0 [Línea: 10, Col: 7]
+                COMPONENTE
+                  NUMERO: 4 [Línea: 10, Col: 12]
+              EXPRESION_BINARIA: * [Línea: 10, Col: 17]
+                EXPRESION_BINARIA: / [Línea: 10, Col: 15]
+                  COMPONENTE
+                    NUMERO: 1 [Línea: 10, Col: 14]
+                  COMPONENTE
+                    NUMERO: 3 [Línea: 10, Col: 16]
+                COMPONENTE
+                  NUMERO: 2 [Línea: 10, Col: 18]
+            COMPONENTE
+              NUMERO: 34 [Línea: 10, Col: 20]
+          COMPONENTE
+            NUMERO: 1 [Línea: 10, Col: 23]
+        PUNTO_COMA: ; [Línea: 10, Col: 24]
+    ASIGNACION
+      ID: x [Línea: 11, Col: 5]
+      ASIGN: = [Línea: 11, Col: 6]
+      SENT_EXPRESSION
+        EXPRESION_BINARIA: * [Línea: 11, Col: 12]
+          COMPONENTE
+            EXPRESION_BINARIA: - [Línea: 11, Col: 9]
+              COMPONENTE
+                NUMERO: 5 [Línea: 11, Col: 8]
+              COMPONENTE
+                NUMERO: 3 [Línea: 11, Col: 10]
+          COMPONENTE
+            EXPRESION_BINARIA: / [Línea: 11, Col: 15]
+              COMPONENTE
+                NUMERO: 8 [Línea: 11, Col: 14]
+              COMPONENTE
+                NUMERO: 2 [Línea: 11, Col: 16]
+        PUNTO_COMA: ; [Línea: 11, Col: 18]
+    ASIGNACION
+      ID: y [Línea: 12, Col: 5]
+      ASIGN: = [Línea: 12, Col: 6]
+      SENT_EXPRESSION
+        EXPRESION_BINARIA: - [Línea: 12, Col: 16]
+          EXPRESION_BINARIA: - [Línea: 12, Col: 10]
+            EXPRESION_BINARIA: + [Línea: 12, Col: 8]
+              COMPONENTE
+                NUMERO: 5 [Línea: 12, Col: 7]
+              COMPONENTE
+                NUMERO: 3 [Línea: 12, Col: 9]
+            EXPRESION_BINARIA: / [Línea: 12, Col: 14]
+              EXPRESION_BINARIA: * [Línea: 12, Col: 12]
+                COMPONENTE
+                  NUMERO: 2 [Línea: 12, Col: 11]
+                COMPONENTE
+                  NUMERO: 4 [Línea: 12, Col: 13]
+              COMPONENTE
+                NUMERO: 7 [Línea: 12, Col: 15]
+          COMPONENTE
+            NUMERO: 9 [Línea: 12, Col: 17]
+        PUNTO_COMA: ; [Línea: 12, Col: 18]
+    ASIGNACION
+      ID: z [Línea: 13, Col: 5]
+      ASIGN: = [Línea: 13, Col: 7]
+      SENT_EXPRESSION
+        EXPRESION_BINARIA: + [Línea: 13, Col: 15]
+          EXPRESION_BINARIA: / [Línea: 13, Col: 11]
+            COMPONENTE
+              NUMERO: 8 [Línea: 13, Col: 9]
+            COMPONENTE
+              NUMERO: 2 [Línea: 13, Col: 13]
+          EXPRESION_BINARIA: * [Línea: 13, Col: 20]
+            COMPONENTE
+              NUMERO: 15 [Línea: 13, Col: 17]
+            COMPONENTE
+              NUMERO: 4 [Línea: 13, Col: 22]
+        PUNTO_COMA: ; [Línea: 13, Col: 23]
+    ASIGNACION
+      ID: y [Línea: 14, Col: 5]
+      ASIGN: = [Línea: 14, Col: 7]
+      SENT_EXPRESSION
+        COMPONENTE
+          NUMERO: 14.54 [Línea: 14, Col: 9]
+        PUNTO_COMA: ; [Línea: 14, Col: 14]
+    SELECCION
+      IF: if [Línea: 15, Col: 5]
+      EXPRESION_BINARIA: > [Línea: 15, Col: 9]
+        COMPONENTE
+          NUMERO: 2 [Línea: 15, Col: 8]
+        COMPONENTE
+          NUMERO: 3 [Línea: 15, Col: 10]
+      THEN: then [Línea: 15, Col: 12]
+      LISTA_SENTENCIAS
+        ASIGNACION
+          ID: y [Línea: 16, Col: 9]
+          ASIGN: = [Línea: 16, Col: 11]
+          SENT_EXPRESSION
+            EXPRESION_BINARIA: + [Línea: 16, Col: 15]
+              ID: a [Línea: 16, Col: 13]
+              COMPONENTE
+                NUMERO: 3 [Línea: 16, Col: 17]
+            PUNTO_COMA: ; [Línea: 16, Col: 18]
+      ELSE: else [Línea: 17, Col: 5]
+        LISTA_SENTENCIAS
+          SELECCION
+            IF: if [Línea: 18, Col: 9]
+            EXPRESION_BINARIA: && [Línea: 18, Col: 16]
+              EXPRESION_BINARIA: > [Línea: 18, Col: 13]
+                COMPONENTE
+                  NUMERO: 4 [Línea: 18, Col: 12]
+                COMPONENTE
+                  NUMERO: 2 [Línea: 18, Col: 14]
+              ID: true [Línea: 18, Col: 19]
+            THEN: then [Línea: 18, Col: 24]
+            LISTA_SENTENCIAS
+              ASIGNACION
+                ID: b [Línea: 19, Col: 13]
+                ASIGN: = [Línea: 19, Col: 15]
+                SENT_EXPRESSION
+                  COMPONENTE
+                    NUMERO: 3.2 [Línea: 19, Col: 17]
+                  PUNTO_COMA: ; [Línea: 19, Col: 20]
+            ELSE: else [Línea: 20, Col: 9]
+              LISTA_SENTENCIAS
+                ASIGNACION
+                  ID: b [Línea: 21, Col: 13]
+                  ASIGN: = [Línea: 21, Col: 15]
+                  SENT_EXPRESSION
+                    COMPONENTE
+                      NUMERO: 5.0 [Línea: 21, Col: 17]
+                    PUNTO_COMA: ; [Línea: 21, Col: 20]
+            END: end [Línea: 22, Col: 9]
+          ASIGNACION
+            ID: y [Línea: 23, Col: 9]
+            ASIGN: = [Línea: 23, Col: 11]
+            SENT_EXPRESSION
+              EXPRESION_BINARIA: + [Línea: 23, Col: 15]
+                ID: y [Línea: 23, Col: 13]
+                COMPONENTE
+                  NUMERO: 1 [Línea: 23, Col: 17]
+              PUNTO_COMA: ; [Línea: 23, Col: 18]
+      END: end [Línea: 24, Col: 5]
+    ASIGNACION
+      ID: a [Línea: 25, Col: 5]
+      ASIGN: = [Línea: 25, Col: 5]
+      EXPRESION_BINARIA
+        OPERADOR_ARIT: + [Línea: 25, Col: 6]
+          ID: a [Línea: 25, Col: 5]
+          NUM_ENTERO: 1 [Línea: 25, Col: 6]
+      PUNTO_COMA: ; [Línea: 25, Col: 8]
+    ASIGNACION
+      ID: c [Línea: 26, Col: 5]
+      ASIGN: = [Línea: 26, Col: 5]
+      EXPRESION_BINARIA
+        OPERADOR_ARIT: - [Línea: 26, Col: 6]
+          ID: c [Línea: 26, Col: 5]
+          NUM_ENTERO: 1 [Línea: 26, Col: 6]
+      PUNTO_COMA: ; [Línea: 26, Col: 8]
+    ASIGNACION
+      ID: x [Línea: 27, Col: 5]
+      ASIGN: = [Línea: 27, Col: 7]
+      SENT_EXPRESSION
+        EXPRESION_BINARIA: + [Línea: 27, Col: 11]
+          COMPONENTE
+            NUMERO: 3 [Línea: 27, Col: 9]
+          COMPONENTE
+            NUMERO: 4 [Línea: 27, Col: 13]
+        PUNTO_COMA: ; [Línea: 27, Col: 14]
+    REPETICION
+      DO: do [Línea: 28, Col: 5]
+      LISTA_SENTENCIAS
+        ASIGNACION
+          ID: y [Línea: 29, Col: 9]
+          ASIGN: = [Línea: 29, Col: 11]
+          SENT_EXPRESSION
+            EXPRESION_BINARIA: + [Línea: 29, Col: 25]
+              EXPRESION_BINARIA: * [Línea: 29, Col: 21]
+                COMPONENTE
+                  EXPRESION_BINARIA: + [Línea: 29, Col: 16]
+                    ID: y [Línea: 29, Col: 14]
+                    COMPONENTE
+                      NUMERO: 1 [Línea: 29, Col: 18]
+                COMPONENTE
+                  NUMERO: 2 [Línea: 29, Col: 23]
+              COMPONENTE
+                NUMERO: 1 [Línea: 29, Col: 27]
+            PUNTO_COMA: ; [Línea: 29, Col: 28]
+        ITERACION
+          WHILE: while [Línea: 30, Col: 9]
+          EXPRESION_BINARIA: > [Línea: 30, Col: 17]
+            ID: x [Línea: 30, Col: 15]
+            COMPONENTE
+              NUMERO: 7 [Línea: 30, Col: 19]
+          LISTA_SENTENCIAS
+            ASIGNACION
+              ID: x [Línea: 31, Col: 13]
+              ASIGN: = [Línea: 31, Col: 15]
+              SENT_EXPRESSION
+                EXPRESION_BINARIA: + [Línea: 31, Col: 19]
+                  COMPONENTE
+                    NUMERO: 6 [Línea: 31, Col: 17]
+                  EXPRESION_BINARIA: / [Línea: 31, Col: 31]
+                    EXPRESION_BINARIA: * [Línea: 31, Col: 27]
+                      EXPRESION_BINARIA: / [Línea: 31, Col: 23]
+                        COMPONENTE
+                          NUMERO: 8 [Línea: 31, Col: 21]
+                        COMPONENTE
+                          NUMERO: 9 [Línea: 31, Col: 25]
+                      COMPONENTE
+                        NUMERO: 8 [Línea: 31, Col: 29]
+                    COMPONENTE
+                      NUMERO: 3 [Línea: 31, Col: 33]
+                PUNTO_COMA: ; [Línea: 31, Col: 34]
+            ENTRADA
+              CIN: cin [Línea: 32, Col: 13]
+              OPERADOR_ENTRADA: >> [Línea: 32, Col: 17]
+              ID: x [Línea: 32, Col: 20]
+              PUNTO_COMA: ; [Línea: 32, Col: 21]
+            ASIGNACION
+              ID: mas [Línea: 33, Col: 13]
+              ASIGN: = [Línea: 33, Col: 17]
+              SENT_EXPRESSION
+                EXPRESION_BINARIA: / [Línea: 33, Col: 22]
+                  COMPONENTE
+                    NUMERO: 36 [Línea: 33, Col: 19]
+                  COMPONENTE
+                    NUMERO: 7 [Línea: 33, Col: 24]
+                PUNTO_COMA: ; [Línea: 33, Col: 25]
+          END: end [Línea: 34, Col: 9]
