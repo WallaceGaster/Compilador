@@ -990,8 +990,14 @@ class ASTViewer(QTreeWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setHeaderLabel("Árbol Sintáctico Abstracto")
-        self.setColumnCount(3)  # Añadir columnas adicionales
-        self.setHeaderLabels(["Nodo", "Valor", "Posición"])
+        self.setColumnCount(4)
+        self.setHeaderLabels(["Nodo", "Valor", "Línea", "Columna"])
+        
+        # Ajustar el ancho de las columnas
+        self.setColumnWidth(0, 150)  # Nodo
+        self.setColumnWidth(1, 100)  # Valor
+        self.setColumnWidth(2, 60)   # Línea
+        self.setColumnWidth(3, 60)   # Columna
     
     def display_ast(self, ast_root):
         self.clear()
@@ -1003,10 +1009,11 @@ class ASTViewer(QTreeWidget):
         # Crear texto para cada columna
         node_text = ast_node.node_type
         value_text = ast_node.value if ast_node.value else ""
-        position_text = f"Línea: {ast_node.line}, Col: {ast_node.col}" if ast_node.line and ast_node.col else ""
+        line_text = str(ast_node.line) if ast_node.line else ""
+        col_text = str(ast_node.col) if ast_node.col else ""
         
         # Crear el ítem del árbol
-        item = QTreeWidgetItem([node_text, value_text, position_text])
+        item = QTreeWidgetItem([node_text, value_text, line_text, col_text])
         
         # Configurar estilo para nodos especiales
         if ast_node.node_type == "PROGRAMA":
