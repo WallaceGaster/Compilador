@@ -153,7 +153,10 @@ Programa
         EXPRESION_BINARIA: + [Línea: 27, Col: 11]
           Literal: 3 [Línea: 27, Col: 9]
           Literal: 4 [Línea: 27, Col: 13]
-    DoWhile [Línea: 28, Col: 5]
+    While [Línea: 28, Col: 5]
+      EXPRESION_BINARIA: == [Línea: 28, Col: 13]
+        Variable: y [Línea: 28, Col: 11]
+        Literal: 5 [Línea: 28, Col: 16]
       LISTA_SENTENCIAS
         =
           ID: y [Línea: 29, Col: 9]
@@ -192,3 +195,17 @@ Programa
                 EXPRESION_BINARIA: / [Línea: 33, Col: 22]
                   Literal: 36 [Línea: 33, Col: 19]
                   Literal: 7 [Línea: 33, Col: 24]
+    While [Línea: 36, Col: 5]
+      EXPRESION_BINARIA: == [Línea: 36, Col: 13]
+        Variable: y [Línea: 36, Col: 11]
+        Literal: 0 [Línea: 36, Col: 16]
+      LISTA_SENTENCIAS
+        ENTRADA
+          CIN: cin [Línea: 37, Col: 9]
+          OPERADOR_ENTRADA: >> [Línea: 37, Col: 13]
+          ID: mas [Línea: 37, Col: 16]
+        SALIDA
+          COUT: cout [Línea: 38, Col: 9]
+          OPERADOR_SALIDA: << [Línea: 38, Col: 14]
+          SALIDA_EXPR
+            Variable: x [Línea: 38, Col: 17]
