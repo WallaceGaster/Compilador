@@ -363,39 +363,49 @@ class Parser:
 
     def programa(self):
         """programa → main { lista_declaracion }"""
-        node = ASTNode("PROGRAMA")
+        # Crear nodo raíz del programa
+        node = ASTNode("Programa")
         
         # main
         if not self.match('PALABRA_RESERVADA', 'main'):
             self.error("Se esperaba 'main'", self.current_token())
             return node
-        node.add_child(ASTNode("MAIN", "main", *self.current_token()[2:4]))
+        
+        main_token = self.current_token()
+        main_node = ASTNode("Main", "main", main_token[2], main_token[3])
+        node.add_child(main_node)
         self.advance()
         
         # {
         if not self.match('SIMBOLOS', '{'):
             self.error("Se esperaba '{' después de main", self.current_token())
         else:
-            node.add_child(ASTNode("LBRACE", "{", *self.current_token()[2:4]))
             self.advance()
         
-        # lista_declaracion
-        decl_list = self.lista_declaracion()
+        # lista_declaracion (bloque de código principal)
+        decl_list = self.bloque_codigo()
         node.add_child(decl_list)
         
         # }
         if self.match('SIMBOLOS', '}'):
-            node.add_child(ASTNode("RBRACE", "}", *self.current_token()[2:4]))
             self.advance()
         else:
-            # Reportar error pero intentar encontrar el cierre
             self.error("Se esperaba '}' al final del programa", self.current_token())
-            # Buscar manualmente el cierre si existe
-            for i in range(self.current_index, len(self.tokens)):
-                if self.tokens[i][0] == 'SIMBOLOS' and self.tokens[i][1] == '}':
-                    self.current_index = i + 1
-                    node.add_child(ASTNode("RBRACE", "}", *self.tokens[i][2:4]))
-                    break
+        
+        return node
+    
+    def bloque_codigo(self):
+        """Bloque de código: lista de declaraciones/sentencias"""
+        node = ASTNode("Bloque")
+        
+        while self.current_token() and not self.match('SIMBOLOS', '}'):
+            decl = self.declaracion()
+            if decl:
+                node.add_child(decl)
+            else:
+                self.synchronize()
+                if self.current_token():
+                    self.advance()
         
         return node
 
@@ -427,47 +437,35 @@ class Parser:
 
     def declaracion_variable(self):
         """declaracion_variable → tipo lista_identificadores {, lista_identificadores} ;"""
-        node = ASTNode("DECLARACION_VAR")
-    
+        node = ASTNode("DeclaracionVariable")
+        
         # tipo
         tipo_node = self.tipo()
         if tipo_node:
             node.add_child(tipo_node)
         else:
             return None
-    
-        # Lista de identificadores
-        id_node = ASTNode("IDENTIFICADORES")
-        # Primer identificador (obligatorio)
-        if not self.match('IDENTIFICADOR'):
-            self.error("Se esperaba identificador", self.current_token())
-            return None
-    
-        token = self.current_token()
-        id_node.add_child(ASTNode("ID", token[1], token[2], token[3]))
-        self.advance()
-        # Identificadores adicionales (opcionales)
-        while self.match('COMA'):
-            # Agregar la coma al AST
-            self.advance()  # Consumir la coma
         
+        # Lista de identificadores
+        while True:
             if not self.match('IDENTIFICADOR'):
-                self.error("Se esperaba identificador después de ','", self.current_token())
-                break
+                self.error("Se esperaba identificador", self.current_token())
+                return None
             
             token = self.current_token()
-            id_node.add_child(ASTNode("ID", token[1], token[2], token[3]))
+            node.add_child(ASTNode("Variable", token[1], token[2], token[3]))
             self.advance()
-    
-        node.add_child(id_node)
-    
+            
+            if not self.match('COMA'):
+                break
+            self.advance()  # Saltar la coma
+        
         # ;
-        if self.match('SIMBOLOS', ';'):
-            node.add_child(ASTNode("PUNTO_COMA", ";", *self.current_token()[2:4]))
-            self.advance()
-        else:
+        if not self.match('SIMBOLOS', ';'):
             self.error("Se esperaba ';'", self.current_token())
-    
+        else:
+            self.advance()
+        
         return node
 
     def tipo(self):
@@ -536,7 +534,7 @@ class Parser:
             return None
 
         # Crear expresión equivalente: id = id ± 1
-        expr_node = ASTNode("EXPRESION_BINARIA")
+        expr_node = ASTNode(op)
     
         # Crear nodo operador con sus operandos como hijos
         op_node = ASTNode("OPERADOR_ARIT", "+" if op == "++" else "-", op_token[2], op_token[3])
@@ -548,7 +546,6 @@ class Parser:
 
         # Verificar punto y coma final
         if self.match('SIMBOLOS', ';'):
-            assign_node.add_child(ASTNode("PUNTO_COMA", ";", *self.current_token()[2:4]))
             self.advance()
         else:
             self.error("Se esperaba ';'", self.current_token())
@@ -558,15 +555,11 @@ class Parser:
     # Implementaciones básicas de las estructuras (para evitar errores)
     def seleccion(self):
         """seleccion → if expression then lista_sentencias [ else lista_sentencias ] end"""
-        node = ASTNode("SELECCION")
-        # if
-        if not self.match('PALABRA_RESERVADA', 'if'):
-            self.error("Se esperaba 'if'", self.current_token())
-            return node
-        node.add_child(ASTNode("IF", "if", *self.current_token()[2:4]))
-        self.advance()
+        if_token = self.current_token()
+        node = ASTNode("If", line=if_token[2], col=if_token[3])
+        self.advance()  # Saltar 'if'
         
-        # expression
+        # Condición
         expr_node = self.expression()
         if expr_node:
             node.add_child(expr_node)
@@ -577,92 +570,79 @@ class Parser:
         if not self.match('PALABRA_RESERVADA', 'then'):
             self.error("Se esperaba 'then'", self.current_token())
         else:
-            node.add_child(ASTNode("THEN", "then", *self.current_token()[2:4]))
             self.advance()
         
-        # lista_sentencias (bloque then)
+        # Bloque then
         then_block = self.lista_sentencias()
-        if then_block:
-            node.add_child(then_block)
+        node.add_child(then_block)
         
         # else (opcional)
         if self.match('PALABRA_RESERVADA', 'else'):
-            else_node = ASTNode("ELSE", "else", *self.current_token()[2:4])
             self.advance()
             else_block = self.lista_sentencias()
-            if else_block:
-                else_node.add_child(else_block)
+            else_node = ASTNode("Else", line=self.current_token()[2], col=self.current_token()[3])
+            else_node.add_child(else_block)
             node.add_child(else_node)
         
         # end
         if not self.match('PALABRA_RESERVADA', 'end'):
             self.error("Se esperaba 'end' para cerrar if", self.current_token())
         else:
-            node.add_child(ASTNode("END", "end", *self.current_token()[2:4]))
             self.advance()
+        
         return node
 
     def iteracion(self):
         """iteracion → while expression lista_sentencias end"""
-        node = ASTNode("ITERACION")
-        # while
-        if not self.match('PALABRA_RESERVADA', 'while'):
-            self.error("Se esperaba 'while'", self.current_token())
-            return node
-        node.add_child(ASTNode("WHILE", "while", *self.current_token()[2:4]))
-        self.advance()
+        while_token = self.current_token()
+        node = ASTNode("While", line=while_token[2], col=while_token[3])
+        self.advance()  # Saltar 'while'
         
-        # expression
+        # Condición
         expr_node = self.expression()
         if expr_node:
             node.add_child(expr_node)
         else:
             self.error("Se esperaba expresión después de 'while'", self.current_token())
         
-        # lista_sentencias (cuerpo del while)
+        # Cuerpo del while
         body_node = self.lista_sentencias()
-        if body_node:
-            node.add_child(body_node)
+        node.add_child(body_node)
         
         # end
         if not self.match('PALABRA_RESERVADA', 'end'):
             self.error("Se esperaba 'end' para cerrar while", self.current_token())
         else:
-            node.add_child(ASTNode("END", "end", *self.current_token()[2:4]))
             self.advance()
+        
         return node
 
     def repeticion(self):
         """repeticion → do lista_sentencias (until | while) expression"""
-        node = ASTNode("REPETICION")
-    
-        # do
-        if not self.match('PALABRA_RESERVADA', 'do'):
-            self.error("Se esperaba 'do'", self.current_token())
-            return node
-        node.add_child(ASTNode("DO", "do", *self.current_token()[2:4]))
-        self.advance()
-    
-        # lista_sentencias (puede contener estructuras anidadas)
+        do_token = self.current_token()
+        node = ASTNode("DoWhile", line=do_token[2], col=do_token[3])
+        self.advance()  # Saltar 'do'
+        
+        # Cuerpo del do-while
         body_node = self.lista_sentencias()
-        if body_node:
-            node.add_child(body_node)
-    
+        node.add_child(body_node)
+        
         # until o while
         if self.match('PALABRA_RESERVADA', 'until') or self.match('PALABRA_RESERVADA', 'while'):
             keyword = self.current_token()[1]
-            node.add_child(ASTNode(keyword.upper(), keyword, *self.current_token()[2:4]))
+            node.value = keyword  # Guardar el tipo de condición
             self.advance()
         else:
             self.error("Se esperaba 'until' o 'while'", self.current_token())
             return node
-    
-        # expression (condición)
+        
+        # Condición
         expr_node = self.expression()
         if expr_node:
             node.add_child(expr_node)
         else:
             self.error("Se esperaba expresión después de 'until'/'while'", self.current_token())
+        
         return node
 
     def sent_in(self):
@@ -693,7 +673,6 @@ class Parser:
         if not self.match('SIMBOLOS', ';'):
             self.error("Se esperaba ';'", self.current_token())
         else:
-            node.add_child(ASTNode("PUNTO_COMA", ";", *self.current_token()[2:4]))
             self.advance()
         return node
 
@@ -737,7 +716,7 @@ class Parser:
 
     def asignacion(self):
         """asignacion → id = sent_expression"""
-        node = ASTNode("ASIGNACION")
+        node = ASTNode("=")
         # id
         if not self.match('IDENTIFICADOR'):
             self.error("Se esperaba identificador", self.current_token())
@@ -749,7 +728,6 @@ class Parser:
         if not self.match('ASIGNACION', '='):
             self.error("Se esperaba '='", self.current_token())
         else:
-            node.add_child(ASTNode("ASIGN", "=", *self.current_token()[2:4]))
             self.advance()
         
         # sent_expression
@@ -766,7 +744,6 @@ class Parser:
             if expr_node:
                 node.add_child(expr_node)
         if self.match('SIMBOLOS', ';'):
-            node.add_child(ASTNode("PUNTO_COMA", ";", *self.current_token()[2:4]))
             self.advance()
         else:
             self.error("Se esperaba ';'", self.current_token())
@@ -814,13 +791,13 @@ class Parser:
         
         while self.current_token() and self.current_token()[1] in ['&&', '||']:
             op_token = self.current_token()
+            op_node = ASTNode("OperacionLogica", op_token[1], op_token[2], op_token[3])
             self.advance()
+            
             right = self.expression()
             if not right:
                 break
                 
-            # Crear nodo binario con el operador como padre
-            op_node = ASTNode("EXPRESION_BINARIA", op_token[1], op_token[2], op_token[3])
             op_node.add_child(node)
             op_node.add_child(right)
             node = op_node
@@ -906,13 +883,13 @@ class Parser:
         
         while self.current_token() and self.current_token()[1] == '^':
             op_token = self.current_token()
+            op_node = ASTNode("Operacion", op_token[1], op_token[2], op_token[3])
             self.advance()
             right = self.componente()
             if not right:
                 break
                 
             # Crear nodo binario con el operador como padre
-            op_node = ASTNode("EXPRESION_BINARIA", op_token[1], op_token[2], op_token[3])
             op_node.add_child(node)
             op_node.add_child(right)
             node = op_node
@@ -921,51 +898,50 @@ class Parser:
 
     def componente(self):
         """componente → ( expression ) | número | id | bool | op_logico componente | id OPERADOR_ARIT ('++' | '--')"""
-        node = ASTNode("COMPONENTE")
         token = self.current_token()
         if not token:
             return None
-    
+        
         # ( expression )
         if self.match('SIMBOLOS', '('):
             self.advance()
             expr_node = self.expression()
             if expr_node:
-                node.add_child(expr_node)
-            if not self.match('SIMBOLOS', ')'):
-                self.error("Se esperaba ')'", self.current_token())
-            else:
-                self.advance()
-            return node
-    
+                if not self.match('SIMBOLOS', ')'):
+                    self.error("Se esperaba ')'", self.current_token())
+                else:
+                    self.advance()
+                return expr_node
+            return None
+        
         # Números
         elif self.match('NUM_ENTERO') or self.match('NUM_REAL'):
-            node.add_child(ASTNode("NUMERO", token[1], token[2], token[3]))
+            node = ASTNode("Literal", token[1], token[2], token[3])
             self.advance()
             return node
-    
-        # Identificadores (con posible operador postfijo)
-        elif self.match('IDENTIFICADOR'):
-            id_node = ASTNode("ID", token[1], token[2], token[3])
-            self.advance()
         
-            # Verificar operador postfijo (++ o --)
-            next_token = self.current_token()
-            if next_token and next_token[0] == 'OPERADOR_ARIT' and next_token[1] in ['++', '--']:
-                op_node = ASTNode("OP_UNARIO_POST", next_token[1], next_token[2], next_token[3])
-                op_node.add_child(id_node)
+        # Identificadores
+        elif self.match('IDENTIFICADOR'):
+            node = ASTNode("Variable", token[1], token[2], token[3])
+            self.advance()
+            
+            # Operador postfijo (++ o --)
+            if self.current_token() and self.current_token()[1] in ['++', '--']:
+                op_token = self.current_token()
+                op_node = ASTNode("OperacionUnaria", op_token[1], op_token[2], op_token[3])
+                op_node.add_child(node)
                 self.advance()
                 return op_node
-            else:
-                return id_node
-    
+            
+            return node
+        
         # Booleanos
         elif self.match('PALABRA_RESERVADA', 'true') or self.match('PALABRA_RESERVADA', 'false'):
-            node.add_child(ASTNode("BOOL", token[1], token[2], token[3]))
+            node = ASTNode("Literal", token[1], token[2], token[3])
             self.advance()
             return node
-    
-        # Operadores lógicos (unarios)
+        
+        # Operadores lógicos unarios
         elif self.match('OPERADOR_LOG', '!'):
             op_token = self.current_token()
             self.advance()
@@ -973,11 +949,10 @@ class Parser:
             if not comp_node:
                 return None
                 
-            # Crear nodo unario con el operador como padre
-            unary_node = ASTNode("EXPRESION_UNARIA", op_token[1], op_token[2], op_token[3])
-            unary_node.add_child(comp_node)
-            return unary_node
-    
+            op_node = ASTNode("OperacionUnaria", op_token[1], op_token[2], op_token[3])
+            op_node.add_child(comp_node)
+            return op_node
+        
         else:
             self.error("Componente inválido", token)
             return None
