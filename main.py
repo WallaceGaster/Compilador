@@ -543,7 +543,7 @@ class Parser:
 
         expr_node.add_child(op_node)
         assign_node.add_child(expr_node)
-
+        
         # Verificar punto y coma final
         if self.match('SIMBOLOS', ';'):
             self.advance()
@@ -677,7 +677,7 @@ class Parser:
         return node
 
     def sent_out(self):
-        """sent_out → cout << salida"""
+        """sent_out → cout << salida ;"""
         node = ASTNode("SALIDA")
         # cout
         if not self.match('PALABRA_RESERVADA', 'cout'):
@@ -697,6 +697,11 @@ class Parser:
         salida_node = self.salida()
         if salida_node:
             node.add_child(salida_node)
+        if self.match('SIMBOLOS', ';'):
+            self.advance()
+        else:
+            self.error("Se esperaba ';'", self.current_token())
+        
         return node
     
     def salida(self):
