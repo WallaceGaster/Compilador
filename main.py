@@ -327,17 +327,25 @@ class Parser:
         return match_type and match_lexeme
 
     def error(self, message, token=None):
+        error_info = {'message': message}
+        
         if token:
-            self.errors.append({
-                'message': message,
-                'line': token[2],
-                'col': token[3]
-            })
+            error_info['line'] = token[2]
+            error_info['col'] = token[3]
+            # Crear un nodo de error
+            error_node = ASTNode("ERROR", value=message, line=token[2], col=token[3])
+            error_node.mark_as_error(message)
+            # Agregar al AST si es posible
+            if self.stack:
+                self.stack[-1].add_child(error_node)
         else:
-            self.errors.append({'message': message})
+            error_info['line'] = self.current_token()[2] if self.current_token() else 0
+            error_info['col'] = self.current_token()[3] if self.current_token() else 0
+        
+        self.errors.append(error_info)
+        
         # Estrategia de recuperación: saltar hasta el siguiente ';' o '}'
-        while self.current_token() and self.current_token()[0] not in [';', '}']:
-            self.advance()
+        self.synchronize()
 
     def parse(self):
         try:
@@ -346,20 +354,34 @@ class Parser:
                 self.error("Código después del programa principal")
         except Exception as e:
             self.error(f"Error inesperado: {str(e)}")
+            # Intentar continuar el análisis
+            self.synchronize()
+            if self.current_token():
+                self.ast = self.programa()  # Intentar continuar desde donde quedó
+                
         return self.ast, self.errors
+
+
 
     def synchronize(self):
         """Saltar tokens hasta encontrar un punto de sincronización"""
         while self.current_token():
             # Puntos de sincronización: ; } 
-            if self.current_token()[0] in [';', '}']:
+            if self.current_token()[1] in [';', '}']:
+                self.advance()
                 return
-        
+            
             # Inicio de nuevas declaraciones
             if self.current_token()[1] in ['int', 'float', 'bool', 'if', 'while', 'do', 'cin', 'cout']:
                 return
             
+            # Estructuras de control
+            if self.current_token()[1] in ['end', 'else', 'until', 'then']:
+                return
+            
             self.advance()
+            
+            
 
     def programa(self):
         """programa → main { lista_declaracion }"""
@@ -404,14 +426,21 @@ class Parser:
         node = ASTNode("LISTA_DECLARACION")
         
         while self.current_token() and not self.match('SIMBOLOS', '}'):
-            decl = self.declaracion()
-            if decl:
-                node.add_child(decl)
-            else:
+            try:
+                decl = self.declaracion()
+                if decl:
+                    node.add_child(decl)
+                else:
+                    # Si no se pudo parsear, sincronizar y continuar
+                    self.synchronize()
+                    if self.current_token():
+                        self.advance()
+            except Exception as e:
+                self.error(f"Error en lista_declaracion: {str(e)}")
                 self.synchronize()
                 if self.current_token():
                     self.advance()
-        
+                    
         return node
 
     def declaracion(self):
@@ -429,12 +458,17 @@ class Parser:
     def declaracion_variable(self):
         """declaracion_variable → tipo lista_identificadores {, lista_identificadores} ;"""
         node = ASTNode("DECLARACION_VAR")
-    
+
         # tipo
-        tipo_node = self.tipo()
-        if tipo_node:
-            node.add_child(tipo_node)
-        else:
+        try:
+            tipo_node = self.tipo()
+            if tipo_node:
+                node.add_child(tipo_node)
+            else:
+                self.error("Tipo inválido", self.current_token())
+                return None
+        except:
+            self.error("Error al parsear tipo")
             return None
     
         # Lista de identificadores
@@ -462,14 +496,20 @@ class Parser:
     
         node.add_child(id_node)
     
-        # ;
-        if self.match('SIMBOLOS', ';'):
+        # Manejar punto y coma faltante
+        if not self.match('SIMBOLOS', ';'):
+            self.error("Se esperaba ';'", self.current_token())
+            # Buscar manualmente el próximo punto y coma
+            for i in range(self.current_index, len(self.tokens)):
+                if self.tokens[i][1] == ';':
+                    self.current_index = i + 1
+                    break
+        else:
             node.add_child(ASTNode("PUNTO_COMA", ";", *self.current_token()[2:4]))
             self.advance()
-        else:
-            self.error("Se esperaba ';'", self.current_token())
-    
+
         return node
+
 
     def tipo(self):
         """tipo → int | float | bool"""
@@ -480,34 +520,41 @@ class Parser:
             return node
         self.error("Tipo inválido", token)
         return None
-
+        
+        
     # Implementación básica de sentencia
     def sentencia(self):
         """sentencia → seleccion | iteracion | repeticion | sent_in | sent_out | asignacion | incremento_sentencia"""
-        token = self.current_token()
-        if not token:
-            return None
-            
-        if token[1] == 'if':
-            return self.seleccion()
-        elif token[1] == 'while':
-            return self.iteracion()
-        elif token[1] == 'do':
-            return self.repeticion()
-        elif token[1] == 'cin':
-            return self.sent_in()
-        elif token[1] == 'cout':
-            return self.sent_out()
-        elif self.match('IDENTIFICADOR'):
-            # Verificar si es un incremento/decremento
-            next_token = self.tokens[self.current_index+1] if self.current_index+1 < len(self.tokens) else None
-            if next_token and next_token[0] == 'OPERADOR_ARIT' and next_token[1] in ['++', '--']:
-                return self.incremento_sentencia()
+        try:
+            token = self.current_token()
+            if not token:
+                return None
+                
+            if token[1] == 'if':
+                return self.seleccion()
+            elif token[1] == 'while':
+                return self.iteracion()
+            elif token[1] == 'do':
+                return self.repeticion()
+            elif token[1] == 'cin':
+                return self.sent_in()
+            elif token[1] == 'cout':
+                return self.sent_out()
+            elif self.match('IDENTIFICADOR'):
+                # Verificar si es un incremento/decremento
+                next_token = self.tokens[self.current_index+1] if self.current_index+1 < len(self.tokens) else None
+                if next_token and next_token[0] == 'OPERADOR_ARIT' and next_token[1] in ['++', '--']:
+                    return self.incremento_sentencia()
+                else:
+                    return self.asignacion()
             else:
-                return self.asignacion()
-        else:
-            self.error("Sentencia inválida", token)
-            return None
+                self.error("Sentencia inválida", token)
+                self.synchronize()
+                return None
+        except Exception as e:
+            self.error(f"Error procesando sentencia: {str(e)}")
+            self.synchronize()
+        return None
         
     def incremento_sentencia(self):
         """incremento_sentencia → id OPERADOR_ARIT ('++' | '--') ;"""
@@ -933,6 +980,11 @@ class ASTNode:
         self.line = line
         self.col = col
         self.children = []
+        self.error = False  # Marcar si este nodo contiene un error
+    
+    def mark_as_error(self, message):
+        self.error = True
+        self.error_message = message
     
     def add_child(self, child_node):
         self.children.append(child_node)
@@ -1359,6 +1411,7 @@ class CompilerIDE(QMainWindow):
             process.readyReadStandardError.connect(handle_output)
             process.start(command)
         
+    #------------------------------------------------    
     def run_syntax(self):
         # Obtener tokens del archivo
         tokens = []
@@ -1371,53 +1424,52 @@ class CompilerIDE(QMainWindow):
         except Exception as e:
             self.error_list.addItem(f"Error al leer tokens: {str(e)}")
             return
-    
+
         # Ejecutar parser
         parser = Parser(tokens)
         ast, errors = parser.parse()
-    
+        
+        # Limpiar salida sintáctica y mostrar AST en formato texto
+        self.syntax_output.clear()
+        if ast:
+            # Generar representación textual del AST
+            ast_text = ast.__repr__()
+            self.syntax_output.setPlainText(ast_text)
+            self.syntax_output.append("\n\n--- Árbol Sintáctico Abstracto ---")
+        else:
+            self.syntax_output.setPlainText("No se pudo generar el AST")
+        
         # Mostrar errores
         self.error_list.clear()
         for error in errors:
-            # Verificar si el error tiene información de posición
             if 'line' in error and 'col' in error:
                 self.error_list.addItem(
                     f"Error sintáctico en línea {error['line']}, col {error['col']}: {error['message']}"
                 )
             else:
                 self.error_list.addItem(f"Error sintáctico: {error['message']}")
-    
+
+        # Mostrar el árbol visual si existe
         if not hasattr(self, 'ast_viewer'):
             self.ast_viewer = ASTViewer()
-            # Buscar el índice de la pestaña "Sintáctico"
-            syntax_tab_index = -1
-            for i in range(self.tabs.count()):
-                if self.tabs.tabText(i) == "Sintáctico":
-                    syntax_tab_index = i
-                    break
-            
-            if syntax_tab_index != -1:
-                # Insertar después de la pestaña "Sintáctico"
-                self.tabs.insertTab(syntax_tab_index + 1, self.ast_viewer, "Árbol AST")
-            else:
-                # Si no se encuentra, agregar al final
-                self.tabs.addTab(self.ast_viewer, "Árbol AST")
+            self.tabs.addTab(self.ast_viewer, "Árbol AST")
         
-        # Mostrar el AST
         self.ast_viewer.display_ast(ast)
-        # Cambiar a la pestaña del AST
-        ast_tab_index = -1
+        
+        # Cambiar a la pestaña de resultados sintácticos
+        syntax_tab_index = -1
         for i in range(self.tabs.count()):
-            if self.tabs.tabText(i) == "Árbol AST":
-                ast_tab_index = i
+            if self.tabs.tabText(i) == "Sintáctico":
+                syntax_tab_index = i
                 break
-        if ast_tab_index != -1:
-            self.tabs.setCurrentIndex(ast_tab_index)
+        if syntax_tab_index != -1:
+            self.tabs.setCurrentIndex(syntax_tab_index)
         
         # Guardar AST en archivo
         if ast:
             with open("ast.txt", "w", encoding="utf-8") as f:
                 f.write(ast.__repr__())
+    #------------------------------------------------
         
     def run_semantic(self):
         self.run_compiler("semantic")
