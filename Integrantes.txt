@@ -1,0 +1,8 @@
+IDE | Equipo 10
+
+- Morales Martin Bryan Misael 326945
+- Hernandez Romo Naomi 325571
+- Veloz Hernandez Ricardo Andres 261822
+
+Archivo fuente: main.py
+Archivo ejecutable: /dist/main.exe

@@ -1548,6 +1548,33 @@ class CompilerIDE(QMainWindow):
         if ast:
             with open("ast.txt", "w", encoding="utf-8") as f:
                 f.write(ast.__repr__())
+                
+        self.error_list.clear()
+        error_content = []
+        
+        try:
+            with open("errors.txt", "r", encoding="utf-8") as f:
+                error_content = f.read().splitlines()
+        except:
+            pass
+        
+        for error in errors:
+            if 'line' in error and 'col' in error:
+                error_msg = f"Error sintáctico en línea {error['line']}, col {error['col']}: {error['message']}"
+            else:
+                error_msg = f"Error sintáctico: {error['message']}"
+        
+            self.error_list.addItem(error_msg)
+            error_content.append(error_msg)  # Agregar a la lista de errores
+    
+        # Guardar TODOS los errores en errors.txt
+        try:
+            current_dir = os.getcwd()
+            errors_path = os.path.join(current_dir, "errors.txt")
+            with open(errors_path, "w", encoding="utf-8") as f:
+                f.write("\n".join(error_content))
+        except Exception as e:
+            self.error_list.addItem(f"Error al guardar errores: {str(e)}")
     
     def highlight_error_nodes(self, node):
         """Recorrer AST y marcar nodos con errores"""

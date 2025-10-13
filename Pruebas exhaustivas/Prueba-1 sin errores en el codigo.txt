@@ -1,0 +1,28 @@
+main {
+    int a, b, resultado;
+    float x, y;
+    
+    a = 15;
+    b = 3 * (2 + 4);
+    x = 3.14;
+    y = x * 2.5 - 1.0;
+    
+    if a > b then
+        resultado = a + b;
+        cout << "Suma: ";
+        cout << resultado;
+    else
+        resultado = a - b;
+        cout << "Resta: ";
+        cout << resultado;
+    end
+    
+    while resultado < 100
+        resultado = resultado * 2;
+        cout << "Duplicado: ";
+        cout << resultado;
+    end
+    
+    a++;
+    b--;
+}

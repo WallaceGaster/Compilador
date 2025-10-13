@@ -1,0 +1,40 @@
+Programa
+  Main: main [Línea: 1, Col: 1]
+  Bloque
+    =
+      ID: a [Línea: 3, Col: 11]
+      Literal: 3.14 [Línea: 3, Col: 15]
+    If [Línea: 5, Col: 5]
+      EXPRESION_BINARIA: > [Línea: 5, Col: 10]
+        Variable: a [Línea: 5, Col: 8]
+        Literal: 2 [Línea: 5, Col: 12]
+      LISTA_SENTENCIAS
+        SALIDA
+          COUT: cout [Línea: 6, Col: 9]
+          OPERADOR_SALIDA: << [Línea: 6, Col: 14]
+          SALIDA_EXPR
+            Variable: a [Línea: 6, Col: 17]
+      Else [Línea: 7, Col: 5]
+        LISTA_SENTENCIAS
+          SALIDA
+            COUT: cout [Línea: 8, Col: 9]
+            OPERADOR_SALIDA: << [Línea: 8, Col: 14]
+            SALIDA_EXPR
+              CADENA: "Menor" [Línea: 8, Col: 17]
+          DoWhile: until [Línea: 11, Col: 5]
+            LISTA_SENTENCIAS
+              =
+                ID: a [Línea: 12, Col: 9]
+                EXPRESION_BINARIA: - [Línea: 12, Col: 15]
+                  Variable: a [Línea: 12, Col: 13]
+                  Literal: 0.5 [Línea: 12, Col: 17]
+              ENTRADA
+                CIN: cin [Línea: 13, Col: 9]
+                OPERADOR_ENTRADA: >> [Línea: 13, Col: 13]
+                ID: b [Línea: 13, Col: 16]
+            EXPRESION_BINARIA: < [Línea: 14, Col: 13]
+              Variable: a [Línea: 14, Col: 11]
+              Literal: 0 [Línea: 14, Col: 15]
+    =
+      ID: x [Línea: 16, Col: 9]
+      Literal: 5 [Línea: 16, Col: 13]

@@ -1,0 +1,18 @@
+main 
+    // Falta llave de apertura
+    float a = 3.14;
+    
+    if a > 2 then
+        cout << a;
+    else
+        cout << "Menor";
+    // Falta 'end' para el if
+    
+    do
+        a = a - 0.5;
+        cin >> b;  // Lectura de bool no implementada
+    until a < 0
+    
+    int x = 5++
+    // Error en operador de incremento
+}
