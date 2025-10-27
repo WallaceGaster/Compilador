@@ -1233,29 +1233,41 @@ class SemanticAnalyzer:
 
     def visitar_SALIDA(self, nodo):
         """Manejar cout << expresión"""
-        if len(nodo.children) >= 3:
-            expr_nodo = nodo.children[2]  # El tercer hijo es la expresión
+        # cout
+        if len(nodo.children) > 0:
+            self.visitar_nodo(nodo.children[0])
+    
+        # <<
+        if len(nodo.children) > 1:
+            self.visitar_nodo(nodo.children[1])
+    
+        # expresión de salida
+        if len(nodo.children) > 2:
+            expr_nodo = nodo.children[2]
             tipo_expr = self.visitar_nodo(expr_nodo)
-            
-            # Registrar uso de variables en la expresión de salida
-            self._registrar_usos_en_expresion(expr_nodo, nodo.line)
         
+            # Registrar uso de variables en la expresión de salida
+            self._registrar_usos_en_expresion(expr_nodo)
+    
         return "void"
     
-    def _registrar_usos_en_expresion(self, nodo, linea):
+    def _registrar_usos_en_expresion(self, nodo):
         """Función auxiliar para registrar usos de variables en expresiones"""
         if nodo is None:
             return
-            
-        if nodo.node_type == "ID":
+        
+        # Registrar si es un nodo de variable/identificador
+        if nodo.node_type in ["ID", "Variable"]:
             nombre_var = nodo.value
             simbolo = self.tabla_simbolos.buscar(nombre_var)
             if simbolo:
+                # Usar la línea del nodo específico
+                linea = nodo.line if nodo.line is not None else 0
                 self.tabla_simbolos.registrar_uso(nombre_var, linea)
-        
+    
         # Recursivamente visitar hijos
         for hijo in nodo.children:
-            self._registrar_usos_en_expresion(hijo, linea)
+            self._registrar_usos_en_expresion(hijo)
         
     def visitar_If(self, nodo):
         if len(nodo.children) >= 1:
@@ -1263,7 +1275,7 @@ class SemanticAnalyzer:
             tipo_cond = self.visitar_nodo(cond_nodo)
             
             # Registrar uso de variables en la condición
-            self._registrar_usos_en_expresion(cond_nodo, nodo.line)
+            self._registrar_usos_en_expresion(cond_nodo)
             
             if tipo_cond != "bool" and tipo_cond != "error":
                 self.agregar_error("La condición del if debe ser booleana", cond_nodo.line, cond_nodo.col)
@@ -1308,14 +1320,17 @@ class SemanticAnalyzer:
             tipo_cond = self.visitar_nodo(cond_nodo)
             
             # Registrar uso de variables en la condición
-            self._registrar_usos_en_expresion(cond_nodo, nodo.line)
+            self._registrar_usos_en_expresion(cond_nodo)
             
             if tipo_cond != "bool" and tipo_cond != "error":
                 self.agregar_error("La condición del while debe ser booleana", cond_nodo.line, cond_nodo.col)
                 
         # Visitar cuerpo
         for i in range(1, len(nodo.children)):
-            self.visitar_nodo(nodo.children[i])
+            cuerpo_nodo = nodo.children[i]
+            self.visitar_nodo(cuerpo_nodo)
+            # Registrar usos en el cuerpo del while
+            self._registrar_usos_en_expresion(cuerpo_nodo)
             
         return "void"
 
@@ -1331,7 +1346,7 @@ class SemanticAnalyzer:
             tipo_cond = self.visitar_nodo(cond_nodo)
             
             # Registrar uso de variables en la condición
-            self._registrar_usos_en_expresion(cond_nodo, nodo.line)
+            self._registrar_usos_en_expresion(cond_nodo)
             
             if tipo_cond != "bool" and tipo_cond != "error":
                 self.agregar_error("La condición del do-while debe ser booleana", cond_nodo.line, cond_nodo.col)
@@ -1409,6 +1424,9 @@ class SemanticAnalyzer:
     
         tipo_izq = self.visitar_nodo(izquierda)
         tipo_der = self.visitar_nodo(derecha)
+        
+        self._registrar_usos_en_expresion(izquierda)
+        self._registrar_usos_en_expresion(derecha)
     
         # Si no se pueden determinar los tipos, asumir int
         if tipo_izq == "void" or tipo_izq is None:
