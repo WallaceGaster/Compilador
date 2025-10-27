@@ -1,5 +1,1 @@
-Error sintáctico en línea 3, col 5: Se insertó virtualmente: '{'
-Error sintáctico en línea 16, col 5: Sentencia inválida
-Error sintáctico en línea 16, col 5: Se esperaba 'end' para cerrar if
-Error sintáctico en línea 16, col 14: Se esperaba ';'
-Error sintáctico: Se esperaba '}' al final del programa
+Error sintáctico en línea 35, col 5: Sentencia inválida

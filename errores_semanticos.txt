@@ -1,0 +1,4 @@
+Línea 4, Col 5: Variable 'suma' no declarada
+Línea 18, Col 16: La condición del if debe ser booleana
+Línea 33, Col 13: Variable 'mas' no declarada
+Línea 37, Col 16: Variable 'mas' no declarada

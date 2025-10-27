@@ -1037,6 +1037,456 @@ class Parser:
             self.error("Componente inválido", token)
             # Crear componente ficticio
             return ASTNode("Error Componente", "0", token[2], token[3], error=True)
+        
+class SymbolTable:
+    def __init__(self):
+        self.symbols = {}
+        self.ambito_actual = "global"
+        self.direccion_memoria = 0
+        self.desplazamiento = 0
+        
+    def insertar(self, nombre, tipo, linea, columna, ambito=None):
+        if ambito is None:
+            ambito = self.ambito_actual
+            
+        clave = f"{ambito}::{nombre}"
+        if clave in self.symbols:
+            return False  # Variable ya declarada
+            
+        # Asegurarse de que la línea no sea None
+        linea_valida = linea if linea is not None else 0
+            
+        self.symbols[clave] = {
+            'tipo': tipo,
+            'ambito': ambito,
+            'lineas': [linea_valida],  # Iniciar con la línea de declaración
+            'columna': columna,
+            'direccion': self.direccion_memoria,
+            'desplazamiento': self.desplazamiento
+        }
+        
+        self.direccion_memoria += 4
+        self.desplazamiento += 4
+        return True
+        
+    def buscar(self, nombre, ambito=None):
+        if ambito is None:
+            ambito = self.ambito_actual
+            
+        # Buscar en ámbito actual primero
+        clave = f"{ambito}::{nombre}"
+        if clave in self.symbols:
+            return self.symbols[clave]
+            
+        # Buscar en ámbito global
+        clave_global = f"global::{nombre}"
+        if clave_global in self.symbols:
+            return self.symbols[clave_global]
+            
+        return None
+        
+    def registrar_uso(self, nombre, linea, ambito=None):
+        """Registra un nuevo uso de la variable en una línea específica"""
+        # Filtrar líneas None antes de ordenar
+        if linea is None or linea == 0:
+            return False
+            
+        simbolo = self.buscar(nombre, ambito)
+        if simbolo:
+            # Solo agregar la línea si no está ya en la lista
+            if linea not in simbolo['lineas']:
+                simbolo['lineas'].append(linea)
+                # Filtrar valores None antes de ordenar y ordenar solo números
+                lineas_filtradas = [l for l in simbolo['lineas'] if l is not None and l > 0]
+                lineas_filtradas.sort()
+                simbolo['lineas'] = lineas_filtradas
+            return True
+        return False
+        
+    def entrar_ambito(self, nombre_ambito):
+        self.ambito_actual = nombre_ambito
+        
+    def salir_ambito(self):
+        self.ambito_actual = "global"
+        
+    def __str__(self):
+        result = "TABLA DE SÍMBOLOS:\n"
+        result += "Nombre\tTipo\tÁmbito\tLíneas\tDirección\tDesplazamiento\n"
+        result += "-" * 60 + "\n"
+        for clave, info in self.symbols.items():
+            nombre = clave.split('::')[1]
+            lineas_filtradas = [str(l) for l in info['lineas'] if l is not None and l > 0]
+            lineas_str = ', '.join(lineas_filtradas) if lineas_filtradas else "0"
+            result += f"{nombre}\t{info['tipo']}\t{info['ambito']}\t{lineas_str}\t{info['direccion']}\t\t{info['desplazamiento']}\n"
+        return result
+
+class SemanticAnalyzer:
+    def __init__(self):
+        self.tabla_simbolos = SymbolTable()
+        self.errores = []
+        self.ambito_actual = "global"
+        self.ast_anotado = None
+        
+    def analizar(self, ast):
+        self.ast_anotado = ast
+        self.visitar_nodo(ast)
+        return self.errores
+        
+    def visitar_nodo(self, nodo):
+        if nodo is None:
+            return "error"
+            
+        metodo_name = f"visitar_{nodo.node_type}"
+        if hasattr(self, metodo_name):
+            return getattr(self, metodo_name)(nodo)
+        else:
+            # Visitar hijos por defecto
+            for hijo in nodo.children:
+                self.visitar_nodo(hijo)
+            return "void"
+    
+    def visitar_Programa(self, nodo):
+        self.tabla_simbolos.entrar_ambito("global")
+        for hijo in nodo.children:
+            self.visitar_nodo(hijo)
+        self.tabla_simbolos.salir_ambito()
+        return "void"
+        
+    def visitar_DeclaracionVariable(self, nodo):
+        if len(nodo.children) < 2:
+            self.agregar_error("Declaración de variable incompleta", nodo.line, nodo.col)
+            return "error"
+            
+        tipo_nodo = nodo.children[0]
+        tipo = tipo_nodo.value if tipo_nodo else "desconocido"
+        
+        for i in range(1, len(nodo.children)):
+            var_nodo = nodo.children[i]
+            if var_nodo.node_type == "Variable":
+                nombre = var_nodo.value
+                if not self.tabla_simbolos.insertar(nombre, tipo, var_nodo.line, var_nodo.col):
+                    self.agregar_error(f"Variable '{nombre}' ya declarada", var_nodo.line, var_nodo.col)
+                    
+        return "void"
+        
+    def visitar_Asignacion(self, nodo):
+        if len(nodo.children) < 2:
+            self.agregar_error("Asignación incompleta", nodo.line, nodo.col)
+            return "error"
+        
+        # Verificar variable izquierda
+        id_nodo = nodo.children[0]
+        if id_nodo.node_type != "ID":
+            self.agregar_error("Se esperaba identificador en asignación", id_nodo.line, id_nodo.col)
+            return "error"
+        
+        nombre_var = id_nodo.value
+        simbolo = self.tabla_simbolos.buscar(nombre_var)
+    
+        if not simbolo:
+            # ERROR: Variable no declarada
+            self.agregar_error(f"Variable '{nombre_var}' no declarada", id_nodo.line, id_nodo.col)
+            return "error"
+    
+        tipo_var = simbolo['tipo']
+    
+        # Verificar expresión derecha
+        expr_nodo = nodo.children[1]
+        tipo_expr = self.visitar_nodo(expr_nodo)
+    
+        # Si no se pudo determinar el tipo de la expresión, usar el tipo de la variable
+        if tipo_expr == "void" or tipo_expr is None:
+            tipo_expr = tipo_var
+    
+        # Verificar compatibilidad de tipos
+        if tipo_expr != "error" and not self.tipos_compatibles(tipo_var, tipo_expr):
+            self.agregar_error(f"Tipos incompatibles: no se puede asignar {tipo_expr} a {tipo_var}", 
+                            id_nodo.line, id_nodo.col)
+    
+        # Anotar tipos en el AST
+        nodo.tipo = tipo_var
+        id_nodo.tipo = tipo_var
+        if hasattr(expr_nodo, 'tipo'):
+            expr_nodo.tipo = tipo_expr
+        
+        return tipo_var
+
+    def visitar_ENTRADA(self, nodo):
+        """Manejar cin >> variable"""
+        if len(nodo.children) >= 3:
+            id_nodo = nodo.children[2]  # El tercer hijo es el ID
+            if id_nodo and id_nodo.node_type == "ID":
+                nombre_var = id_nodo.value
+                simbolo = self.tabla_simbolos.buscar(nombre_var)
+        
+                if not simbolo:
+                    # ERROR: Variable no declarada
+                    linea = id_nodo.line if id_nodo.line is not None else 0
+                    columna = id_nodo.col if id_nodo.col is not None else 0
+                    self.agregar_error(f"Variable '{nombre_var}' no declarada", linea, columna)
+                    
+                # Registrar uso de la variable en esta línea
+                linea = nodo.line if nodo.line is not None else 0
+                self.tabla_simbolos.registrar_uso(nombre_var, linea)
+
+        return "void"
+
+    def visitar_SALIDA(self, nodo):
+        """Manejar cout << expresión"""
+        if len(nodo.children) >= 3:
+            expr_nodo = nodo.children[2]  # El tercer hijo es la expresión
+            tipo_expr = self.visitar_nodo(expr_nodo)
+            
+            # Registrar uso de variables en la expresión de salida
+            self._registrar_usos_en_expresion(expr_nodo, nodo.line)
+        
+        return "void"
+    
+    def _registrar_usos_en_expresion(self, nodo, linea):
+        """Función auxiliar para registrar usos de variables en expresiones"""
+        if nodo is None:
+            return
+            
+        if nodo.node_type == "ID":
+            nombre_var = nodo.value
+            simbolo = self.tabla_simbolos.buscar(nombre_var)
+            if simbolo:
+                self.tabla_simbolos.registrar_uso(nombre_var, linea)
+        
+        # Recursivamente visitar hijos
+        for hijo in nodo.children:
+            self._registrar_usos_en_expresion(hijo, linea)
+        
+    def visitar_If(self, nodo):
+        if len(nodo.children) >= 1:
+            cond_nodo = nodo.children[0]
+            tipo_cond = self.visitar_nodo(cond_nodo)
+            
+            # Registrar uso de variables en la condición
+            self._registrar_usos_en_expresion(cond_nodo, nodo.line)
+            
+            if tipo_cond != "bool" and tipo_cond != "error":
+                self.agregar_error("La condición del if debe ser booleana", cond_nodo.line, cond_nodo.col)
+                
+        # Visitar bloques then y else
+        for i in range(1, len(nodo.children)):
+            self.visitar_nodo(nodo.children[i])
+            
+        return "void"
+    
+    def visitar_INCREMENTO_SENTENCIA(self, nodo):
+        """Manejar id++ o id--"""
+        if len(nodo.children) >= 1:
+            id_nodo = nodo.children[0]
+            if id_nodo and id_nodo.node_type == "ID":
+                nombre_var = id_nodo.value
+                simbolo = self.tabla_simbolos.buscar(nombre_var)
+            
+                if not simbolo:
+                    # ERROR: Variable no declarada
+                    self.agregar_error(f"Variable '{nombre_var}' no declarada", id_nodo.line, id_nodo.col)
+                else:
+                    # Verificar que sea numérico
+                    if simbolo['tipo'] not in ['int', 'float']:
+                        self.agregar_error(f"Incremento no aplicable a tipo {simbolo['tipo']}", 
+                                         id_nodo.line, id_nodo.col)
+                    # Registrar uso de la variable en esta línea
+                    self.tabla_simbolos.registrar_uso(nombre_var, nodo.line)
+                    
+                # Visitar el nodo ID para registrar el uso
+                self.visitar_nodo(id_nodo)
+    
+        return "void"
+    
+    def visitar_INCREMENTO(self, nodo):
+        """Manejar nodos de incremento específicos"""
+        return self.visitar_OperacionUnaria(nodo)
+        
+    def visitar_While(self, nodo):
+        if len(nodo.children) >= 1:
+            cond_nodo = nodo.children[0]
+            tipo_cond = self.visitar_nodo(cond_nodo)
+            
+            # Registrar uso de variables en la condición
+            self._registrar_usos_en_expresion(cond_nodo, nodo.line)
+            
+            if tipo_cond != "bool" and tipo_cond != "error":
+                self.agregar_error("La condición del while debe ser booleana", cond_nodo.line, cond_nodo.col)
+                
+        # Visitar cuerpo
+        for i in range(1, len(nodo.children)):
+            self.visitar_nodo(nodo.children[i])
+            
+        return "void"
+
+    def visitar_DoWhile(self, nodo):
+        # Visitar cuerpo primero
+        if len(nodo.children) >= 1:
+            cuerpo_nodo = nodo.children[0]
+            self.visitar_nodo(cuerpo_nodo)
+            
+        # Luego condición
+        if len(nodo.children) >= 2:
+            cond_nodo = nodo.children[1]
+            tipo_cond = self.visitar_nodo(cond_nodo)
+            
+            # Registrar uso de variables en la condición
+            self._registrar_usos_en_expresion(cond_nodo, nodo.line)
+            
+            if tipo_cond != "bool" and tipo_cond != "error":
+                self.agregar_error("La condición del do-while debe ser booleana", cond_nodo.line, cond_nodo.col)
+                
+        return "void"
+        
+    def visitar_ID(self, nodo):
+        nombre = nodo.value
+        simbolo = self.tabla_simbolos.buscar(nombre)
+        
+        if not simbolo:
+            # ERROR: Variable no declarada
+            self.agregar_error(f"Variable '{nombre}' no declarada", nodo.line, nodo.col)
+            nodo.tipo = "error"
+            return "error"
+            
+        # Registrar uso de la variable en esta línea
+        self.tabla_simbolos.registrar_uso(nombre, nodo.line)
+            
+        nodo.tipo = simbolo['tipo']
+        return simbolo['tipo']
+        
+    def visitar_Literal(self, nodo):
+        valor = nodo.value
+    
+        # Determinar tipo del literal
+        if valor.isdigit():
+            nodo.tipo = "int"
+            return "int"
+        elif self.es_numero_real(valor):
+            nodo.tipo = "float" 
+            return "float"
+        elif valor in ['true', 'false']:
+            nodo.tipo = "bool"
+            return "bool"
+        elif valor.startswith('"') or valor.startswith("'"):
+            nodo.tipo = "string"
+            return "string"
+        else:
+            # Intentar convertir a número
+            try:
+                float(valor)
+                nodo.tipo = "float"
+                return "float"
+            except:
+                nodo.tipo = "desconocido"
+                return "desconocido"
+
+    def visitar_OperacionUnaria(self, nodo):
+        """Manejar operaciones unarias como ++ y --"""
+        if len(nodo.children) == 1:
+            operando = nodo.children[0]
+            tipo_operando = self.visitar_nodo(operando)
+
+            # Si no se puede determinar el tipo, asumir int
+            if tipo_operando == "void" or tipo_operando is None:
+                tipo_operando = "int"
+            
+            if tipo_operando not in ['int', 'float']:
+                self.agregar_error(f"Operación unaria '{nodo.value}' no aplicable a tipo {tipo_operando}", 
+                               nodo.line, nodo.col)
+                return "error"
+        
+            nodo.tipo = tipo_operando
+            return tipo_operando
+        return "error"
+            
+    def visitar_EXPRESION_BINARIA(self, nodo):
+        if len(nodo.children) != 2:
+            self.agregar_error("Operación binaria incompleta", nodo.line, nodo.col)
+            return "error"
+        
+        izquierda = nodo.children[0]
+        derecha = nodo.children[1]
+    
+        tipo_izq = self.visitar_nodo(izquierda)
+        tipo_der = self.visitar_nodo(derecha)
+    
+        # Si no se pueden determinar los tipos, asumir int
+        if tipo_izq == "void" or tipo_izq is None:
+            tipo_izq = "int"
+        if tipo_der == "void" or tipo_der is None:
+            tipo_der = "int"
+    
+        operador = nodo.value
+    
+        # Verificar tipos según operador
+        tipo_resultado = self.verificar_operacion_binaria(operador, tipo_izq, tipo_der, nodo.line, nodo.col)
+        nodo.tipo = tipo_resultado
+    
+        return tipo_resultado
+        
+    def verificar_operacion_binaria(self, operador, tipo_izq, tipo_der, linea, columna):
+        # Si alguno es error, propagar error
+        if tipo_izq == "error" or tipo_der == "error":
+            return "error"
+            
+        # Operadores aritméticos
+        if operador in ['+', '-', '*', '/', '%', '^']:
+            if tipo_izq in ['int', 'float'] and tipo_der in ['int', 'float']:
+                # Promoción de tipos: si alguno es float, resultado es float
+                if tipo_izq == 'float' or tipo_der == 'float':
+                    return 'float'
+                return 'int'
+            else:
+                self.agregar_error(f"Operador '{operador}' no aplicable a tipos {tipo_izq} y {tipo_der}", 
+                                 linea, columna)
+                return "error"
+                
+        # Operadores relacionales
+        elif operador in ['<', '<=', '>', '>=', '==', '!=']:
+            if (tipo_izq in ['int', 'float'] and tipo_der in ['int', 'float']) or \
+               (tipo_izq == tipo_der and tipo_izq in ['bool', 'string']):
+                return 'bool'
+            else:
+                self.agregar_error(f"Operador '{operador}' no aplicable a tipos {tipo_izq} y {tipo_der}", 
+                                 linea, columna)
+                return "error"
+                
+        # Operadores lógicos
+        elif operador in ['&&', '||']:
+            if tipo_izq == 'bool' and tipo_der == 'bool':
+                return 'bool'
+            else:
+                self.agregar_error(f"Operador '{operador}' requiere operandos booleanos", 
+                                 linea, columna)
+                return "error"
+                
+        return "error"
+        
+    def tipos_compatibles(self, tipo1, tipo2):
+        if tipo1 == tipo2:
+            return True
+        # Conversiones implícitas permitidas
+        if tipo1 == 'float' and tipo2 == 'int':
+            return True
+        # No permitir asignar float a int (pérdida de precisión)
+        if tipo1 == 'int' and tipo2 == 'float':
+            return False
+        return False
+        
+    def es_numero_real(self, texto):
+        try:
+            float(texto)
+            return True
+        except ValueError:
+            return False
+            
+    def agregar_error(self, mensaje, linea, columna):
+        self.errores.append({
+            'mensaje': mensaje,
+            'linea': linea,
+            'columna': columna,
+            'tipo': 'semantico'
+        })
 
 class ASTNode:
     def __init__(self, node_type, value=None, line=None, col=None, error=False):
@@ -1046,6 +1496,7 @@ class ASTNode:
         self.col = col
         self.children = []
         self.is_error = error
+        self.tipo = None
     
     def add_child(self, child_node):
         self.children.append(child_node)
@@ -1068,13 +1519,14 @@ class ASTViewer(QTreeWidget):
         super().__init__(parent)
         self.setHeaderLabel("Árbol Sintáctico Abstracto")
         self.setColumnCount(4)
-        self.setHeaderLabels(["Nodo", "Valor", "Línea", "Columna"])
+        self.setHeaderLabels(["Nodo", "Valor", "Tipo", "Línea", "Columna"])
         
         # Ajustar el ancho de las columnas
         self.setColumnWidth(0, 150)  # Nodo
         self.setColumnWidth(1, 100)  # Valor
-        self.setColumnWidth(2, 60)   # Línea
-        self.setColumnWidth(3, 60)   # Columna
+        self.setColumnWidth(2, 80)   # Tipo
+        self.setColumnWidth(3, 60)   # Línea
+        self.setColumnWidth(4, 60)   # Columna
     
     def display_ast(self, ast_root):
         self.clear()
@@ -1086,15 +1538,16 @@ class ASTViewer(QTreeWidget):
         # Crear texto para cada columna
         node_text = ast_node.node_type
         value_text = ast_node.value if ast_node.value else ""
+        tipo_text = ast_node.tipo if hasattr(ast_node, 'tipo') and ast_node.tipo else ""
         line_text = str(ast_node.line) if ast_node.line else ""
         col_text = str(ast_node.col) if ast_node.col else ""
         
         # Crear el ítem del árbol
-        item = QTreeWidgetItem([node_text, value_text, line_text, col_text])
+        item = QTreeWidgetItem([node_text, value_text, tipo_text, line_text, col_text])
         
         if ast_node.is_error:
             # Fondo rojo para nodos con errores
-            for i in range(4):  # Aplicar a todas las columnas
+            for i in range(5):  # Aplicar a todas las columnas
                 item.setBackground(i, QColor(255, 200, 200))  # Rojo claro
                 item.setForeground(i, QColor(255, 0, 0))       # Texto rojo
             item.setToolTip(0, "Este nodo contiene un error sintáctico")
@@ -1106,6 +1559,10 @@ class ASTViewer(QTreeWidget):
         elif ast_node.node_type in ["MAIN", "LISTA_DECLARACION"]:
             item.setBackground(0, QColor(70, 130, 180))  # Azul acero para nodos importantes
             item.setForeground(0, QColor(255, 255, 255))
+        
+        if hasattr(ast_node, 'tipo') and ast_node.tipo:
+            item.setBackground(2, QColor(144, 238, 144))  # Verde claro para tipos
+            item.setToolTip(2, f"Tipo inferido: {ast_node.tipo}")
         
         if parent_item:
             parent_item.addChild(item)
@@ -1215,7 +1672,6 @@ class CompilerIDE(QMainWindow):
         # Agregar primera pestaña
         self.new_file()
         
-        
     # Funciones de análisis lexico
     
     # Esta función se encarga de ejecutar el análisis léxico
@@ -1315,13 +1771,19 @@ class CompilerIDE(QMainWindow):
         self.symbol_table = QTableWidget()
         self.error_list = QListWidget()
         
+        # Crear visores para AST normal y AST anotado
+        self.ast_viewer = ASTViewer()
+        self.ast_anotado_viewer = ASTViewer() 
+        
         # Configuración de los paneles y sus nombres
         self.tabs.addTab(self.output, "Salida")
         self.tabs.addTab(self.lexical_output, "Léxico")
         self.tabs.addTab(self.syntax_output, "Sintáctico")
+        self.tabs.addTab(self.ast_viewer, "Árbol AST")
         self.tabs.addTab(self.semantic_output, "Semántico")
+        self.tabs.addTab(self.ast_anotado_viewer, "Árbol AST Anotado")
         self.tabs.addTab(self.intermediate_code, "Código Intermedio")
-        self.tabs.addTab(self.symbol_table, "Hash Table")
+        self.tabs.addTab(self.symbol_table, "Tabla de Símbolos")
         self.tabs.addTab(self.error_list, "Errores")
         
         # Configuración del panel de pestañas
@@ -1503,6 +1965,7 @@ class CompilerIDE(QMainWindow):
         # Ejecutar parser
         parser = Parser(tokens)
         ast, errors = parser.parse()
+        self.ast = ast  # Guardar AST para análisis semántico
     
         # Mostrar errores
         self.error_list.clear()
@@ -1514,28 +1977,13 @@ class CompilerIDE(QMainWindow):
                 )
             else:
                 self.error_list.addItem(f"Error sintáctico: {error['message']}")
-    
-        if not hasattr(self, 'ast_viewer'):
-            self.ast_viewer = ASTViewer()
-            # Buscar el índice de la pestaña "Sintáctico"
-            syntax_tab_index = -1
-            for i in range(self.tabs.count()):
-                if self.tabs.tabText(i) == "Sintáctico":
-                    syntax_tab_index = i
-                    break
-            
-            if syntax_tab_index != -1:
-                # Insertar después de la pestaña "Sintáctico"
-                self.tabs.insertTab(syntax_tab_index + 1, self.ast_viewer, "Árbol AST")
-            else:
-                # Si no se encuentra, agregar al final
-                self.tabs.addTab(self.ast_viewer, "Árbol AST")
         
-        # Mostrar el AST
+        # Mostrar el AST normal
         self.ast_viewer.display_ast(ast)
+    
         # Resaltar nodos con errores
         self.highlight_error_nodes(ast)
-        # Cambiar a la pestaña del AST
+        
         ast_tab_index = -1
         for i in range(self.tabs.count()):
             if self.tabs.tabText(i) == "Árbol AST":
@@ -1584,13 +2032,149 @@ class CompilerIDE(QMainWindow):
             self.highlight_error_nodes(child)
         
     def run_semantic(self):
-        self.run_compiler("semantic")
+        """Ejecutar análisis semántico"""
+        if not hasattr(self, 'ast') or self.ast is None:
+            self.error_list.addItem("Error: debe ejecutar análisis sintáctico primero")
+            return
+    
+        # Ejecutar analizador semántico
+        analyzer = SemanticAnalyzer()
+        errores_semanticos = analyzer.analizar(self.ast)
+
+        # Mostrar tabla de símbolos
+        self.mostrar_tabla_simbolos(analyzer.tabla_simbolos)
+
+        # Mostrar errores semánticos
+        self.error_list.clear()
+        for error in errores_semanticos:
+            error_msg = f"Error semántico en línea {error['linea']}, col {error['columna']}: {error['mensaje']}"
+            self.error_list.addItem(error_msg)
+    
+        # Guardar errores en archivo
+        self.guardar_errores_semanticos(errores_semanticos)
+
+        # Guardar tabla de símbolos
+        self.guardar_tabla_simbolos(analyzer.tabla_simbolos)
+
+        # Mostrar AST anotado
+        self.mostrar_ast_anotado(analyzer.ast_anotado)
+
+        # Mostrar resumen
+        if errores_semanticos:
+            self.semantic_output.setPlainText(f"Se encontraron {len(errores_semanticos)} errores semánticos")
+        else:
+            self.semantic_output.setPlainText("Análisis semántico exitoso. No se encontraron errores.")
+
+        # Cambiar a pestaña de AST anotado
+        ast_anotado_tab_index = -1
+        for i in range(self.tabs.count()):
+            if self.tabs.tabText(i) == "Árbol AST Anotado":
+                ast_anotado_tab_index = i
+                break
+        if ast_anotado_tab_index != -1:
+            self.tabs.setCurrentIndex(ast_anotado_tab_index)
+
+    def mostrar_tabla_simbolos(self, tabla_simbolos):
+        """Mostrar tabla de símbolos en el panel correspondiente"""
+        self.symbol_table.clear()
+        self.symbol_table.setColumnCount(6)
+        self.symbol_table.setHorizontalHeaderLabels(["Nombre", "Tipo", "Ámbito", "Líneas", "Dirección", "Desplazamiento"])
+
+        fila = 0
+        for clave, info in tabla_simbolos.symbols.items():
+            nombre = clave.split('::')[1]
+            self.symbol_table.insertRow(fila)
+            self.symbol_table.setItem(fila, 0, QTableWidgetItem(nombre))
+            self.symbol_table.setItem(fila, 1, QTableWidgetItem(info['tipo']))
+            self.symbol_table.setItem(fila, 2, QTableWidgetItem(info['ambito']))
+
+            # Mostrar todas las líneas donde aparece la variable, filtrando None y 0
+            lineas_filtradas = [str(l) for l in info['lineas'] if l is not None and l > 0]
+            lineas_str = ', '.join(lineas_filtradas) if lineas_filtradas else "0"
+            self.symbol_table.setItem(fila, 3, QTableWidgetItem(lineas_str))
+            self.symbol_table.setItem(fila, 4, QTableWidgetItem(str(info['direccion'])))
+            self.symbol_table.setItem(fila, 5, QTableWidgetItem(str(info['desplazamiento'])))
+            fila += 1
+    
+        self.symbol_table.resizeColumnsToContents()
+
+    def guardar_errores_semanticos(self, errores):
+        """Guardar errores semánticos en archivo"""
+        try:
+            with open("errores_semanticos.txt", "w", encoding="utf-8") as f:
+                for error in errores:
+                    f.write(f"Línea {error['linea']}, Col {error['columna']}: {error['mensaje']}\n")
+        except Exception as e:
+            self.error_list.addItem(f"Error al guardar errores semánticos: {str(e)}")
+
+    def guardar_tabla_simbolos(self, tabla_simbolos):
+        """Guardar tabla de símbolos en archivo"""
+        try:
+            with open("tabla_simbolos.txt", "w", encoding="utf-8") as f:
+                f.write(str(tabla_simbolos))
+        except Exception as e:
+            self.error_list.addItem(f"Error al guardar tabla de símbolos: {str(e)}")
+
+    def mostrar_ast_anotado(self, ast_anotado):
+        """Mostrar AST con anotaciones semánticas en el visor específico"""
+        if ast_anotado:
+            self.ast_anotado_viewer.display_ast(ast_anotado)
+    
+        # Guardar AST anotado en archivo
+        if ast_anotado:
+            with open("ast_anotado.txt", "w", encoding="utf-8") as f:
+                f.write(self.ast_a_texto_con_tipos(ast_anotado))
+
+    def ast_a_texto_con_tipos(self, nodo, nivel=0):
+        """Convertir AST anotado a texto mostrando tipos"""
+        texto = "  " * nivel + f"{nodo.node_type}"
+        if nodo.value:
+            texto += f": {nodo.value}"
+        if hasattr(nodo, 'tipo'):
+            texto += f" [tipo: {nodo.tipo}]"
+        if nodo.line and nodo.col:
+            texto += f" [Línea: {nodo.line}, Col: {nodo.col}]"
+        texto += "\n"
+    
+        for hijo in nodo.children:
+            texto += self.ast_a_texto_con_tipos(hijo, nivel + 1)
+        return texto
         
     def run_intermediate(self):
         self.run_compiler("intermediate")
         
     def run_execution(self):
-        self.run_compiler("execute")
+        """Ejecutar análisis léxico, sintáctico y semántico en orden"""
+        # Limpiar resultados anteriores
+        self.lexical_output.clear()
+        self.syntax_output.clear()
+        self.semantic_output.clear()
+        self.error_list.clear()
+        self.ast_viewer.clear()
+        self.ast_anotado_viewer.clear()
+        self.symbol_table.clear()
+        
+        # Ejecutar análisis léxico
+        self.run_lexical()
+        
+        # Verificar si hay errores léxicos
+        if self.error_list.count() > 0:
+            self.error_list.addItem("No se puede continuar con análisis sintáctico debido a errores léxicos")
+            return
+            
+        # Ejecutar análisis sintáctico
+        self.run_syntax()
+        
+        # Verificar si hay errores sintácticos
+        if self.error_list.count() > 0:
+            self.error_list.addItem("No se puede continuar con análisis semántico debido a errores sintácticos")
+            return
+            
+        # Ejecutar análisis semántico
+        self.run_semantic()
+        
+        # Mostrar mensaje de finalización
+        self.statusBar().showMessage("Ejecución completada")
         
 
 # Función principal
