@@ -1062,8 +1062,12 @@ class SymbolTable:
             'lineas': [linea_valida],  # Iniciar con la línea de declaración
             'columna': columna,
             'direccion': self.direccion_memoria,
-            'desplazamiento': self.desplazamiento
+            'desplazamiento': self.desplazamiento,
+            'apariciones': []  # NUEVO: Lista para todas las apariciones (línea, columna)
         }
+        
+        # Registrar la declaración como primera aparición
+        self.registrar_aparicion(nombre, linea, columna, ambito)
         
         self.direccion_memoria += 4
         self.desplazamiento += 4
@@ -1085,23 +1089,69 @@ class SymbolTable:
             
         return None
         
-    def registrar_uso(self, nombre, linea, ambito=None):
-        """Registra un nuevo uso de la variable en una línea específica"""
-        # Filtrar líneas None antes de ordenar
+    def registrar_uso(self, nombre, linea, columna=None, ambito=None):
+        """Registra un nuevo uso de la variable, incluyendo múltiples veces en una misma línea."""
+        if linea is None or linea == 0:
+            return False
+
+        simbolo = self.buscar(nombre, ambito)
+        if simbolo:
+            # Registrar aparición exacta
+            self.registrar_aparicion(nombre, linea, columna, ambito)
+
+            # También mantener el registro general de líneas
+            if linea not in simbolo['lineas']:
+                simbolo['lineas'].append(linea)
+                simbolo['lineas'] = sorted([l for l in simbolo['lineas'] if l is not None and l > 0])
+            return True
+        return False
+
+
+    def registrar_aparicion(self, nombre, linea, columna, ambito=None):
+        """NUEVO: Registra cada aparición individual de la variable con línea y columna"""
         if linea is None or linea == 0:
             return False
             
         simbolo = self.buscar(nombre, ambito)
         if simbolo:
-            # Solo agregar la línea si no está ya en la lista
-            if linea not in simbolo['lineas']:
-                simbolo['lineas'].append(linea)
-                # Filtrar valores None antes de ordenar y ordenar solo números
-                lineas_filtradas = [l for l in simbolo['lineas'] if l is not None and l > 0]
-                lineas_filtradas.sort()
-                simbolo['lineas'] = lineas_filtradas
+            # Siempre agregar la aparición, incluso si está en la misma línea
+            aparicion = {'linea': linea, 'columna': columna}
+            if aparicion not in simbolo['apariciones']:
+                simbolo['apariciones'].append(aparicion)
+                # Ordenar apariciones por línea y columna
+                simbolo['apariciones'].sort(key=lambda x: (x['linea'], x['columna']))
             return True
         return False
+        
+    def contar_apariciones_por_linea(self, nombre, ambito=None):
+        """NUEVO: Cuenta cuántas veces aparece la variable en cada línea"""
+        simbolo = self.buscar(nombre, ambito)
+        if not simbolo:
+            return {}
+            
+        conteo = {}
+        for aparicion in simbolo['apariciones']:
+            linea = aparicion['linea']
+            conteo[linea] = conteo.get(linea, 0) + 1
+            
+        return conteo
+        
+    def obtener_lineas_con_apariciones(self, nombre, ambito=None):
+        """NUEVO: Obtiene las líneas con el formato correcto para mostrar"""
+        simbolo = self.buscar(nombre, ambito)
+        if not simbolo:
+            return ""
+            
+        conteo = self.contar_apariciones_por_linea(nombre, ambito)
+        lineas_formateadas = []
+        
+        for linea, count in sorted(conteo.items()):
+            if count > 1:
+                lineas_formateadas.append(f"{linea}({count})")
+            else:
+                lineas_formateadas.append(str(linea))
+                
+        return ", ".join(lineas_formateadas)
         
     def entrar_ambito(self, nombre_ambito):
         self.ambito_actual = nombre_ambito
@@ -1111,13 +1161,14 @@ class SymbolTable:
         
     def __str__(self):
         result = "TABLA DE SÍMBOLOS:\n"
-        result += "Nombre\tTipo\tÁmbito\tLíneas\tDirección\tDesplazamiento\n"
-        result += "-" * 60 + "\n"
+        result += "Nombre\tTipo\tÁmbito\tLíneas\tApariciones\tDirección\tDesplazamiento\n"
+        result += "-" * 80 + "\n"
         for clave, info in self.symbols.items():
             nombre = clave.split('::')[1]
-            lineas_filtradas = [str(l) for l in info['lineas'] if l is not None and l > 0]
-            lineas_str = ', '.join(lineas_filtradas) if lineas_filtradas else "0"
-            result += f"{nombre}\t{info['tipo']}\t{info['ambito']}\t{lineas_str}\t{info['direccion']}\t\t{info['desplazamiento']}\n"
+            # Usar el nuevo método para obtener líneas con conteo de apariciones
+            lineas_str = self.obtener_lineas_con_apariciones(nombre, info['ambito'])
+            total_apariciones = len(info['apariciones'])
+            result += f"{nombre}\t{info['tipo']}\t{info['ambito']}\t{lineas_str}\t{total_apariciones}\t\t{info['direccion']}\t\t{info['desplazamiento']}\n"
         return result
 
 class SemanticAnalyzer:
@@ -1225,9 +1276,8 @@ class SemanticAnalyzer:
                     columna = id_nodo.col if id_nodo.col is not None else 0
                     self.agregar_error(f"Variable '{nombre_var}' no declarada", linea, columna)
                     
-                # Registrar uso de la variable en esta línea
-                linea = nodo.line if nodo.line is not None else 0
-                self.tabla_simbolos.registrar_uso(nombre_var, linea)
+                # NUEVO: Registrar aparición de la variable en entrada
+                self.tabla_simbolos.registrar_aparicion(nombre_var, nodo.line, nodo.col)
 
         return "void"
 
@@ -1255,16 +1305,16 @@ class SemanticAnalyzer:
         """Función auxiliar para registrar usos de variables en expresiones"""
         if nodo is None:
             return
-        
+
         # Registrar si es un nodo de variable/identificador
         if nodo.node_type in ["ID", "Variable"]:
             nombre_var = nodo.value
             simbolo = self.tabla_simbolos.buscar(nombre_var)
             if simbolo:
-                # Usar la línea del nodo específico
                 linea = nodo.line if nodo.line is not None else 0
-                self.tabla_simbolos.registrar_uso(nombre_var, linea)
-    
+                columna = nodo.col if nodo.col is not None else 0
+                self.tabla_simbolos.registrar_uso(nombre_var, linea, columna)
+
         # Recursivamente visitar hijos
         for hijo in nodo.children:
             self._registrar_usos_en_expresion(hijo)
@@ -1363,8 +1413,8 @@ class SemanticAnalyzer:
             nodo.tipo = "error"
             return "error"
             
-        # Registrar uso de la variable en esta línea
-        self.tabla_simbolos.registrar_uso(nombre, nodo.line)
+        # NUEVO: Registrar cada aparición individual con línea y columna
+        self.tabla_simbolos.registrar_aparicion(nombre, nodo.line, nodo.col)
             
         nodo.tipo = simbolo['tipo']
         return simbolo['tipo']
@@ -2095,8 +2145,8 @@ class CompilerIDE(QMainWindow):
     def mostrar_tabla_simbolos(self, tabla_simbolos):
         """Mostrar tabla de símbolos en el panel correspondiente"""
         self.symbol_table.clear()
-        self.symbol_table.setColumnCount(6)
-        self.symbol_table.setHorizontalHeaderLabels(["Nombre", "Tipo", "Ámbito", "Líneas", "Dirección", "Desplazamiento"])
+        self.symbol_table.setColumnCount(7)  # Una columna más para "Apariciones"
+        self.symbol_table.setHorizontalHeaderLabels(["Nombre", "Tipo", "Ámbito", "Líneas", "Apariciones", "Dirección", "Desplazamiento"])
 
         fila = 0
         for clave, info in tabla_simbolos.symbols.items():
@@ -2106,12 +2156,16 @@ class CompilerIDE(QMainWindow):
             self.symbol_table.setItem(fila, 1, QTableWidgetItem(info['tipo']))
             self.symbol_table.setItem(fila, 2, QTableWidgetItem(info['ambito']))
 
-            # Mostrar todas las líneas donde aparece la variable, filtrando None y 0
-            lineas_filtradas = [str(l) for l in info['lineas'] if l is not None and l > 0]
-            lineas_str = ', '.join(lineas_filtradas) if lineas_filtradas else "0"
+            # Usar el nuevo método para mostrar líneas con conteo
+            lineas_str = tabla_simbolos.obtener_lineas_con_apariciones(nombre, info['ambito'])
             self.symbol_table.setItem(fila, 3, QTableWidgetItem(lineas_str))
-            self.symbol_table.setItem(fila, 4, QTableWidgetItem(str(info['direccion'])))
-            self.symbol_table.setItem(fila, 5, QTableWidgetItem(str(info['desplazamiento'])))
+            
+            # Mostrar el total de apariciones
+            total_apariciones = len(info['apariciones'])
+            self.symbol_table.setItem(fila, 4, QTableWidgetItem(str(total_apariciones)))
+            
+            self.symbol_table.setItem(fila, 5, QTableWidgetItem(str(info['direccion'])))
+            self.symbol_table.setItem(fila, 6, QTableWidgetItem(str(info['desplazamiento'])))
             fila += 1
     
         self.symbol_table.resizeColumnsToContents()
