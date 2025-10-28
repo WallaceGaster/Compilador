@@ -1106,6 +1106,53 @@ class SymbolTable:
             return True
         return False
 
+    def registrar_aparicion(self, nombre, linea, columna, ambito=None):
+        """NUEVO: Registra cada aparición individual de la variable con línea y columna"""
+        if linea is None or linea == 0:
+            return False
+            
+        simbolo = self.buscar(nombre, ambito)
+        if simbolo:
+            # Siempre agregar la aparición, incluso si está en la misma línea
+            aparicion = {'linea': linea, 'columna': columna}
+            if aparicion not in simbolo['apariciones']:
+                simbolo['apariciones'].append(aparicion)
+                # Ordenar apariciones por línea y columna
+                simbolo['apariciones'].sort(key=lambda x: (x['linea'], x['columna']))
+            return True
+        return False
+        
+    def obtener_lineas_con_apariciones(self, nombre, ambito=None):
+        """NUEVO: Obtiene las líneas con el formato correcto para mostrar"""
+        simbolo = self.buscar(nombre, ambito)
+        if not simbolo:
+            return ""
+        
+        # Crear lista de líneas repetidas según las apariciones
+        lineas_expandidas = []
+        for aparicion in simbolo['apariciones']:
+            lineas_expandidas.append(str(aparicion['linea']))
+                
+        return ", ".join(lineas_expandidas)
+        
+    def entrar_ambito(self, nombre_ambito):
+        self.ambito_actual = nombre_ambito
+        
+    def salir_ambito(self):
+        self.ambito_actual = "global"
+        
+    def __str__(self):
+        result = "TABLA DE SÍMBOLOS:\n"
+        result += "Nombre\tTipo\tÁmbito\tLíneas\tApariciones\tDirección\tDesplazamiento\n"
+        result += "-" * 80 + "\n"
+        for clave, info in self.symbols.items():
+            nombre = clave.split('::')[1]
+            # Usar el nuevo método para obtener líneas con conteo de apariciones
+            lineas_str = self.obtener_lineas_con_apariciones(nombre, info['ambito'])
+            total_apariciones = len(info['apariciones'])
+            result += f"{nombre}\t{info['tipo']}\t{info['ambito']}\t{lineas_str}\t{total_apariciones}\t\t{info['direccion']}\t\t{info['desplazamiento']}\n"
+        return result
+
 
     def registrar_aparicion(self, nombre, linea, columna, ambito=None):
         """NUEVO: Registra cada aparición individual de la variable con línea y columna"""
@@ -1141,18 +1188,14 @@ class SymbolTable:
         simbolo = self.buscar(nombre, ambito)
         if not simbolo:
             return ""
-            
-        conteo = self.contar_apariciones_por_linea(nombre, ambito)
-        lineas_formateadas = []
         
-        for linea, count in sorted(conteo.items()):
-            if count > 1:
-                lineas_formateadas.append(f"{linea}({count})")
-            else:
-                lineas_formateadas.append(str(linea))
+        # Crear lista de líneas repetidas según las apariciones
+        lineas_expandidas = []
+        for aparicion in simbolo['apariciones']:
+            lineas_expandidas.append(str(aparicion['linea']))
                 
-        return ", ".join(lineas_formateadas)
-        
+        return ", ".join(lineas_expandidas)
+            
     def entrar_ambito(self, nombre_ambito):
         self.ambito_actual = nombre_ambito
         
