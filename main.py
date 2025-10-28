@@ -1042,8 +1042,8 @@ class SymbolTable:
     def __init__(self):
         self.symbols = {}
         self.ambito_actual = "global"
-        self.direccion_memoria = 0
-        self.desplazamiento = 0
+        self.direccion_memoria = 1
+        self.desplazamiento = 1
         
     def insertar(self, nombre, tipo, linea, columna, ambito=None):
         if ambito is None:
@@ -1069,8 +1069,8 @@ class SymbolTable:
         # Registrar la declaración como primera aparición
         self.registrar_aparicion(nombre, linea, columna, ambito)
         
-        self.direccion_memoria += 4
-        self.desplazamiento += 4
+        self.direccion_memoria += 1
+        self.desplazamiento += 1
         return True
         
     def buscar(self, nombre, ambito=None):
@@ -1143,77 +1143,17 @@ class SymbolTable:
         
     def __str__(self):
         result = "TABLA DE SÍMBOLOS:\n"
-        result += "Nombre\tTipo\tÁmbito\tLíneas\tApariciones\tDirección\tDesplazamiento\n"
-        result += "-" * 80 + "\n"
+        # MODIFICADO: Eliminar "Ámbito", "Apariciones" y "Desplazamiento"
+        result += "Nombre\tTipo\tLíneas\tDirección\n"
+        result += "-" * 50 + "\n"
         for clave, info in self.symbols.items():
             nombre = clave.split('::')[1]
             # Usar el nuevo método para obtener líneas con conteo de apariciones
             lineas_str = self.obtener_lineas_con_apariciones(nombre, info['ambito'])
-            total_apariciones = len(info['apariciones'])
-            result += f"{nombre}\t{info['tipo']}\t{info['ambito']}\t{lineas_str}\t{total_apariciones}\t\t{info['direccion']}\t\t{info['desplazamiento']}\n"
+            # MODIFICADO: Eliminar info['ambito'], total_apariciones, y info['desplazamiento']
+            result += f"{nombre}\t{info['tipo']}\t{lineas_str}\t{info['direccion']}\n"
         return result
-
-
-    def registrar_aparicion(self, nombre, linea, columna, ambito=None):
-        """NUEVO: Registra cada aparición individual de la variable con línea y columna"""
-        if linea is None or linea == 0:
-            return False
-            
-        simbolo = self.buscar(nombre, ambito)
-        if simbolo:
-            # Siempre agregar la aparición, incluso si está en la misma línea
-            aparicion = {'linea': linea, 'columna': columna}
-            if aparicion not in simbolo['apariciones']:
-                simbolo['apariciones'].append(aparicion)
-                # Ordenar apariciones por línea y columna
-                simbolo['apariciones'].sort(key=lambda x: (x['linea'], x['columna']))
-            return True
-        return False
-        
-    def contar_apariciones_por_linea(self, nombre, ambito=None):
-        """NUEVO: Cuenta cuántas veces aparece la variable en cada línea"""
-        simbolo = self.buscar(nombre, ambito)
-        if not simbolo:
-            return {}
-            
-        conteo = {}
-        for aparicion in simbolo['apariciones']:
-            linea = aparicion['linea']
-            conteo[linea] = conteo.get(linea, 0) + 1
-            
-        return conteo
-        
-    def obtener_lineas_con_apariciones(self, nombre, ambito=None):
-        """NUEVO: Obtiene las líneas con el formato correcto para mostrar"""
-        simbolo = self.buscar(nombre, ambito)
-        if not simbolo:
-            return ""
-        
-        # Crear lista de líneas repetidas según las apariciones
-        lineas_expandidas = []
-        for aparicion in simbolo['apariciones']:
-            lineas_expandidas.append(str(aparicion['linea']))
-                
-        return ", ".join(lineas_expandidas)
-            
-    def entrar_ambito(self, nombre_ambito):
-        self.ambito_actual = nombre_ambito
-        
-    def salir_ambito(self):
-        self.ambito_actual = "global"
-        
-    def __str__(self):
-        result = "TABLA DE SÍMBOLOS:\n"
-        result += "Nombre\tTipo\tÁmbito\tLíneas\tApariciones\tDirección\tDesplazamiento\n"
-        result += "-" * 80 + "\n"
-        for clave, info in self.symbols.items():
-            nombre = clave.split('::')[1]
-            # Usar el nuevo método para obtener líneas con conteo de apariciones
-            lineas_str = self.obtener_lineas_con_apariciones(nombre, info['ambito'])
-            total_apariciones = len(info['apariciones'])
-            result += f"{nombre}\t{info['tipo']}\t{info['ambito']}\t{lineas_str}\t{total_apariciones}\t\t{info['direccion']}\t\t{info['desplazamiento']}\n"
-        return result
-
+    
 class SemanticAnalyzer:
     def __init__(self):
         self.tabla_simbolos = SymbolTable()
@@ -2188,8 +2128,10 @@ class CompilerIDE(QMainWindow):
     def mostrar_tabla_simbolos(self, tabla_simbolos):
         """Mostrar tabla de símbolos en el panel correspondiente"""
         self.symbol_table.clear()
-        self.symbol_table.setColumnCount(7)  # Una columna más para "Apariciones"
-        self.symbol_table.setHorizontalHeaderLabels(["Nombre", "Tipo", "Ámbito", "Líneas", "Apariciones", "Dirección", "Desplazamiento"])
+        # MODIFICADO: Reducir a 4 columnas (eliminar Ámbito, Apariciones, Desplazamiento)
+        self.symbol_table.setColumnCount(4)
+        # MODIFICADO: Eliminar "Ámbito", "Apariciones" y "Desplazamiento" de los encabezados
+        self.symbol_table.setHorizontalHeaderLabels(["Nombre", "Tipo", "Líneas", "Dirección"])
 
         fila = 0
         for clave, info in tabla_simbolos.symbols.items():
@@ -2197,20 +2139,18 @@ class CompilerIDE(QMainWindow):
             self.symbol_table.insertRow(fila)
             self.symbol_table.setItem(fila, 0, QTableWidgetItem(nombre))
             self.symbol_table.setItem(fila, 1, QTableWidgetItem(info['tipo']))
-            self.symbol_table.setItem(fila, 2, QTableWidgetItem(info['ambito']))
-
+            
+            # MODIFICADO: Eliminar la columna de Ámbito (índice 2)
             # Usar el nuevo método para mostrar líneas con conteo
             lineas_str = tabla_simbolos.obtener_lineas_con_apariciones(nombre, info['ambito'])
-            self.symbol_table.setItem(fila, 3, QTableWidgetItem(lineas_str))
+            self.symbol_table.setItem(fila, 2, QTableWidgetItem(lineas_str))
             
-            # Mostrar el total de apariciones
-            total_apariciones = len(info['apariciones'])
-            self.symbol_table.setItem(fila, 4, QTableWidgetItem(str(total_apariciones)))
+            # MODIFICADO: Eliminar la columna de Apariciones (índice 4)
+            # Mostrar solo dirección (índice 3 ahora)
+            self.symbol_table.setItem(fila, 3, QTableWidgetItem(str(info['direccion'])))
             
-            self.symbol_table.setItem(fila, 5, QTableWidgetItem(str(info['direccion'])))
-            self.symbol_table.setItem(fila, 6, QTableWidgetItem(str(info['desplazamiento'])))
             fila += 1
-    
+
         self.symbol_table.resizeColumnsToContents()
 
     def guardar_errores_semanticos(self, errores):
