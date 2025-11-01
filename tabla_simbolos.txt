@@ -1,9 +1,9 @@
 TABLA DE SÍMBOLOS:
-Nombre	Tipo	Ámbito	Líneas	Dirección	Desplazamiento
-------------------------------------------------------------
-x	int	global	2, 30, 30, 32, 31, 32, 38, 38	0		0
-y	int	global	2, 8, 9, 23, 29, 29, 29, 35, 35, 36, 36	4		4
-z	int	global	2	8		8
-a	float	global	3, 16	12		12
-b	float	global	3	16		16
-c	float	global	3	20		20
+Nombre	Tipo	Líneas	Dirección
+--------------------------------------------------
+x	int	2, 5, 6, 11, 27, 30, 31, 32, 38	1
+y	int	2, 7, 8, 9, 9, 12, 14, 16, 23, 23, 29, 29, 35, 36	2
+z	int	2, 8, 13	3
+a	float	3, 10, 16, 25	4
+b	float	3, 19, 21	5
+c	float	3, 26	6
