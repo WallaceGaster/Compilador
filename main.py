@@ -1094,12 +1094,11 @@ class SymbolTable:
         simbolo = self.buscar(nombre, ambito)
         if simbolo:
             # Solo agregar la línea si no está ya en la lista
-            if linea not in simbolo['lineas']:
-                simbolo['lineas'].append(linea)
-                # Filtrar valores None antes de ordenar y ordenar solo números
-                lineas_filtradas = [l for l in simbolo['lineas'] if l is not None and l > 0]
-                lineas_filtradas.sort()
-                simbolo['lineas'] = lineas_filtradas
+            simbolo['lineas'].append(linea)
+            # Filtrar valores None antes de ordenar y ordenar solo números
+            lineas_filtradas = [l for l in simbolo['lineas'] if l is not None and l > 0]
+            lineas_filtradas.sort()
+            simbolo['lineas'] = lineas_filtradas
             return True
         return False
         
