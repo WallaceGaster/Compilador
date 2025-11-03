@@ -1501,6 +1501,12 @@ class SemanticAnalyzer:
                 elif operador == '/': nodo.calculated_value = val_izq / val_der
                 elif operador == '%': nodo.calculated_value = val_izq % val_der
                 elif operador == '^': nodo.calculated_value = val_izq ** val_der
+                elif operador == '<': nodo.calculated_value = val_izq < val_der
+                elif operador == '<=': nodo.calculated_value = val_izq <= val_der
+                elif operador == '>': nodo.calculated_value = val_izq > val_der
+                elif operador == '>=': nodo.calculated_value = val_izq >= val_der
+                elif operador == '==': nodo.calculated_value = val_izq == val_der
+                elif operador == '!=': nodo.calculated_value = val_izq != val_der
             except TypeError:
                 self.agregar_error(f"Operación '{operador}' no se puede realizar con los tipos de datos", nodo.line, nodo.col)
 

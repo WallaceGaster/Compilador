@@ -87,7 +87,7 @@ Programa
       ID: y [tipo: int] [Línea: 14, Col: 5]
       Literal: 14.54 [tipo: float] [Valor Calculado: 14.54] [Línea: 14, Col: 9]
     If [Línea: 15, Col: 5]
-      EXPRESION_BINARIA: > [tipo: bool] [Línea: 15, Col: 9]
+      EXPRESION_BINARIA: > [tipo: bool] [Valor Calculado: False] [Línea: 15, Col: 9]
         Literal: 2 [tipo: int] [Valor Calculado: 2] [Línea: 15, Col: 8]
         Literal: 3 [tipo: int] [Valor Calculado: 3] [Línea: 15, Col: 10]
       LISTA_SENTENCIAS
@@ -100,7 +100,7 @@ Programa
         LISTA_SENTENCIAS
           If [Línea: 18, Col: 9]
             OperacionLogica: && [Línea: 18, Col: 16]
-              EXPRESION_BINARIA: > [tipo: bool] [Línea: 18, Col: 13]
+              EXPRESION_BINARIA: > [tipo: bool] [Valor Calculado: True] [Línea: 18, Col: 13]
                 Literal: 4 [tipo: int] [Valor Calculado: 4] [Línea: 18, Col: 12]
                 Literal: 2 [tipo: int] [Valor Calculado: 2] [Línea: 18, Col: 14]
               Variable: true [tipo: error] [Línea: 18, Col: 19]
@@ -145,7 +145,7 @@ Programa
               Literal: 2 [tipo: int] [Valor Calculado: 2] [Línea: 29, Col: 23]
             Literal: 1 [tipo: int] [Valor Calculado: 1] [Línea: 29, Col: 27]
         While [Línea: 30, Col: 9]
-          EXPRESION_BINARIA: > [tipo: bool] [Línea: 30, Col: 17]
+          EXPRESION_BINARIA: > [tipo: bool] [Valor Calculado: False] [Línea: 30, Col: 17]
             Variable: x [tipo: int] [Valor Calculado: 7] [Línea: 30, Col: 15]
             Literal: 7 [tipo: int] [Valor Calculado: 7] [Línea: 30, Col: 19]
           LISTA_SENTENCIAS
@@ -169,11 +169,11 @@ Programa
               EXPRESION_BINARIA: / [Línea: 33, Col: 22]
                 Literal: 36 [Línea: 33, Col: 19]
                 Literal: 7 [Línea: 33, Col: 24]
-      EXPRESION_BINARIA: == [tipo: bool] [Línea: 35, Col: 13]
+      EXPRESION_BINARIA: == [tipo: bool] [Valor Calculado: False] [Línea: 35, Col: 13]
         Variable: y [tipo: int] [Valor Calculado: 131] [Línea: 35, Col: 11]
         Literal: 5 [tipo: int] [Valor Calculado: 5] [Línea: 35, Col: 16]
     While [Línea: 36, Col: 5]
-      EXPRESION_BINARIA: == [tipo: bool] [Línea: 36, Col: 13]
+      EXPRESION_BINARIA: == [tipo: bool] [Valor Calculado: False] [Línea: 36, Col: 13]
         Variable: y [tipo: int] [Valor Calculado: 131] [Línea: 36, Col: 11]
         Literal: 0 [tipo: int] [Valor Calculado: 0] [Línea: 36, Col: 16]
       LISTA_SENTENCIAS
