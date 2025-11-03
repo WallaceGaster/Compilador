@@ -528,29 +528,47 @@ class Parser:
         
     def incremento_sentencia(self):
         """incremento_sentencia → id OPERADOR_ARIT ('++' | '--') ;"""
-        id_token = self.current_token()
-        self.advance()
-        op_token = self.current_token()
-        self.advance()
-
-        # Create the assignment node
-        assign_node = ASTNode("Asignacion", line=id_token[2], col=id_token[3])
-
-        # Left side of assignment
-        id_node = ASTNode("ID", value=id_token[1], line=id_token[2], col=id_token[3])
-        assign_node.add_child(id_node)
-
-        # Right side of assignment
-        op_char = "+" if op_token[1] == "++" else "-"
-        expr_node = ASTNode("EXPRESION_BINARIA", value=op_char, line=op_token[2], col=op_token[3])
-        expr_node.add_child(ASTNode("Variable", value=id_token[1], line=id_token[2], col=id_token[3]))
-        expr_node.add_child(ASTNode("Literal", value="1", line=op_token[2], col=op_token[3]))
-        assign_node.add_child(expr_node)
-
-        if not self.match('SIMBOLOS', ';'):
-            self.error("Se esperaba ';'", self.current_token())
-        else:
+        # Crear nodo de asignación
+        assign_node = ASTNode("ASIGNACION")
+    
+        # Obtener identificador
+        token = self.current_token()
+        if token and token[0] == 'IDENTIFICADOR':
+            id_node = ASTNode("ID", token[1], token[2], token[3])
+            assign_node.add_child(id_node)
             self.advance()
+        else:
+            self.error("Se esperaba un identificador", token)
+            return None
+
+        # Agregar operador de asignación
+        assign_node.add_child(ASTNode("ASIGN", "=", token[2], token[3]))
+    
+        # Obtener operador de incremento (++ o --)
+        op_token = self.current_token()
+        if op_token and op_token[0] == 'OPERADOR_ARIT' and op_token[1] in ['++', '--']:
+            op = op_token[1]
+            self.advance()
+        else:
+            self.error("Se esperaba '++' o '--'", op_token)
+            return None
+
+        # Crear expresión equivalente: id = id ± 1
+        expr_node = ASTNode(op)
+    
+        # Crear nodo operador con sus operandos como hijos
+        op_node = ASTNode("OPERADOR_ARIT", "+" if op == "++" else "-", op_token[2], op_token[3])
+        op_node.add_child(ASTNode("ID", token[1], token[2], token[3]))  # Operando izquierdo
+        op_node.add_child(ASTNode("NUM_ENTERO", "1", op_token[2], op_token[3]))  # Operando derecho
+
+        expr_node.add_child(op_node)
+        assign_node.add_child(expr_node)
+        
+        # Verificar punto y coma final
+        if self.match('SIMBOLOS', ';'):
+            self.advance()
+        else:
+            self.error("Se esperaba ';'", self.current_token())
 
         return assign_node
     
@@ -737,7 +755,7 @@ class Parser:
 
     def asignacion(self):
         """asignacion → id = sent_expression"""
-        node = ASTNode("Asignacion")
+        node = ASTNode("=")
 
         # id
         if not self.match('IDENTIFICADOR'):
@@ -1045,8 +1063,7 @@ class SymbolTable:
             'columna': columna,
             'direccion': self.direccion_memoria,
             'desplazamiento': self.desplazamiento,
-            'apariciones': [],  # NUEVO: Lista para todas las apariciones (línea, columna)
-            'valor': None # NUEVO: Para almacenar el valor calculado
+            'apariciones': []  # NUEVO: Lista para todas las apariciones (línea, columna)
         }
         
         # Registrar la declaración como primera aparición
@@ -1183,10 +1200,6 @@ class SemanticAnalyzer:
                 nombre = var_nodo.value
                 if not self.tabla_simbolos.insertar(nombre, tipo, var_nodo.line, var_nodo.col):
                     self.agregar_error(f"Variable '{nombre}' ya declarada", var_nodo.line, var_nodo.col)
-                else:
-                    if tipo in ['int', 'float']:
-                        simbolo = self.tabla_simbolos.buscar(nombre)
-                        simbolo['valor'] = 0
                     
         return "void"
         
@@ -1203,40 +1216,28 @@ class SemanticAnalyzer:
         
         nombre_var = id_nodo.value
         simbolo = self.tabla_simbolos.buscar(nombre_var)
-
+    
         if not simbolo:
             # ERROR: Variable no declarada
             self.agregar_error(f"Variable '{nombre_var}' no declarada", id_nodo.line, id_nodo.col)
             return "error"
-
-        # Registrar el uso de la variable en el lado izquierdo de la asignación
-        self.tabla_simbolos.registrar_uso(nombre_var, id_nodo.line, id_nodo.col)
-
+    
         tipo_var = simbolo['tipo']
-
+    
         # Verificar expresión derecha
         expr_nodo = nodo.children[1]
         tipo_expr = self.visitar_nodo(expr_nodo)
-
-        # Special case: assignment of a float expression to an int variable
-        if tipo_var == 'int' and tipo_expr == 'float' and expr_nodo.node_type != 'Literal':
-            if expr_nodo.calculated_value is not None:
-                simbolo['valor'] = int(expr_nodo.calculated_value)
-                nodo.calculated_value = int(expr_nodo.calculated_value)
-        else:
-            # General case: check for type compatibility
-            if tipo_expr != "error" and not self.tipos_compatibles(tipo_var, tipo_expr):
-                self.agregar_error(f"Tipos incompatibles: no se puede asignar {tipo_expr} a {tipo_var}", 
-                                id_nodo.line, id_nodo.col)
-                nodo.is_error = True
-                nodo.calculated_value = "error"
-            else:
-                # Update symbol table value
-                if expr_nodo.calculated_value is not None:
-                    simbolo['valor'] = expr_nodo.calculated_value
-                    nodo.calculated_value = expr_nodo.calculated_value
-
-        # Annotate types in the AST
+    
+        # Si no se pudo determinar el tipo de la expresión, usar el tipo de la variable
+        if tipo_expr == "void" or tipo_expr is None:
+            tipo_expr = tipo_var
+    
+        # Verificar compatibilidad de tipos
+        if tipo_expr != "error" and not self.tipos_compatibles(tipo_var, tipo_expr):
+            self.agregar_error(f"Tipos incompatibles: no se puede asignar {tipo_expr} a {tipo_var}", 
+                            id_nodo.line, id_nodo.col)
+    
+        # Anotar tipos en el AST
         nodo.tipo = tipo_var
         id_nodo.tipo = tipo_var
         if hasattr(expr_nodo, 'tipo'):
@@ -1280,7 +1281,7 @@ class SemanticAnalyzer:
         
             # Registrar uso de variables en la expresión de salida
             self._registrar_usos_en_expresion(expr_nodo)
-        
+    
         return "void"
     
     def _registrar_usos_en_expresion(self, nodo):
@@ -1388,35 +1389,17 @@ class SemanticAnalyzer:
     def visitar_ID(self, nodo):
         nombre = nodo.value
         simbolo = self.tabla_simbolos.buscar(nombre)
-            
+        
         if not simbolo:
             # ERROR: Variable no declarada
             self.agregar_error(f"Variable '{nombre}' no declarada", nodo.line, nodo.col)
             nodo.tipo = "error"
             return "error"
-                
-        # NUEVO: Registrar cada aparición individual con línea y columna
-        self.tabla_simbolos.registrar_aparicion(nombre, nodo.line, nodo.col)
-                
-        nodo.tipo = simbolo['tipo']
-        nodo.calculated_value = simbolo['valor']
-        return simbolo['tipo']
-
-    def visitar_Variable(self, nodo):
-        nombre = nodo.value
-        simbolo = self.tabla_simbolos.buscar(nombre)
             
-        if not simbolo:
-            # ERROR: Variable no declarada
-            self.agregar_error(f"Variable '{nombre}' no declarada", nodo.line, nodo.col)
-            nodo.tipo = "error"
-            return "error"
-                
         # NUEVO: Registrar cada aparición individual con línea y columna
         self.tabla_simbolos.registrar_aparicion(nombre, nodo.line, nodo.col)
-                
+            
         nodo.tipo = simbolo['tipo']
-        nodo.calculated_value = simbolo['valor']
         return simbolo['tipo']
         
     def visitar_Literal(self, nodo):
@@ -1425,24 +1408,20 @@ class SemanticAnalyzer:
         # Determinar tipo del literal
         if valor.isdigit():
             nodo.tipo = "int"
-            nodo.calculated_value = int(valor)
             return "int"
         elif self.es_numero_real(valor):
             nodo.tipo = "float" 
-            nodo.calculated_value = float(valor)
             return "float"
         elif valor in ['true', 'false']:
             nodo.tipo = "bool"
-            nodo.calculated_value = (valor == 'true')
             return "bool"
         elif valor.startswith('"') or valor.startswith("'"):
             nodo.tipo = "string"
-            nodo.calculated_value = valor[1:-1]
             return "string"
         else:
             # Intentar convertir a número
             try:
-                nodo.calculated_value = float(valor)
+                float(valor)
                 nodo.tipo = "float"
                 return "float"
             except:
@@ -1481,7 +1460,7 @@ class SemanticAnalyzer:
         
         self._registrar_usos_en_expresion(izquierda)
         self._registrar_usos_en_expresion(derecha)
-        
+    
         # Si no se pueden determinar los tipos, asumir int
         if tipo_izq == "void" or tipo_izq is None:
             tipo_izq = "int"
@@ -1489,21 +1468,6 @@ class SemanticAnalyzer:
             tipo_der = "int"
     
         operador = nodo.value
-        
-        # Calcular valor
-        val_izq = izquierda.calculated_value
-        val_der = derecha.calculated_value
-        if val_izq is not None and val_der is not None:
-            try:
-                if operador == '+': nodo.calculated_value = val_izq + val_der
-                elif operador == '-': nodo.calculated_value = val_izq - val_der
-                elif operador == '*': nodo.calculated_value = val_izq * val_der
-                elif operador == '/': nodo.calculated_value = val_izq / val_der
-                elif operador == '%': nodo.calculated_value = val_izq % val_der
-                elif operador == '^': nodo.calculated_value = val_izq ** val_der
-            except TypeError:
-                self.agregar_error(f"Operación '{operador}' no se puede realizar con los tipos de datos", nodo.line, nodo.col)
-
     
         # Verificar tipos según operador
         tipo_resultado = self.verificar_operacion_binaria(operador, tipo_izq, tipo_der, nodo.line, nodo.col)
@@ -1520,7 +1484,7 @@ class SemanticAnalyzer:
         if operador in ['+', '-', '*', '/', '%', '^']:
             if tipo_izq in ['int', 'float'] and tipo_der in ['int', 'float']:
                 # Promoción de tipos: si alguno es float, resultado es float
-                if tipo_izq == 'float' or tipo_der == 'float' or operador == '/':
+                if tipo_izq == 'float' or tipo_der == 'float':
                     return 'float'
                 return 'int'
             else:
@@ -1584,22 +1548,17 @@ class ASTNode:
         self.children = []
         self.is_error = error
         self.tipo = None
-        self.calculated_value = None
     
     def add_child(self, child_node):
         self.children.append(child_node)
     
     def __repr__(self, level=0):
         prefix = "🚫 " if self.is_error else ""
-        ret = "  " * level + f"{self.node_type} (id: {id(self)})"
+        ret = "  " * level + f"{self.node_type}"
         if self.value:
             ret += f": {self.value}"
         if self.line and self.col:
             ret += f" [Línea: {self.line}, Col: {self.col}]"
-        if hasattr(self, 'tipo') and self.tipo:
-            ret += f" [tipo: {self.tipo}]"
-        if hasattr(self, 'calculated_value') and self.calculated_value is not None:
-            ret += f" [Valor Calculado: {self.calculated_value}]"
         ret += "\n"
         
         for child in self.children:
@@ -1610,16 +1569,15 @@ class ASTViewer(QTreeWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setHeaderLabel("Árbol Sintáctico Abstracto")
-        self.setColumnCount(6)
-        self.setHeaderLabels(["Nodo", "Valor", "Tipo", "Valor Calculado", "Línea", "Columna"])
+        self.setColumnCount(4)
+        self.setHeaderLabels(["Nodo", "Valor", "Tipo", "Línea", "Columna"])
         
         # Ajustar el ancho de las columnas
         self.setColumnWidth(0, 150)  # Nodo
         self.setColumnWidth(1, 100)  # Valor
         self.setColumnWidth(2, 80)   # Tipo
-        self.setColumnWidth(3, 100)  # Valor Calculado
-        self.setColumnWidth(4, 60)   # Línea
-        self.setColumnWidth(5, 60)   # Columna
+        self.setColumnWidth(3, 60)   # Línea
+        self.setColumnWidth(4, 60)   # Columna
     
     def display_ast(self, ast_root):
         self.clear()
@@ -1632,16 +1590,15 @@ class ASTViewer(QTreeWidget):
         node_text = ast_node.node_type
         value_text = ast_node.value if ast_node.value else ""
         tipo_text = ast_node.tipo if hasattr(ast_node, 'tipo') and ast_node.tipo else ""
-        calculated_value_text = str(ast_node.calculated_value) if hasattr(ast_node, 'calculated_value') and ast_node.calculated_value is not None else ""
         line_text = str(ast_node.line) if ast_node.line else ""
         col_text = str(ast_node.col) if ast_node.col else ""
         
         # Crear el ítem del árbol
-        item = QTreeWidgetItem([node_text, value_text, tipo_text, calculated_value_text, line_text, col_text])
+        item = QTreeWidgetItem([node_text, value_text, tipo_text, line_text, col_text])
         
         if ast_node.is_error:
             # Fondo rojo para nodos con errores
-            for i in range(6):  # Aplicar a todas las columnas
+            for i in range(5):  # Aplicar a todas las columnas
                 item.setBackground(i, QColor(255, 200, 200))  # Rojo claro
                 item.setForeground(i, QColor(255, 0, 0))       # Texto rojo
             item.setToolTip(0, "Este nodo contiene un error sintáctico")
@@ -2228,10 +2185,8 @@ class CompilerIDE(QMainWindow):
         texto = "  " * nivel + f"{nodo.node_type}"
         if nodo.value:
             texto += f": {nodo.value}"
-        if hasattr(nodo, 'tipo') and nodo.tipo:
+        if hasattr(nodo, 'tipo'):
             texto += f" [tipo: {nodo.tipo}]"
-        if hasattr(nodo, 'calculated_value') and nodo.calculated_value is not None:
-            texto += f" [Valor Calculado: {nodo.calculated_value}]"
         if nodo.line and nodo.col:
             texto += f" [Línea: {nodo.line}, Col: {nodo.col}]"
         texto += "\n"

@@ -1,0 +1,4 @@
+main {
+    int x;
+    x = 3.14; // This should cause a type error
+}
