@@ -40,11 +40,13 @@ class LexicalAnalyzer:
         ('COMENTARIO_MULTI', r'/\*[\s\S]*?\*/', QColor('#6A9955')),  # Usando [\s\S] para incluir saltos
         ('COMENTARIO_LINEA', r'//.*', QColor('#6A9955')),
         # Palabras reservadas
-        ('PALABRA_RESERVADA', r'\b(if|then|else|end|do|until|while|switch|case|int|float|main|cin|cout)\b', QColor('#569CD6')),
+        ('PALABRA_RESERVADA', r'\b(if|then|else|end|do|until|while|switch|case|int|float|main|cin|cout|bool)\b', QColor('#569CD6')),
+        # Booleanos
+        ('BOOLEANO', r'\b(true|false)\b', QColor('#569CD6')),
         # Números
         ('NUM_REAL_INCOMPLETO', r'\d+\.(?!\d)', QColor('#FF0000')), # Errores en números reales
-        ('NUM_REAL', r'\d+\.\d+', QColor('#1788ff')),
-        ('NUM_ENTERO', r'\d+', QColor('#1788ff')),
+        ('NUM_REAL', r'\d+\.\d+\b', QColor('#1788ff')),
+        ('NUM_ENTERO', r'\d+\b', QColor('#1788ff')),
         # Identificadores
         ('IDENTIFICADOR', r'[a-zA-Z_][a-zA-Z0-9_]*', QColor('#ff56e3')),
         # Operadores y símbolos
@@ -199,10 +201,12 @@ class SyntaxHighlighter(QSyntaxHighlighter):
         # Numeros
         ('NUM_REAL', r'\d+\.\d+', QColor('#1788ff')),
         ('NUM_ENTERO', r'\d+', QColor('#1788ff')),
+        # Booleano
+        ('BOOLEANO', r'\b(true|false)\b', QColor('#569CD6')),
         # Identificadores
         ('IDENTIFICADOR', r'[a-zA-Z_][a-zA-Z0-9_]*', QColor('#ff56e3')),
         # Palabras reservadas
-        ('PALABRA_RESERVADA', r'\b(if|then|else|end|do|until|while|switch|case|int|float|main|cin|cout)\b', QColor('#569CD6')),
+        ('PALABRA_RESERVADA', r'\b(if|then|else|end|do|until|while|switch|case|int|float|main|cin|cout|bool)\b', QColor('#569CD6')),
         # Operadores y símbolos
         ('OPERADOR_ARIT', r'(\+\+|--|\+|-|\*|/|%|\^)', QColor('#e789ff')),
         ('ASIGNACION', r'=', QColor('#FFD700')),
@@ -1000,7 +1004,7 @@ class Parser:
             return node
         
         # Booleanos
-        elif self.match('PALABRA_RESERVADA', 'true') or self.match('PALABRA_RESERVADA', 'false'):
+        elif self.match('BOOLEANO', 'true') or self.match('BOOLEANO', 'false'):
             node = ASTNode("Literal", token[1], token[2], token[3])
             self.advance()
             return node
@@ -1468,6 +1472,40 @@ class SemanticAnalyzer:
             return tipo_operando
         return "error"
             
+    def visitar_OperacionLogica(self, nodo):
+        if len(nodo.children) != 2:
+            self.agregar_error("Operación lógica incompleta", nodo.line, nodo.col)
+            return "error"
+
+        izquierda = nodo.children[0]
+        derecha = nodo.children[1]
+
+        tipo_izq = self.visitar_nodo(izquierda)
+        tipo_der = self.visitar_nodo(derecha)
+
+        self._registrar_usos_en_expresion(izquierda)
+        self._registrar_usos_en_expresion(derecha)
+
+        if tipo_izq != 'bool' or tipo_der != 'bool':
+            self.agregar_error(f"Operador '{nodo.value}' requiere operandos booleanos", nodo.line, nodo.col)
+            return "error"
+
+        val_izq = izquierda.calculated_value
+        val_der = derecha.calculated_value
+
+        if val_izq is not None and val_der is not None:
+            try:
+                if nodo.value == '&&':
+                    nodo.calculated_value = val_izq and val_der
+                elif nodo.value == '||':
+                    nodo.calculated_value = val_izq or val_der
+            except TypeError:
+                self.agregar_error(f"Operación '{nodo.value}' no se puede realizar con los tipos de datos", nodo.line, nodo.col)
+
+        nodo.tipo = 'bool'
+        return 'bool'
+
+            
     def visitar_EXPRESION_BINARIA(self, nodo):
         if len(nodo.children) != 2:
             self.agregar_error("Operación binaria incompleta", nodo.line, nodo.col)
@@ -1498,7 +1536,11 @@ class SemanticAnalyzer:
                 if operador == '+': nodo.calculated_value = val_izq + val_der
                 elif operador == '-': nodo.calculated_value = val_izq - val_der
                 elif operador == '*': nodo.calculated_value = val_izq * val_der
-                elif operador == '/': nodo.calculated_value = val_izq / val_der
+                elif operador == '/':
+                    if tipo_izq == 'int' and tipo_der == 'int':
+                        nodo.calculated_value = int(val_izq // val_der)
+                    else:
+                        nodo.calculated_value = float(val_izq) / float(val_der)
                 elif operador == '%': nodo.calculated_value = val_izq % val_der
                 elif operador == '^': nodo.calculated_value = val_izq ** val_der
                 elif operador == '<': nodo.calculated_value = val_izq < val_der
@@ -1525,8 +1567,13 @@ class SemanticAnalyzer:
         # Operadores aritméticos
         if operador in ['+', '-', '*', '/', '%', '^']:
             if tipo_izq in ['int', 'float'] and tipo_der in ['int', 'float']:
+                if operador == '/':
+                    if tipo_izq == 'int' and tipo_der == 'int':
+                        return 'int'
+                    else:
+                        return 'float'
                 # Promoción de tipos: si alguno es float, resultado es float
-                if tipo_izq == 'float' or tipo_der == 'float' or operador == '/':
+                if tipo_izq == 'float' or tipo_der == 'float':
                     return 'float'
                 return 'int'
             else:
@@ -1541,15 +1588,6 @@ class SemanticAnalyzer:
                 return 'bool'
             else:
                 self.agregar_error(f"Operador '{operador}' no aplicable a tipos {tipo_izq} y {tipo_der}", 
-                                 linea, columna)
-                return "error"
-                
-        # Operadores lógicos
-        elif operador in ['&&', '||']:
-            if tipo_izq == 'bool' and tipo_der == 'bool':
-                return 'bool'
-            else:
-                self.agregar_error(f"Operador '{operador}' requiere operandos booleanos", 
                                  linea, columna)
                 return "error"
                 
@@ -1620,7 +1658,7 @@ class ASTViewer(QTreeWidget):
         self.setHeaderLabels(["Nodo", "Valor", "Tipo", "Valor Calculado", "Línea", "Columna"])
         
         # Ajustar el ancho de las columnas
-        self.setColumnWidth(0, 150)  # Nodo
+        self.setColumnWidth(0, 250)  # Nodo
         self.setColumnWidth(1, 100)  # Valor
         self.setColumnWidth(2, 80)   # Tipo
         self.setColumnWidth(3, 100)  # Valor Calculado
