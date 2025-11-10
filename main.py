@@ -3,7 +3,7 @@
 # - Bryan Misael Morales Martin
 # - Naomi Hernandez Romo
 # - Ricardo Andres Veloz Hernandez
-# 8A TM 
+# 9A TM 
 
 # Importar librerías necesarias, incluyendo:
 import sys 
