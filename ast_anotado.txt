@@ -101,7 +101,7 @@ Programa
           If [Línea: 18, Col: 9]
             OperacionLogica: && [tipo: bool] [Valor Calculado: True] [Línea: 18, Col: 16]
               EXPRESION_BINARIA: > [tipo: bool] [Valor Calculado: True] [Línea: 18, Col: 13]
-                Variable: x [tipo: int] [Valor Calculado: 8] [Línea: 18, Col: 12]
+                Literal: 4 [tipo: int] [Valor Calculado: 4] [Línea: 18, Col: 12]
                 Literal: 2 [tipo: int] [Valor Calculado: 2] [Línea: 18, Col: 14]
               Literal: true [tipo: bool] [Valor Calculado: True] [Línea: 18, Col: 19]
             LISTA_SENTENCIAS
