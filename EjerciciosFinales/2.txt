@@ -1,0 +1,49 @@
+main {
+    int A, B, C;
+    int mayor, medio, menor;
+    
+    // Leer los tres números
+    cin >> A;
+    cin >> B;
+    cin >> C;
+    
+    // Determinar el mayor
+    if (A > B && A > C) then
+        mayor = A;
+        if (B > C) then
+            medio = B;
+            menor = C;
+        else
+            medio = C;
+            menor = B;
+        end
+    else
+        if (B > A && B > C) then
+            mayor = B;
+            if (A > C) then
+                medio = A;
+                menor = C;
+            else
+                medio = C;
+                menor = A;
+            end
+        else
+            mayor = C;
+            if (A > B) then
+                medio = A;
+                menor = B;
+            else
+                medio = B;
+                menor = A;
+            end
+        end
+    end
+    
+    // Mostrar los números en orden descendente
+    cout << "Numeros en orden descendente: ";
+    cout << mayor;
+    cout << " ";
+    cout << medio;
+    cout << " ";
+    cout << menor;
+}

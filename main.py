@@ -67,6 +67,7 @@ class PInterpreter:
         self.pc = 0  # Contador de programa
         self.running = False
         self.output_buffer = []
+        self.input_buffer = []
         
         # Inicializar registros importantes
         self.registers[5] = 0  # Base para variables globales
@@ -152,9 +153,12 @@ class PInterpreter:
                 operands = [int(parts[1].strip()), int(parts[2].strip()), int(parts[3].strip())]
         
         elif opcode in ['JLT', 'JLE', 'JGT', 'JGE', 'JEQ', 'JNE']:
-            # Formato: OP reg,offset(base)
+            # Formato: OP reg,offset(base) o a veces OP reg,basura,offset(base)
             if ',' in parts[1]:
-                reg_part, offset_part = parts[1].split(',', 1)
+                all_ops = parts[1].split(',')
+                reg_part = all_ops[0]
+                offset_part = all_ops[-1]  # Tomar la última parte para el offset
+                
                 reg = int(reg_part.strip())
                 offset = int(offset_part.split('(')[0].strip())
                 operands = [reg, offset]
@@ -289,7 +293,7 @@ class PInterpreter:
                         condition = self.registers[reg] != 0
                     
                     if condition:
-                        self.pc = offset
+                        self.pc += offset
                     else:
                         self.pc += 1
                 else:
@@ -297,7 +301,10 @@ class PInterpreter:
             
             # LDA: Cargar dirección
             elif opcode == 'LDA':
-                if len(operands) >= 2:
+                if len(operands) >= 3:
+                    reg, offset, base_reg = operands
+                    self.registers[reg] = offset + self.registers[base_reg]
+                elif len(operands) == 2:
                     reg, offset = operands
                     self.registers[reg] = offset
                 self.pc += 1
@@ -306,27 +313,35 @@ class PInterpreter:
             elif opcode == 'IN':
                 reg = operands[0] if operands else 0
                 
-                # Solicitar entrada a través del hilo principal
-                self.thread.input_request_signal.emit("Ingrese un valor para IN instruction:")
-                self.thread.waiting_for_input = True
+                if not self.input_buffer:
+                    # Si el buffer está vacío, solicitar nueva entrada
+                    self.thread.input_request_signal.emit("Ingrese un valor (o varios separados por espacio):")
+                    self.thread.waiting_for_input = True
+                    
+                    # Esperar por entrada
+                    while self.thread.waiting_for_input and not self.thread.should_stop:
+                        self.thread.msleep(100)
+                    
+                    if self.thread.input_value is not None:
+                        # Dividir la entrada y guardarla en el buffer
+                        self.input_buffer.extend(self.thread.input_value.strip().split())
                 
-                # Esperar por entrada
-                while self.thread.waiting_for_input and not self.thread.should_stop:
-                    self.thread.msleep(100)
-                
-                if self.thread.input_value is not None:
+                # Si todavía no hay nada en el buffer (ej. entrada vacía), usar 0
+                if not self.input_buffer:
+                    self.registers[reg] = 0
+                else:
+                    # Tomar el siguiente valor del buffer
+                    input_val = self.input_buffer.pop(0)
                     try:
                         # Intentar convertir a float primero
                         try:
-                            self.registers[reg] = float(self.thread.input_value)
+                            self.registers[reg] = float(input_val)
                         except ValueError:
                             # Si falla, intentar como int
-                            self.registers[reg] = int(self.thread.input_value)
+                            self.registers[reg] = int(input_val)
                     except ValueError:
-                        self.thread.error_signal.emit(f"Valor inválido: {self.thread.input_value}")
+                        self.thread.error_signal.emit(f"Valor inválido: {input_val}")
                         self.registers[reg] = 0
-                else:
-                    self.registers[reg] = 0
                 
                 self.pc += 1
             
