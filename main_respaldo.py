@@ -302,50 +302,24 @@ class PInterpreter:
             # IN: Leer entrada
             elif opcode == 'IN':
                 reg = operands[0] if operands else 0
-
+                
                 # Solicitar entrada a través del hilo principal
-                self.thread.input_request_signal.emit("Ingrese un valor entero:")
+                self.thread.input_request_signal.emit("Ingrese un valor para IN instruction:")
                 self.thread.waiting_for_input = True
-
+                
                 # Esperar por entrada (esto se maneja en el hilo principal)
                 while self.thread.waiting_for_input and not self.thread.should_stop:
                     self.thread.msleep(100)
-
+                
                 if self.thread.input_value is not None:
                     try:
-                        # Reemplazar coma por punto para manejar números con coma decimal
-                        input_str = str(self.thread.input_value).strip().replace(',', '.')
-            
-                        # Depuración: mostrar lo que se está intentando convertir
-                        print(f"DEBUG: Intento convertir '{input_str}' a número")
-            
-                        # Primero intentar convertir a float
-                        float_value = float(input_str)
-            
-                        # Luego convertir a int (truncar)
-                        int_value = int(float_value)
-            
-                        # Asignar al registro
-                        self.registers[reg] = int_value
-            
-                        # Depuración: mostrar resultado
-                        print(f"DEBUG: Convertido {self.thread.input_value} -> {float_value} -> {int_value}")
-            
-                    except ValueError as e:
-                        # Mostrar error detallado
-                        error_msg = f"No se pudo convertir '{self.thread.input_value}' a número. Error: {str(e)}"
-                        self.thread.error_signal.emit(error_msg)
-                        print(f"ERROR: {error_msg}")
-                        self.registers[reg] = 0
-                    except Exception as e:
-                        # Capturar cualquier otro error
-                        error_msg = f"Error inesperado al procesar entrada: {str(e)}"
-                        self.thread.error_signal.emit(error_msg)
-                        print(f"ERROR: {error_msg}")
+                        self.registers[reg] = int(self.thread.input_value)
+                    except ValueError:
+                        self.thread.error_signal.emit(f"Valor inválido: {self.thread.input_value}")
                         self.registers[reg] = 0
                 else:
                     self.registers[reg] = 0
-
+                
                 self.pc += 1
             
             # OUT: Escribir salida
@@ -2039,106 +2013,6 @@ class CodeGenerator:
         
         return "\n".join(final_code)
     
-    def emit_print_number(self, value_reg):
-        """Genera código para imprimir un número entero dígito por dígito"""
-        # Esta rutina convierte el número en el registro value_reg a dígitos decimales
-        # y los imprime uno por uno
-
-        # Guardar el valor original
-        temp_addr = self.new_temp_addr()
-        self.emit(f"ST  {value_reg},{temp_addr}(5)")
-
-        # Si el número es 0, imprimir '0' y terminar
-        label_not_zero = self.new_label()
-        label_print_digits = self.new_label()
-        label_done = self.new_label()
-
-        self.emit(f"LD  0,{temp_addr}(5)")
-        self.emit(f"JEQ  0,0,2(7)")
-        self.emit(f"LDA  7,{label_not_zero}(7)")
-
-        # Número es 0
-        self.emit(f"LDC  0,48(0)")  # ASCII '0'
-        self.emit(f"OUT  0,0,0")
-        self.emit(f"LDA  7,{label_done}(7)")
-
-        # Número no es 0
-        self.patch_label(label_not_zero, len(self.code))
-        
-        # Contador de dígitos en pila (simulada)
-        digit_count_addr = self.new_temp_addr()
-        self.emit(f"LDC  0,0(0)")
-        self.emit(f"ST  0,{digit_count_addr}(5)")
-
-        # Cargar número
-        self.emit(f"LD  1,{temp_addr}(5)")
-
-        # Bucle para extraer dígitos
-        label_extract_loop = self.new_label()
-        label_extract_done = self.new_label()
-
-        self.patch_label(label_extract_loop, len(self.code))
-
-        # Verificar si aún hay dígitos
-        self.emit(f"JEQ  1,0,2(7)")
-        self.emit(f"LDA  7,{label_extract_done}(7)")
-
-        # Dividir por 10
-        self.emit(f"LDC  2,10(0)")
-        self.emit(f"DIV  3,1,2")   # cociente en R3
-        self.emit(f"MUL  4,3,2")   # cociente * 10
-        self.emit(f"SUB  5,1,4")   # resto (dígito) en R5
-
-        # Guardar dígito en pila (en memoria)
-        self.emit(f"LD  0,{digit_count_addr}(5)")
-        temp_digit_addr = self.new_temp_addr()
-        self.emit(f"ADD  6,0,{temp_digit_addr}")
-        self.emit(f"ST  5,0(6)")
-
-        # Incrementar contador
-        self.emit(f"LDC  5,1(0)")
-        self.emit(f"ADD  0,0,5")
-        self.emit(f"ST  0,{digit_count_addr}(5)")
-
-        # Actualizar número (cociente)
-        self.emit(f"MOV  1,3")
-
-        # Continuar bucle
-        self.emit(f"LDA  7,{label_extract_loop}(7)")
-    
-        self.patch_label(label_extract_done, len(self.code))
-    
-        # Imprimir dígitos en orden inverso (desde el último al primero)
-        label_print_loop = self.new_label()
-        label_print_end = self.new_label()
-    
-        self.patch_label(label_print_loop, len(self.code))
-    
-        # Verificar si hay más dígitos
-        self.emit(f"LD  0,{digit_count_addr}(5)")
-        self.emit(f"JEQ  0,0,2(7)")
-        self.emit(f"LDA  7,{label_print_end}(7)")
-    
-        # Decrementar contador
-        self.emit(f"LDC  1,1(0)")
-        self.emit(f"SUB  0,0,1")
-        self.emit(f"ST  0,{digit_count_addr}(5)")
-    
-        # Obtener dígito
-        self.emit(f"ADD  6,0,{temp_digit_addr}")
-        self.emit(f"LD  2,0(6)")
-    
-        # Convertir a ASCII e imprimir
-        self.emit(f"LDC  3,48(0)")
-        self.emit(f"ADD  2,2,3")
-        self.emit(f"OUT  2,0,0")
-    
-        # Continuar bucle
-        self.emit(f"LDA  7,{label_print_loop}(7)")
-    
-        self.patch_label(label_print_end, len(self.code))
-        self.patch_label(label_done, len(self.code))
-    
     def add_string_data(self, string_value):
         """Agrega una cadena a los datos y devuelve la etiqueta"""
         label = f"S{self.string_counter}"
@@ -2580,7 +2454,7 @@ class CodeGenerator:
         else:
             # Para expresiones regulares (números, variables, etc.)
             self.visit_expression(node, 0)
-            self.emit_print_number(0)
+            self.emit(f"OUT  0,0,0")
     
     def visit_string_output(self, node):
         """Genera código para imprimir una cadena usando valores ASCII"""
