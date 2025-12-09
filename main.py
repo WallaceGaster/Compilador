@@ -375,37 +375,13 @@ class PInterpreter:
             return ""
         elif value == 9:   # Tabulación
             return "\t"
-        elif value == 32:  # Espacio
+        elif value == 32:  # Espacio 
             return " "
         elif 32 <= value <= 126:  # Caracteres imprimibles
             return chr(value)
         else:
             # Si no es imprimible, mostrar como número
-            return str(value) + " "
-    
-    def format_output(self, value):
-        """Formatea un valor para salida (para compatibilidad con código viejo)"""
-        # Si es un valor negativo codificado (bit más alto activado)
-        if value >= 32768:
-            actual_value = value - 65536
-            return str(actual_value) + " "
-        
-        # Si es negativo directo
-        elif value < 0:
-            return str(value) + " "
-        
-        # Caracteres de control especiales
-        if value == 10:  # Salto de línea
-            return "\n"
-        elif value == 13:  # Retorno de carro
-            return ""
-        elif value == 9:   # Tabulación
-            return "\t"
-        elif value == 32:  # Espacio
-            return " "
-        
-        # Para compatibilidad: mostrar como número
-        return str(value) + " "  
+            return str(value) + " "  
     
     def format_output(self, value):
         """Formatea un valor para salida, manejando números negativos, ASCII, etc."""
