@@ -2298,39 +2298,30 @@ class CodeGenerator:
             self.emit(f"MUL  {dest_reg},1,1")
         elif op in ['<', '<=', '>', '>=', '==', '!=']:
             # Operaciones relacionales
-            label_true = self.new_label()
-            label_end = self.new_label()
+            # left is in R1, right is in R0
+            if op in ['>', '>=']:
+                self.emit(f"SUB  0,0,1") # R0 = R0 - R1 = B - A
+            else:
+                self.emit(f"SUB  0,1,0") # R0 = R1 - R0 = A - B
+
+            jump_instr = ""
+            if op == '<': jump_instr = "JLT"
+            elif op == '<=': jump_instr = "JLE"
+            elif op == '>': jump_instr = "JLT" # because of B-A
+            elif op == '>=': jump_instr = "JLE" # because of B-A
+            elif op == '==': jump_instr = "JEQ"
+            elif op == '!=': jump_instr = "JNE"
             
-            if op == '<':
-                self.emit(f"SUB  0,1,0")
-                self.emit(f"JLT  0,2(7)")
-            elif op == '<=':
-                self.emit(f"SUB  0,1,0")
-                self.emit(f"JLE  0,2(7)")
-            elif op == '>':
-                self.emit(f"SUB  0,0,1")
-                self.emit(f"JLT  0,2(7)")
-            elif op == '>=':
-                self.emit(f"SUB  0,0,1")
-                self.emit(f"JLE  0,2(7)")
-            elif op == '==':
-                self.emit(f"SUB  0,1,0")
-                self.emit(f"JEQ  0,2(7)")
-            elif op == '!=':
-                self.emit(f"SUB  0,1,0")
-                self.emit(f"JNE  0,2(7)")
-            
-            # Si la condición es falsa
+            self.emit(f"{jump_instr}  0,3(7)") # if true, jump 3 instructions to the true case
+
+            # False case
             self.emit(f"LDC  {dest_reg},0(0)")
-            # Saltar al final
-            self.emit(f"LDA  7,{label_end}(7)")
+            # Unconditional jump to end (2 instructions)
+            self.emit("LDC 3,0(0)")
+            self.emit("JEQ 3,2(7)") # Jump over the true case
             
-            # Marcar posición para verdadero
-            self.patch_label(label_true, len(self.code))
+            # True case
             self.emit(f"LDC  {dest_reg},1(0)")
-            
-            # Marcar final
-            self.patch_label(label_end, len(self.code))
     
     def visit_unary_operation(self, node, dest_reg):
         """Evalúa una operación unaria"""
@@ -2367,7 +2358,7 @@ class CodeGenerator:
             self.patch_label(label_end, len(self.code))
     
     def visit_logical_operation(self, node, dest_reg):
-        """Evalúa una operación lógica"""
+        """Evalúa una operación lógica con cortocircuito"""
         if len(node.children) < 2:
             self.emit(f"LDC  {dest_reg},0(0)")
             return
@@ -2377,50 +2368,34 @@ class CodeGenerator:
         op = node.value
         
         if op == '&&':
-            # AND lógico
-            label_false = self.new_label()
-            label_end = self.new_label()
-            
+            # Si el izquierdo es falso (0), el resultado es falso y ya está en dest_reg.
+            # Se salta la evaluación del operando derecho.
             self.visit_expression(left_node, dest_reg)
-            self.emit(f"JEQ  {dest_reg},0,2(7)")
-            self.emit(f"LDA  7,{label_false}(7)")
+            jump_to_end = len(self.code)
+            self.emit(f"JEQ  {dest_reg}, <placeholder_end>") # Jump if false
             
+            # Si el izquierdo es verdadero, el resultado es el valor del derecho.
             self.visit_expression(right_node, dest_reg)
-            self.emit(f"JEQ  {dest_reg},0,2(7)")
-            self.emit(f"LDA  7,{label_false}(7)")
-            
-            self.emit(f"LDC  {dest_reg},1(0)")
-            self.emit(f"LDA  7,{label_end}(7)")
-            
-            # Marcar posición para falso
-            self.patch_label(label_false, len(self.code))
-            self.emit(f"LDC  {dest_reg},0(0)")
-            
-            # Marcar final
-            self.patch_label(label_end, len(self.code))
-            
+
+            # Se parchea el salto.
+            end_addr = len(self.code)
+            offset = end_addr - jump_to_end
+            self.code[jump_to_end] = f"    JEQ  {dest_reg},{offset}(7)"
+
         elif op == '||':
-            # OR lógico
-            label_true = self.new_label()
-            label_end = self.new_label()
-            
+            # Si el izquierdo es verdadero (no 0), el resultado es verdadero y ya está en dest_reg.
+            # Se salta la evaluación del operando derecho.
             self.visit_expression(left_node, dest_reg)
-            self.emit(f"JNE  {dest_reg},0,2(7)")
-            self.emit(f"LDA  7,{label_true}(7)")
+            jump_to_end = len(self.code)
+            self.emit(f"JNE  {dest_reg}, <placeholder_end>") # Jump if true
             
+            # Si el izquierdo es falso, el resultado es el valor del derecho.
             self.visit_expression(right_node, dest_reg)
-            self.emit(f"JNE  {dest_reg},0,2(7)")
-            self.emit(f"LDA  7,{label_true}(7)")
-            
-            self.emit(f"LDC  {dest_reg},0(0)")
-            self.emit(f"LDA  7,{label_end}(7)")
-            
-            # Marcar posición para verdadero
-            self.patch_label(label_true, len(self.code))
-            self.emit(f"LDC  {dest_reg},1(0)")
-            
-            # Marcar final
-            self.patch_label(label_end, len(self.code))
+
+            # Se parchea el salto.
+            end_addr = len(self.code)
+            offset = end_addr - jump_to_end
+            self.code[jump_to_end] = f"    JNE  {dest_reg},{offset}(7)"
     
     def visit_if(self, node):
         """Visita una estructura if-then-else"""
@@ -2431,70 +2406,74 @@ class CodeGenerator:
         cond_node = node.children[0]
         self.visit_expression(cond_node, 0)
         
-        # Crear etiquetas
-        label_else = self.new_label()
-        label_end = self.new_label()
-        
-        # Saltar si condición es falsa
-        self.emit(f"JEQ  0,0,2(7)")
-        self.emit(f"LDA  7,{label_else}(7)")
+        # Salto condicional a la sección else
+        jump_to_else_index = len(self.code)
+        self.emit("JEQ  0, <placeholder_else>")
         
         # Bloque then
         then_block = node.children[1]
         self.visit_statement(then_block)
         
-        # Si hay else, saltar al final
-        if len(node.children) > 2:
-            self.emit(f"LDA  7,{label_end}(7)")
+        jump_to_end_index = -1
+        if len(node.children) > 2: # has else
+            # Salto incondicional al final
+            jump_to_end_index = len(self.code)
+            self.emit("LDC  1,0(0)")
+            self.emit("JEQ  1, <placeholder_end>")
+            
+        # Dirección del else
+        else_addr = len(self.code)
+        offset = else_addr - jump_to_else_index
+        self.code[jump_to_else_index] = f"    JEQ  0,{offset}(7)"
         
-        # Bloque else (si existe)
-        # Parchear etiqueta else
-        self.patch_label(label_else, len(self.code))
-        
+        # Bloque else
         if len(node.children) > 2:
             else_block = node.children[2]
-            if else_block.node_type == "Else":
-                else_block = else_block.children[0] if else_block.children else else_block
-            self.visit_statement(else_block)
-        
-        # Parchear etiqueta end
-        self.patch_label(label_end, len(self.code))
+            if else_block.node_type == "Else" and else_block.children:
+                self.visit_statement(else_block.children[0])
+            else:
+                self.visit_statement(else_block)
+
+        # Dirección final
+        end_addr = len(self.code)
+        if jump_to_end_index != -1:
+            offset_end = end_addr - (jump_to_end_index + 1)
+            self.code[jump_to_end_index+1] = f"    JEQ  1,{offset_end}(7)"
     
     def visit_while(self, node):
         """Visita una estructura while"""
         if len(node.children) < 2:
             return
         
-        # Marcar inicio
         label_start = len(self.code)
         
         # Evaluar condición
         cond_node = node.children[0]
         self.visit_expression(cond_node, 0)
         
-        # Crear etiqueta de fin
-        label_end = self.new_label()
-        
-        # Saltar si condición es falsa
-        self.emit(f"JEQ  0,0,2(7)")
-        self.emit(f"LDA  7,{label_end}(7)")
-        
+        # Saltar al final si es falso
+        jump_to_end_index = len(self.code)
+        self.emit("JEQ 0, <placeholder_end>")
+
         # Cuerpo del while
         body_block = node.children[1]
         self.visit_statement(body_block)
         
-        # Volver al inicio
-        self.emit(f"LDA  7,{label_start}(7)")
-        
-        # Parchear etiqueta de fin
-        self.patch_label(label_end, len(self.code))
+        # Salto incondicional al inicio
+        self.emit("LDC 1,0(0)")
+        jump_to_start_offset = label_start - (len(self.code))
+        self.emit(f"JEQ 1, {jump_to_start_offset}(7)")
+
+        # Final
+        end_addr = len(self.code)
+        offset = end_addr - jump_to_end_index
+        self.code[jump_to_end_index] = f"    JEQ  0,{offset}(7)"
     
     def visit_dowhile(self, node):
         """Visita una estructura do-while"""
         if len(node.children) < 2:
             return
         
-        # Marcar inicio
         label_start = len(self.code)
         
         # Cuerpo del do-while
@@ -2506,8 +2485,8 @@ class CodeGenerator:
         self.visit_expression(cond_node, 0)
         
         # Repetir si condición es verdadera
-        self.emit(f"JNE  0,0,2(7)")
-        self.emit(f"LDA  7,{label_start}(7)")
+        jump_to_start_offset = label_start - len(self.code)
+        self.emit(f"JNE  0,{jump_to_start_offset}(7)")
     
     def visit_input(self, node):
         """Visita una sentencia de entrada (cin >> variable)"""

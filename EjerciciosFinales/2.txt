@@ -3,14 +3,16 @@ main {
     int mayor, medio, menor;
     
     // Leer los tres números
-    cin >> A;
-    cin >> B;
-    cin >> C;
+    cin >> A; //5
+    cin >> B; //9
+    cin >> C; //4
     
     // Determinar el mayor
-    if (A > B && A > C) then
+    if A > B && A > C then
+        cout << "Aqui no deberia entrar\n";
         mayor = A;
-        if (B > C) then
+        if B > C then
+            cout << "Aqui menos\n";
             medio = B;
             menor = C;
         else
@@ -18,9 +20,11 @@ main {
             menor = B;
         end
     else
-        if (B > A && B > C) then
+        cout << "Aqui entre else\n";
+        if B > A && B > C then
+            cout << "Aqui si entro\n";
             mayor = B;
-            if (A > C) then
+            if A > C then
                 medio = A;
                 menor = C;
             else
@@ -29,7 +33,7 @@ main {
             end
         else
             mayor = C;
-            if (A > B) then
+            if A > B then
                 medio = A;
                 menor = B;
             else
