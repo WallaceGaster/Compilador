@@ -1619,6 +1619,529 @@ class SemanticAnalyzer:
             'tipo': 'semantico'
         })
 
+class CodeGenerator:
+    def __init__(self):
+        self.code = []
+        self.var_addresses = {}
+        self.temp_counter = 0
+        self.label_counter = 0
+        self.current_address = 0
+        self.next_temp_addr = 100
+        self.string_data = []
+        self.string_counter = 0
+        
+    def generate(self, ast_node):
+        """Genera código P ejecutable a partir del AST anotado"""
+        self.code = []
+        self.var_addresses = {}
+        self.current_address = 0
+        self.next_temp_addr = 100
+        self.string_data = []
+        self.string_counter = 0
+        
+        # Inicialización estándar del código P
+        self.emit("LD  6,0(0)")  # Inicializar puntero de pila
+        self.emit("ST  0,0(0)")   # Inicialización
+        
+        # Recopilar direcciones de variables
+        self.collect_variable_addresses(ast_node)
+        
+        # Inicializar todas las variables a 0
+        for addr in range(len(self.var_addresses)):
+            self.emit(f"LDC  0,0(0)")
+            self.emit(f"ST  0,{addr}(5)")
+        
+        # Generar código principal
+        self.visit_program(ast_node)
+        
+        # Agregar datos de cadenas si existen
+        if self.string_data:
+            self.emit("")  # Separador
+            self.emit("; Datos de cadenas")
+            for i, (label, string) in enumerate(self.string_data):
+                # Convertir cadena a valores ASCII
+                for j, char in enumerate(string):
+                    ascii_val = ord(char)
+                    self.emit(f"{label}_{j}: DC  {ascii_val}(0)")
+                # Terminador de cadena (0)
+                self.emit(f"{label}_end: DC  0(0)")
+        
+        # Finalizar programa
+        self.emit("HALT  0,0,0")
+        
+        # Generar código numerado
+        final_code = []
+        line_num = 0
+        for line in self.code:
+            if line and not line.startswith(';'):  # Saltar líneas de comentario
+                final_code.append(f"{line_num:3}:{line}")
+                line_num += 1
+        
+        return "\n".join(final_code)
+    
+    def add_string_data(self, string_value):
+        """Agrega una cadena a los datos y devuelve la etiqueta"""
+        label = f"S{self.string_counter}"
+        self.string_counter += 1
+        self.string_data.append((label, string_value))
+        return label
+    
+    def collect_variable_addresses(self, ast_node):
+        """Recopila las direcciones de memoria de las variables del AST"""
+        if ast_node is None:
+            return
+            
+        if ast_node.node_type == "DeclaracionVariable":
+            for i in range(1, len(ast_node.children)):
+                var_node = ast_node.children[i]
+                if var_node.node_type == "Variable":
+                    self.var_addresses[var_node.value] = self.current_address
+                    self.current_address += 1
+        
+        for child in ast_node.children:
+            self.collect_variable_addresses(child)
+    
+    def emit(self, instruction):
+        """Agrega una instrucción al código"""
+        self.code.append(f"    {instruction}")
+    
+    def get_var_address(self, var_name):
+        """Obtiene la dirección de una variable"""
+        return self.var_addresses.get(var_name)
+    
+    def new_temp_addr(self):
+        """Genera una nueva dirección temporal"""
+        addr = self.next_temp_addr
+        self.next_temp_addr += 1
+        return addr
+    
+    def new_label(self):
+        """Genera una nueva etiqueta (dirección futura)"""
+        return len(self.code)  # Devuelve la próxima posición en el código
+    
+    def patch_label(self, label, target_addr):
+        """Parchea una instrucción de salto con la dirección correcta"""
+        if label < len(self.code):
+            # Extraer la instrucción actual
+            current = self.code[label]
+            # Reemplazar el marcador de etiqueta con la dirección real
+            parts = current.split()
+            if len(parts) >= 4:
+                parts[3] = f"{target_addr}"
+                self.code[label] = "    " + " ".join(parts)
+    
+    def visit_program(self, node):
+        """Visita un nodo de programa"""
+        for child in node.children:
+            if child.node_type == "Bloque":
+                self.visit_block(child)
+    
+    def visit_block(self, node):
+        """Visita un bloque de código"""
+        for child in node.children:
+            self.visit_statement(child)
+    
+    def visit_statement(self, node):
+        """Visita una sentencia"""
+        if node.node_type == "DeclaracionVariable":
+            self.visit_declaration(node)
+        elif node.node_type == "Asignacion":
+            self.visit_assignment(node)
+        elif node.node_type == "If":
+            self.visit_if(node)
+        elif node.node_type == "While":
+            self.visit_while(node)
+        elif node.node_type == "DoWhile":
+            self.visit_dowhile(node)
+        elif node.node_type == "ENTRADA":
+            self.visit_input(node)
+        elif node.node_type == "SALIDA":
+            self.visit_output(node)
+        elif node.node_type == "LISTA_SENTENCIAS":
+            self.visit_block(node)
+    
+    def visit_declaration(self, node):
+        """Visita una declaración de variable (ya inicializada)"""
+        pass
+    
+    def visit_assignment(self, node):
+        """Visita una asignación: ID = expresión"""
+        if len(node.children) < 2:
+            return
+            
+        id_node = node.children[0]
+        expr_node = node.children[1]
+        
+        # Evaluar expresión y poner resultado en registro 0
+        self.visit_expression(expr_node, 0)
+        
+        # Almacenar en variable
+        var_name = id_node.value
+        addr = self.get_var_address(var_name)
+        if addr is not None:
+            self.emit(f"ST  0,{addr}(5)")
+    
+    def visit_expression(self, node, dest_reg):
+        """Evalúa una expresión y pone el resultado en el registro dest_reg"""
+        if node.node_type == "Literal":
+            self.visit_literal(node, dest_reg)
+        elif node.node_type in ["Variable", "ID"]:
+            self.visit_variable(node, dest_reg)
+        elif node.node_type == "CADENA":
+            # Para cadenas en expresiones (no en cout), usar una representación numérica
+            self.emit(f"LDC  {dest_reg},0(0)")
+        elif node.node_type == "EXPRESION_BINARIA":
+            self.visit_binary_expression(node, dest_reg)
+        elif node.node_type == "OperacionUnaria":
+            self.visit_unary_operation(node, dest_reg)
+        elif node.node_type == "OperacionLogica":
+            self.visit_logical_operation(node, dest_reg)
+        else:
+            self.emit(f"LDC  {dest_reg},0(0)")
+    
+    def visit_cadena(self, node, dest_reg):
+        """Maneja una cadena (simplificado para el ejemplo)"""
+        # Para simplificar, cargamos la cadena como una constante
+        # En un implementación real, se necesitaría manejar cadenas en memoria
+        str_value = node.value[1:-1] if node.value else ""  # Quitar comillas
+        # Usamos un código numérico para representar la cadena (simplificación)
+        str_code = hash(str_value) % 1000 if str_value else 0
+        self.emit(f"LDC  {dest_reg},{str_code}(0)")
+    
+    def visit_literal(self, node, dest_reg):
+        """Carga un literal en el registro dest_reg"""
+        value = node.value
+        
+        if node.tipo == "bool":
+            int_value = 1 if value == "true" else 0
+            self.emit(f"LDC  {dest_reg},{int_value}(0)")
+        elif node.tipo == "int":
+            self.emit(f"LDC  {dest_reg},{value}(0)")
+        elif node.tipo == "float":
+            int_value = int(float(value))
+            self.emit(f"LDC  {dest_reg},{int_value}(0)")
+        else:
+            self.emit(f"LDC  {dest_reg},0(0)")
+    
+    def visit_variable(self, node, dest_reg):
+        """Carga una variable en el registro dest_reg"""
+        var_name = node.value
+        addr = self.get_var_address(var_name)
+        
+        if addr is not None:
+            self.emit(f"LD  {dest_reg},{addr}(5)")
+        else:
+            self.emit(f"LDC  {dest_reg},0(0)")
+    
+    def visit_binary_expression(self, node, dest_reg):
+        """Evalúa una expresión binaria"""
+        if len(node.children) < 2:
+            self.emit(f"LDC  {dest_reg},0(0)")
+            return
+        
+        left_node = node.children[0]
+        right_node = node.children[1]
+        op = node.value
+        
+        # Evaluar lado izquierdo en registro 1
+        self.visit_expression(left_node, 1)
+        
+        # Guardar resultado izquierdo en temporal
+        temp_addr = self.new_temp_addr()
+        self.emit(f"ST  1,{temp_addr}(5)")
+        
+        # Evaluar lado derecho en registro 0
+        self.visit_expression(right_node, 0)
+        
+        # Cargar izquierdo en registro 1
+        self.emit(f"LD  1,{temp_addr}(5)")
+        
+        # Aplicar operación
+        if op == '+':
+            self.emit(f"ADD  {dest_reg},1,0")
+        elif op == '-':
+            self.emit(f"SUB  {dest_reg},1,0")
+        elif op == '*':
+            self.emit(f"MUL  {dest_reg},1,0")
+        elif op == '/':
+            self.emit(f"DIV  {dest_reg},1,0")
+        elif op == '%':
+            self.emit(f"MOD  {dest_reg},1,0")
+        elif op == '^':
+            # Para exponente, usar multiplicación (simplificado para ^2)
+            self.emit(f"MUL  {dest_reg},1,1")
+        elif op in ['<', '<=', '>', '>=', '==', '!=']:
+            # Operaciones relacionales
+            label_true = self.new_label()
+            label_end = self.new_label()
+            
+            if op == '<':
+                self.emit(f"SUB  0,1,0")
+                self.emit(f"JLT  0,2(7)")
+            elif op == '<=':
+                self.emit(f"SUB  0,1,0")
+                self.emit(f"JLE  0,2(7)")
+            elif op == '>':
+                self.emit(f"SUB  0,0,1")
+                self.emit(f"JLT  0,2(7)")
+            elif op == '>=':
+                self.emit(f"SUB  0,0,1")
+                self.emit(f"JLE  0,2(7)")
+            elif op == '==':
+                self.emit(f"SUB  0,1,0")
+                self.emit(f"JEQ  0,2(7)")
+            elif op == '!=':
+                self.emit(f"SUB  0,1,0")
+                self.emit(f"JNE  0,2(7)")
+            
+            # Si la condición es falsa
+            self.emit(f"LDC  {dest_reg},0(0)")
+            # Saltar al final
+            self.emit(f"LDA  7,{label_end}(7)")
+            
+            # Marcar posición para verdadero
+            self.patch_label(label_true, len(self.code))
+            self.emit(f"LDC  {dest_reg},1(0)")
+            
+            # Marcar final
+            self.patch_label(label_end, len(self.code))
+    
+    def visit_unary_operation(self, node, dest_reg):
+        """Evalúa una operación unaria"""
+        if len(node.children) < 1:
+            self.emit(f"LDC  {dest_reg},0(0)")
+            return
+        
+        operand_node = node.children[0]
+        op = node.value
+        
+        # Evaluar operando
+        self.visit_expression(operand_node, dest_reg)
+        
+        if op == '++':
+            self.emit(f"LDC  1,1(0)")
+            self.emit(f"ADD  {dest_reg},{dest_reg},1")
+        elif op == '--':
+            self.emit(f"LDC  1,1(0)")
+            self.emit(f"SUB  {dest_reg},{dest_reg},1")
+        elif op == '!':
+            label_true = self.new_label()
+            label_end = self.new_label()
+            
+            self.emit(f"JEQ  {dest_reg},0,2(7)")
+            # Si no es 0, es falso
+            self.emit(f"LDC  {dest_reg},0(0)")
+            self.emit(f"LDA  7,{label_end}(7)")
+            
+            # Marcar posición para verdadero
+            self.patch_label(label_true, len(self.code))
+            self.emit(f"LDC  {dest_reg},1(0)")
+            
+            # Marcar final
+            self.patch_label(label_end, len(self.code))
+    
+    def visit_logical_operation(self, node, dest_reg):
+        """Evalúa una operación lógica"""
+        if len(node.children) < 2:
+            self.emit(f"LDC  {dest_reg},0(0)")
+            return
+        
+        left_node = node.children[0]
+        right_node = node.children[1]
+        op = node.value
+        
+        if op == '&&':
+            # AND lógico
+            label_false = self.new_label()
+            label_end = self.new_label()
+            
+            self.visit_expression(left_node, dest_reg)
+            self.emit(f"JEQ  {dest_reg},0,2(7)")
+            self.emit(f"LDA  7,{label_false}(7)")
+            
+            self.visit_expression(right_node, dest_reg)
+            self.emit(f"JEQ  {dest_reg},0,2(7)")
+            self.emit(f"LDA  7,{label_false}(7)")
+            
+            self.emit(f"LDC  {dest_reg},1(0)")
+            self.emit(f"LDA  7,{label_end}(7)")
+            
+            # Marcar posición para falso
+            self.patch_label(label_false, len(self.code))
+            self.emit(f"LDC  {dest_reg},0(0)")
+            
+            # Marcar final
+            self.patch_label(label_end, len(self.code))
+            
+        elif op == '||':
+            # OR lógico
+            label_true = self.new_label()
+            label_end = self.new_label()
+            
+            self.visit_expression(left_node, dest_reg)
+            self.emit(f"JNE  {dest_reg},0,2(7)")
+            self.emit(f"LDA  7,{label_true}(7)")
+            
+            self.visit_expression(right_node, dest_reg)
+            self.emit(f"JNE  {dest_reg},0,2(7)")
+            self.emit(f"LDA  7,{label_true}(7)")
+            
+            self.emit(f"LDC  {dest_reg},0(0)")
+            self.emit(f"LDA  7,{label_end}(7)")
+            
+            # Marcar posición para verdadero
+            self.patch_label(label_true, len(self.code))
+            self.emit(f"LDC  {dest_reg},1(0)")
+            
+            # Marcar final
+            self.patch_label(label_end, len(self.code))
+    
+    def visit_if(self, node):
+        """Visita una estructura if-then-else"""
+        if len(node.children) < 2:
+            return
+        
+        # Evaluar condición
+        cond_node = node.children[0]
+        self.visit_expression(cond_node, 0)
+        
+        # Crear etiquetas
+        label_else = self.new_label()
+        label_end = self.new_label()
+        
+        # Saltar si condición es falsa
+        self.emit(f"JEQ  0,0,2(7)")
+        self.emit(f"LDA  7,{label_else}(7)")
+        
+        # Bloque then
+        then_block = node.children[1]
+        self.visit_statement(then_block)
+        
+        # Si hay else, saltar al final
+        if len(node.children) > 2:
+            self.emit(f"LDA  7,{label_end}(7)")
+        
+        # Bloque else (si existe)
+        # Parchear etiqueta else
+        self.patch_label(label_else, len(self.code))
+        
+        if len(node.children) > 2:
+            else_block = node.children[2]
+            if else_block.node_type == "Else":
+                else_block = else_block.children[0] if else_block.children else else_block
+            self.visit_statement(else_block)
+        
+        # Parchear etiqueta end
+        self.patch_label(label_end, len(self.code))
+    
+    def visit_while(self, node):
+        """Visita una estructura while"""
+        if len(node.children) < 2:
+            return
+        
+        # Marcar inicio
+        label_start = len(self.code)
+        
+        # Evaluar condición
+        cond_node = node.children[0]
+        self.visit_expression(cond_node, 0)
+        
+        # Crear etiqueta de fin
+        label_end = self.new_label()
+        
+        # Saltar si condición es falsa
+        self.emit(f"JEQ  0,0,2(7)")
+        self.emit(f"LDA  7,{label_end}(7)")
+        
+        # Cuerpo del while
+        body_block = node.children[1]
+        self.visit_statement(body_block)
+        
+        # Volver al inicio
+        self.emit(f"LDA  7,{label_start}(7)")
+        
+        # Parchear etiqueta de fin
+        self.patch_label(label_end, len(self.code))
+    
+    def visit_dowhile(self, node):
+        """Visita una estructura do-while"""
+        if len(node.children) < 2:
+            return
+        
+        # Marcar inicio
+        label_start = len(self.code)
+        
+        # Cuerpo del do-while
+        body_block = node.children[0]
+        self.visit_statement(body_block)
+        
+        # Evaluar condición
+        cond_node = node.children[1]
+        self.visit_expression(cond_node, 0)
+        
+        # Repetir si condición es verdadera
+        self.emit(f"JNE  0,0,2(7)")
+        self.emit(f"LDA  7,{label_start}(7)")
+    
+    def visit_input(self, node):
+        """Visita una sentencia de entrada (cin >> variable)"""
+        if len(node.children) >= 3:
+            id_node = node.children[2]
+            if id_node and id_node.node_type == "ID":
+                var_name = id_node.value
+                addr = self.get_var_address(var_name)
+                
+                if addr is not None:
+                    self.emit(f"IN  0,0,0")
+                    self.emit(f"ST  0,{addr}(5)")
+    
+    def visit_output(self, node):
+        """Visita una sentencia de salida (cout << expresión)"""
+        if len(node.children) >= 3:
+            output_expr_node = node.children[2]  # Este es el nodo de salida (SALIDA_EXPR)
+            
+            # Si es un nodo SALIDA_EXPR, extraer la expresión real
+            if output_expr_node.node_type == "SALIDA_EXPR":
+                if output_expr_node.children:
+                    # El primer hijo es la expresión real
+                    real_expr = output_expr_node.children[0]
+                    self.visit_output_expression(real_expr)
+                else:
+                    self.emit(f"LDC  0,0(0)")
+                    self.emit(f"OUT  0,0,0")
+            else:
+                # Si no es SALIDA_EXPR, asumir que es la expresión directamente
+                self.visit_output_expression(output_expr_node)
+    
+    def visit_output_expression(self, node):
+        """Visita una expresión de salida (puede ser cadena o expresión)"""
+        if node.node_type == "CADENA":
+            self.visit_string_output(node)
+        else:
+            # Para expresiones regulares (números, variables, etc.)
+            self.visit_expression(node, 0)
+            self.emit(f"OUT  0,0,0")
+    
+    def visit_string_output(self, node):
+        """Genera código para imprimir una cadena usando valores ASCII"""
+        # Extraer el valor de la cadena (sin comillas)
+        if node.value.startswith('"') and node.value.endswith('"'):
+            string_val = node.value[1:-1]
+        elif node.value.startswith("'") and node.value.endswith("'"):
+            string_val = node.value[1:-1]
+        else:
+            string_val = node.value
+    
+        # Para cada carácter en la cadena, imprimir su valor ASCII
+        for char in string_val:
+            ascii_val = ord(char)
+            self.emit(f"LDC  0,{ascii_val}(0)")
+            self.emit(f"OUT  0,0,0")
+
+        # Imprimir un salto de línea al final (opcional)
+        self.emit(f"LDC  0,10(0)")  # 10 = ASCII para salto de línea
+        self.emit(f"OUT  0,0,0")
+    
 class ASTNode:
     def __init__(self, node_type, value=None, line=None, col=None, error=False):
         self.node_type = node_type
@@ -2211,6 +2734,8 @@ class CompilerIDE(QMainWindow):
                 break
         if ast_anotado_tab_index != -1:
             self.tabs.setCurrentIndex(ast_anotado_tab_index)
+        # Guardar el AST anotado para uso posterior
+        self.ast_anotado = analyzer.ast_anotado
 
     def mostrar_tabla_simbolos(self, tabla_simbolos):
         """Mostrar tabla de símbolos en el panel correspondiente"""
@@ -2285,7 +2810,38 @@ class CompilerIDE(QMainWindow):
         return texto
         
     def run_intermediate(self):
-        self.run_compiler("intermediate")
+        """Generar código intermedio P ejecutable a partir del AST anotado"""
+        if not hasattr(self, 'ast_anotado') or self.ast_anotado is None:
+            self.error_list.addItem("Error: debe ejecutar análisis semántico primero")
+            return
+
+        try:
+            # Crear generador de código
+            generator = CodeGenerator()
+
+            # Generar código P ejecutable
+            codigo_p = generator.generate(self.ast_anotado)
+
+            # Mostrar en el panel de código intermedio
+            self.intermediate_code.clear()
+            self.intermediate_code.setPlainText(codigo_p)
+
+            # Guardar en archivo ejecutable programa.P (sin comentarios)
+            with open("programa.P", "w", encoding="utf-8") as f:
+                f.write(codigo_p)
+
+            # Cambiar a la pestaña de código intermedio
+            for i in range(self.tabs.count()):
+                if self.tabs.tabText(i) == "Código Intermedio":
+                    self.tabs.setCurrentIndex(i)
+                    break
+        
+            self.statusBar().showMessage("Código intermedio ejecutable generado exitosamente en programa.P")
+
+        except Exception as e:
+            self.error_list.addItem(f"Error al generar código intermedio: {str(e)}")
+            import traceback
+            self.intermediate_code.setPlainText(f"Error: {str(e)}\n\n{traceback.format_exc()}")
         
     def run_execution(self):
         """Ejecutar análisis léxico, sintáctico y semántico en orden"""

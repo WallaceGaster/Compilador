@@ -1,0 +1,181 @@
+LDC T0, 23  ; int
+STORE T0, 1000  ; x = 23
+LDC T1, 2  ; int
+LDC T2, 3  ; int
+ADD T3, T1, T2  ; suma
+LDC T4, 1  ; int
+SUB T5, T3, T4  ; resta
+STORE T5, 1001  ; y = 4
+LD T6, 1001  ; cargar y
+LDC T7, 7  ; int
+ADD T8, T6, T7  ; suma
+STORE T8, 1002  ; z = 11
+LD T9, 1001  ; cargar y
+LDC T10, 1  ; int
+ADD T11, T9, T10  ; suma
+STORE T11, 1001  ; y = 5
+LDC T12, 24  ; float 24.0
+LDC T13, 4  ; int
+ADD T14, T12, T13  ; suma
+LDC T15, 1  ; int
+LDC T16, 3  ; int
+DIV T17, T15, T16  ; división
+LDC T18, 2  ; int
+MUL T19, T17, T18  ; multiplicación
+SUB T20, T14, T19  ; resta
+LDC T21, 34  ; int
+ADD T22, T20, T21  ; suma
+LDC T23, 1  ; int
+SUB T24, T22, T23  ; resta
+STORE T24, 1003  ; a = 61.0
+LDC T25, 5  ; int
+LDC T26, 3  ; int
+SUB T27, T25, T26  ; resta
+LDC T28, 8  ; int
+LDC T29, 2  ; int
+DIV T30, T28, T29  ; división
+MUL T31, T27, T30  ; multiplicación
+STORE T31, 1000  ; x = 8
+LDC T32, 5  ; int
+LDC T33, 3  ; int
+ADD T34, T32, T33  ; suma
+LDC T35, 2  ; int
+LDC T36, 4  ; int
+MUL T37, T35, T36  ; multiplicación
+LDC T38, 7  ; int
+DIV T39, T37, T38  ; división
+SUB T40, T34, T39  ; resta
+LDC T41, 9  ; int
+SUB T42, T40, T41  ; resta
+STORE T42, 1001  ; y = -2
+LDC T43, 8  ; int
+LDC T44, 2  ; int
+DIV T45, T43, T44  ; división
+LDC T46, 15  ; int
+LDC T47, 4  ; int
+MUL T48, T46, T47  ; multiplicación
+ADD T49, T45, T48  ; suma
+STORE T49, 1002  ; z = 64
+LDC T50, 2  ; int
+LDC T51, 3  ; int
+GT T50, T51
+JMPT T50, L0
+LDC T52, 0  ; false
+JMP L1
+LABEL L0
+LDC T52, 1  ; true
+LABEL L1
+EQ T52, 0  ; if condition
+JMPT T52, L2
+LD T53, 1003  ; cargar a
+LDC T54, 3  ; int
+ADD T55, T53, T54  ; suma
+STORE T55, 1001  ; y = 64.0
+JMP L3
+LABEL L2
+LDC T56, 4  ; int
+LDC T57, 2  ; int
+GT T56, T57
+JMPT T56, L4
+LDC T58, 0  ; false
+JMP L5
+LABEL L4
+LDC T58, 1  ; true
+LABEL L5
+LDC T59, 1  ; true
+EQ T58, 0  ; verificar izquierdo falso
+JMPT T58, L6
+EQ T59, 0  ; verificar derecho falso
+JMPT T59, L6
+LDC T60, 1  ; true
+JMP L7
+LABEL L6
+LDC T60, 0  ; false
+LABEL L7
+EQ T60, 0  ; if condition
+JMPT T60, L8
+LDC T61, 3  ; float 3.2
+STORE T61, 1004  ; b = 3.2
+JMP L9
+LABEL L8
+LDC T62, 5  ; float 5.0
+STORE T62, 1004  ; b = 5.0
+LABEL L9
+LD T63, 1001  ; cargar y
+LDC T64, 1  ; int
+ADD T65, T63, T64  ; suma
+STORE T65, 1001  ; y = 65
+LABEL L3
+LD T66, 1003  ; cargar a
+LDC T67, 1  ; int
+ADD T68, T66, T67  ; suma
+STORE T68, 1003  ; a = 62.0
+LD T69, 1005  ; cargar c
+LDC T70, 1  ; int
+SUB T71, T69, T70  ; resta
+STORE T71, 1005  ; c = -1
+LDC T72, 3  ; int
+LDC T73, 4  ; int
+ADD T74, T72, T73  ; suma
+STORE T74, 1000  ; x = 7
+LABEL L10
+LD T75, 1001  ; cargar y
+LDC T76, 1  ; int
+ADD T77, T75, T76  ; suma
+LDC T78, 2  ; int
+MUL T79, T77, T78  ; multiplicación
+LDC T80, 1  ; int
+ADD T81, T79, T80  ; suma
+STORE T81, 1001  ; y = 133
+LABEL L11
+LD T82, 1000  ; cargar x
+LDC T83, 7  ; int
+GT T82, T83
+JMPT T82, L13
+LDC T84, 0  ; false
+JMP L14
+LABEL L13
+LDC T84, 1  ; true
+LABEL L14
+EQ T84, 0  ; while condition
+JMPT T84, L12
+LDC T85, 6  ; int
+LDC T86, 8  ; int
+LDC T87, 9  ; int
+DIV T88, T86, T87  ; división
+LDC T89, 8  ; int
+MUL T90, T88, T89  ; multiplicación
+LDC T91, 3  ; int
+DIV T92, T90, T91  ; división
+ADD T93, T85, T92  ; suma
+STORE T93, 1000  ; x = 6
+IN 1000  ; leer x
+JMP L11
+LABEL L12
+LD T94, 1001  ; cargar y
+LDC T95, 5  ; int
+EQ T94, T95
+JMPT T94, L15
+LDC T96, 0  ; false
+JMP L16
+LABEL L15
+LDC T96, 1  ; true
+LABEL L16
+NE T96, 0  ; do-while condition
+JMPT T96, L10
+LABEL L17
+LD T97, 1001  ; cargar y
+LDC T98, 0  ; int
+EQ T97, T98
+JMPT T97, L19
+LDC T99, 0  ; false
+JMP L20
+LABEL L19
+LDC T99, 1  ; true
+LABEL L20
+EQ T99, 0  ; while condition
+JMPT T99, L18
+LDC T100, 0  ; Expresión desconocida
+OUT T100, 0  ; imprimir expresión
+JMP L17
+LABEL L18
