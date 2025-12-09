@@ -37,12 +37,12 @@ Programa
       COUT: cout [Línea: 18, Col: 5]
       OPERADOR_SALIDA: << [Línea: 18, Col: 10]
       SALIDA_EXPR
-        CADENA: "Datos del rectangulo:\n" [Línea: 18, Col: 13]
+        CADENA: "Datos del rectangulo:" [Línea: 18, Col: 13]
     SALIDA
       COUT: cout [Línea: 19, Col: 5]
       OPERADOR_SALIDA: << [Línea: 19, Col: 10]
       SALIDA_EXPR
-        CADENA: "Base: " [Línea: 19, Col: 13]
+        CADENA: "\nBase: " [Línea: 19, Col: 13]
     SALIDA
       COUT: cout [Línea: 20, Col: 5]
       OPERADOR_SALIDA: << [Línea: 20, Col: 10]
