@@ -1,0 +1,27 @@
+main {
+    float base;
+    float altura;
+    float perimetro;
+    float area;
+
+    // Leer la base y altura
+    cin >> base;
+    cin >> altura;
+
+    // Calcular perímetro: P = 2(base + altura)
+    perimetro = 2 * (base + altura);
+
+    // Calcular área: A = base * altura
+    area = base * altura;
+
+    // Mostrar resultados
+    cout << "Datos del rectangulo:";
+    cout << "\nBase: ";
+    cout << base;
+    cout << "\nAltura: ";
+    cout << altura;
+    cout << "\nPerimetro: ";
+    cout << perimetro;
+    cout << "\nArea: ";
+    cout << area;
+}

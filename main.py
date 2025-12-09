@@ -326,19 +326,23 @@ class PInterpreter:
             elif opcode == 'OUT':
                 reg = operands[0] if operands else 0
                 value = self.registers[reg]
-    
-                # Si es un valor ASCII imprimible (32-126), mostrar como carácter
-                if 32 <= value <= 126:
-                    output = chr(value)
-                elif value == 10:  # Salto de línea
-                    output = "\n"
-                elif value == 13:  # Retorno de carro
-                    output = ""
-                elif value == 9:   # Tabulación
-                    output = "\t"
-                else:
+
+                if value >= 10000:
+                    value -= 10000
                     output = str(value) + " "
-    
+                else:
+                    # Si es un valor ASCII imprimible (32-126), mostrar como carácter
+                    if 32 <= value <= 126:
+                        output = chr(value)
+                    elif value == 10:  # Salto de línea
+                        output = "\n"
+                    elif value == 13:  # Retorno de carro
+                        output = ""
+                    elif value == 9:   # Tabulación
+                        output = "\t"
+                    else:
+                        output = str(value) + " "
+
                 self.output_buffer.append(output)
                 self.thread.output_signal.emit(output)
                 self.pc += 1
@@ -2448,12 +2452,13 @@ class CodeGenerator:
                 self.visit_output_expression(output_expr_node)
     
     def visit_output_expression(self, node):
-        """Visita una expresión de salida (puede ser cadena o expresión)"""
         if node.node_type == "CADENA":
             self.visit_string_output(node)
         else:
-            # Para expresiones regulares (números, variables, etc.)
             self.visit_expression(node, 0)
+            # Para manejar negativos, usar un valor mayor (ej: 10000)
+            self.emit(f"LDC  1,10000(0)")
+            self.emit(f"ADD  0,0,1")
             self.emit(f"OUT  0,0,0")
     
     def visit_string_output(self, node):
