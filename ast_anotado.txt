@@ -2,14 +2,79 @@ Programa
   Main: main [Línea: 1, Col: 1]
   Bloque
     DeclaracionVariable
-      TIPO: int [Línea: 2, Col: 1]
-      Variable: x [Línea: 2, Col: 5]
+      TIPO: float [Línea: 2, Col: 5]
+      Variable: base [Línea: 2, Col: 11]
+    DeclaracionVariable
+      TIPO: float [Línea: 3, Col: 5]
+      Variable: altura [Línea: 3, Col: 11]
+    DeclaracionVariable
+      TIPO: float [Línea: 4, Col: 5]
+      Variable: perimetro [Línea: 4, Col: 11]
+    DeclaracionVariable
+      TIPO: float [Línea: 5, Col: 5]
+      Variable: area [Línea: 5, Col: 11]
     ENTRADA
-      CIN: cin [Línea: 3, Col: 1]
-      OPERADOR_ENTRADA: >> [Línea: 3, Col: 5]
-      ID: x [Línea: 3, Col: 8]
+      CIN: cin [Línea: 8, Col: 5]
+      OPERADOR_ENTRADA: >> [Línea: 8, Col: 9]
+      ID: base [Línea: 8, Col: 12]
+    ENTRADA
+      CIN: cin [Línea: 9, Col: 5]
+      OPERADOR_ENTRADA: >> [Línea: 9, Col: 9]
+      ID: altura [Línea: 9, Col: 12]
+    Asignacion [tipo: float] [Valor Calculado: 0]
+      ID: perimetro [tipo: float] [Línea: 12, Col: 5]
+      EXPRESION_BINARIA: * [tipo: float] [Valor Calculado: 0] [Línea: 12, Col: 19]
+        Literal: 2 [tipo: int] [Valor Calculado: 2] [Línea: 12, Col: 17]
+        EXPRESION_BINARIA: + [tipo: float] [Valor Calculado: 0] [Línea: 12, Col: 27]
+          Variable: base [tipo: float] [Valor Calculado: 0] [Línea: 12, Col: 22]
+          Variable: altura [tipo: float] [Valor Calculado: 0] [Línea: 12, Col: 29]
+    Asignacion [tipo: float] [Valor Calculado: 0]
+      ID: area [tipo: float] [Línea: 15, Col: 5]
+      EXPRESION_BINARIA: * [tipo: float] [Valor Calculado: 0] [Línea: 15, Col: 17]
+        Variable: base [tipo: float] [Valor Calculado: 0] [Línea: 15, Col: 12]
+        Variable: altura [tipo: float] [Valor Calculado: 0] [Línea: 15, Col: 19]
     SALIDA
-      COUT: cout [Línea: 4, Col: 1]
-      OPERADOR_SALIDA: << [Línea: 4, Col: 6]
+      COUT: cout [Línea: 18, Col: 5]
+      OPERADOR_SALIDA: << [Línea: 18, Col: 10]
       SALIDA_EXPR
-        CADENA: "Hola" [Línea: 4, Col: 9]
+        CADENA: "Datos del rectangulo:\n" [Línea: 18, Col: 13]
+    SALIDA
+      COUT: cout [Línea: 19, Col: 5]
+      OPERADOR_SALIDA: << [Línea: 19, Col: 10]
+      SALIDA_EXPR
+        CADENA: "Base: " [Línea: 19, Col: 13]
+    SALIDA
+      COUT: cout [Línea: 20, Col: 5]
+      OPERADOR_SALIDA: << [Línea: 20, Col: 10]
+      SALIDA_EXPR
+        Variable: base [tipo: float] [Valor Calculado: 0] [Línea: 20, Col: 13]
+    SALIDA
+      COUT: cout [Línea: 21, Col: 5]
+      OPERADOR_SALIDA: << [Línea: 21, Col: 10]
+      SALIDA_EXPR
+        CADENA: "\nAltura: " [Línea: 21, Col: 13]
+    SALIDA
+      COUT: cout [Línea: 22, Col: 5]
+      OPERADOR_SALIDA: << [Línea: 22, Col: 10]
+      SALIDA_EXPR
+        Variable: altura [tipo: float] [Valor Calculado: 0] [Línea: 22, Col: 13]
+    SALIDA
+      COUT: cout [Línea: 23, Col: 5]
+      OPERADOR_SALIDA: << [Línea: 23, Col: 10]
+      SALIDA_EXPR
+        CADENA: "\nPerimetro: " [Línea: 23, Col: 13]
+    SALIDA
+      COUT: cout [Línea: 24, Col: 5]
+      OPERADOR_SALIDA: << [Línea: 24, Col: 10]
+      SALIDA_EXPR
+        Variable: perimetro [tipo: float] [Valor Calculado: 0] [Línea: 24, Col: 13]
+    SALIDA
+      COUT: cout [Línea: 25, Col: 5]
+      OPERADOR_SALIDA: << [Línea: 25, Col: 10]
+      SALIDA_EXPR
+        CADENA: "\nArea: " [Línea: 25, Col: 13]
+    SALIDA
+      COUT: cout [Línea: 26, Col: 5]
+      OPERADOR_SALIDA: << [Línea: 26, Col: 10]
+      SALIDA_EXPR
+        Variable: area [tipo: float] [Valor Calculado: 0] [Línea: 26, Col: 13]
