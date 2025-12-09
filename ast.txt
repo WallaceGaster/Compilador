@@ -1,80 +1,80 @@
-Programa (id: 2527989903536)
-  Main (id: 2527989900800): main [Línea: 1, Col: 1]
-  Bloque (id: 2527989903776)
-    DeclaracionVariable (id: 2527989903824)
-      TIPO (id: 2527989903872): float [Línea: 2, Col: 5]
-      Variable (id: 2527989903680): base [Línea: 2, Col: 11]
-    DeclaracionVariable (id: 2527989903968)
-      TIPO (id: 2527989903920): float [Línea: 3, Col: 5]
-      Variable (id: 2527989904016): altura [Línea: 3, Col: 11]
-    DeclaracionVariable (id: 2527989904112)
-      TIPO (id: 2527989904160): float [Línea: 4, Col: 5]
-      Variable (id: 2527989904208): perimetro [Línea: 4, Col: 11]
-    DeclaracionVariable (id: 2527989904256)
-      TIPO (id: 2527989904064): float [Línea: 5, Col: 5]
-      Variable (id: 2527989904304): area [Línea: 5, Col: 11]
-    ENTRADA (id: 2527989904352)
-      CIN (id: 2527989904400): cin [Línea: 8, Col: 5]
-      OPERADOR_ENTRADA (id: 2527989904448): >> [Línea: 8, Col: 9]
-      ID (id: 2527989904496): base [Línea: 8, Col: 12]
-    ENTRADA (id: 2527989904544)
-      CIN (id: 2527989904592): cin [Línea: 9, Col: 5]
-      OPERADOR_ENTRADA (id: 2527989904640): >> [Línea: 9, Col: 9]
-      ID (id: 2527989904688): altura [Línea: 9, Col: 12]
-    Asignacion (id: 2527989905552)
-      ID (id: 2527989905456): perimetro [Línea: 12, Col: 5]
-      EXPRESION_BINARIA (id: 2527989904928): * [Línea: 12, Col: 19]
-        Literal (id: 2527989904784): 2 [Línea: 12, Col: 17]
-        EXPRESION_BINARIA (id: 2527989904880): + [Línea: 12, Col: 27]
-          Variable (id: 2527989904832): base [Línea: 12, Col: 22]
-          Variable (id: 2527989904736): altura [Línea: 12, Col: 29]
-    Asignacion (id: 2527989905024)
-      ID (id: 2527989905072): area [Línea: 15, Col: 5]
-      EXPRESION_BINARIA (id: 2527989905216): * [Línea: 15, Col: 17]
-        Variable (id: 2527989904976): base [Línea: 15, Col: 12]
-        Variable (id: 2527989905120): altura [Línea: 15, Col: 19]
-    SALIDA (id: 2527989905264)
-      COUT (id: 2527989905168): cout [Línea: 18, Col: 5]
-      OPERADOR_SALIDA (id: 2527989905360): << [Línea: 18, Col: 10]
-      SALIDA_EXPR (id: 2527989905312)
-        CADENA (id: 2527989905408): "Datos del rectangulo:" [Línea: 18, Col: 13]
-    SALIDA (id: 2527989905504)
-      COUT (id: 2527989905600): cout [Línea: 19, Col: 5]
-      OPERADOR_SALIDA (id: 2527989905648): << [Línea: 19, Col: 10]
-      SALIDA_EXPR (id: 2527989905696)
-        CADENA (id: 2527989905744): "\nBase: " [Línea: 19, Col: 13]
-    SALIDA (id: 2527989906032)
-      COUT (id: 2527989905984): cout [Línea: 20, Col: 5]
-      OPERADOR_SALIDA (id: 2527989905792): << [Línea: 20, Col: 10]
-      SALIDA_EXPR (id: 2527989905840)
-        Variable (id: 2527989905936): base [Línea: 20, Col: 13]
-    SALIDA (id: 2527989905888)
-      COUT (id: 2527989906080): cout [Línea: 21, Col: 5]
-      OPERADOR_SALIDA (id: 2527989906128): << [Línea: 21, Col: 10]
-      SALIDA_EXPR (id: 2527989906176)
-        CADENA (id: 2527989906224): "\nAltura: " [Línea: 21, Col: 13]
-    SALIDA (id: 2527989906896)
-      COUT (id: 2527989906848): cout [Línea: 22, Col: 5]
-      OPERADOR_SALIDA (id: 2527989906272): << [Línea: 22, Col: 10]
-      SALIDA_EXPR (id: 2527989906320)
-        Variable (id: 2527989906416): altura [Línea: 22, Col: 13]
-    SALIDA (id: 2527989906368)
-      COUT (id: 2527989906512): cout [Línea: 23, Col: 5]
-      OPERADOR_SALIDA (id: 2527989906464): << [Línea: 23, Col: 10]
-      SALIDA_EXPR (id: 2527989906608)
-        CADENA (id: 2527989906560): "\nPerimetro: " [Línea: 23, Col: 13]
-    SALIDA (id: 2527989906704)
-      COUT (id: 2527989906656): cout [Línea: 24, Col: 5]
-      OPERADOR_SALIDA (id: 2527989906800): << [Línea: 24, Col: 10]
-      SALIDA_EXPR (id: 2527989906752)
-        Variable (id: 2527989906944): perimetro [Línea: 24, Col: 13]
-    SALIDA (id: 2527989906992)
-      COUT (id: 2527989907040): cout [Línea: 25, Col: 5]
-      OPERADOR_SALIDA (id: 2527989907088): << [Línea: 25, Col: 10]
-      SALIDA_EXPR (id: 2527989907424)
-        CADENA (id: 2527989907184): "\nArea: " [Línea: 25, Col: 13]
-    SALIDA (id: 2527989907232)
-      COUT (id: 2527989907280): cout [Línea: 26, Col: 5]
-      OPERADOR_SALIDA (id: 2527989907328): << [Línea: 26, Col: 10]
-      SALIDA_EXPR (id: 2527989907136)
-        Variable (id: 2527989907376): area [Línea: 26, Col: 13]
+Programa (id: 2544789991600)
+  Main (id: 2544789988864): main [Línea: 1, Col: 1]
+  Bloque (id: 2544789991840)
+    DeclaracionVariable (id: 2544789991888)
+      TIPO (id: 2544789991936): float [Línea: 2, Col: 5]
+      Variable (id: 2544789991744): base [Línea: 2, Col: 11]
+    DeclaracionVariable (id: 2544789992032)
+      TIPO (id: 2544789991984): float [Línea: 3, Col: 5]
+      Variable (id: 2544789992080): altura [Línea: 3, Col: 11]
+    DeclaracionVariable (id: 2544789992176)
+      TIPO (id: 2544789992224): float [Línea: 4, Col: 5]
+      Variable (id: 2544789992272): perimetro [Línea: 4, Col: 11]
+    DeclaracionVariable (id: 2544789992320)
+      TIPO (id: 2544789992128): float [Línea: 5, Col: 5]
+      Variable (id: 2544789992368): area [Línea: 5, Col: 11]
+    ENTRADA (id: 2544789992416)
+      CIN (id: 2544789992464): cin [Línea: 8, Col: 5]
+      OPERADOR_ENTRADA (id: 2544789992512): >> [Línea: 8, Col: 9]
+      ID (id: 2544789992560): base [Línea: 8, Col: 12]
+    ENTRADA (id: 2544789992608)
+      CIN (id: 2544789992656): cin [Línea: 9, Col: 5]
+      OPERADOR_ENTRADA (id: 2544789992704): >> [Línea: 9, Col: 9]
+      ID (id: 2544789992752): altura [Línea: 9, Col: 12]
+    Asignacion (id: 2544789993616)
+      ID (id: 2544789993520): perimetro [Línea: 12, Col: 5]
+      EXPRESION_BINARIA (id: 2544789992992): * [Línea: 12, Col: 19]
+        Literal (id: 2544789992848): 2 [Línea: 12, Col: 17]
+        EXPRESION_BINARIA (id: 2544789992944): + [Línea: 12, Col: 27]
+          Variable (id: 2544789992896): base [Línea: 12, Col: 22]
+          Variable (id: 2544789992800): altura [Línea: 12, Col: 29]
+    Asignacion (id: 2544789993088)
+      ID (id: 2544789993136): area [Línea: 15, Col: 5]
+      EXPRESION_BINARIA (id: 2544789993280): * [Línea: 15, Col: 17]
+        Variable (id: 2544789993040): base [Línea: 15, Col: 12]
+        Variable (id: 2544789993184): altura [Línea: 15, Col: 19]
+    SALIDA (id: 2544789993328)
+      COUT (id: 2544789993232): cout [Línea: 18, Col: 5]
+      OPERADOR_SALIDA (id: 2544789993424): << [Línea: 18, Col: 10]
+      SALIDA_EXPR (id: 2544789993376)
+        CADENA (id: 2544789993472): "Datos del rectangulo:" [Línea: 18, Col: 13]
+    SALIDA (id: 2544789993568)
+      COUT (id: 2544789993664): cout [Línea: 19, Col: 5]
+      OPERADOR_SALIDA (id: 2544789993712): << [Línea: 19, Col: 10]
+      SALIDA_EXPR (id: 2544789993760)
+        CADENA (id: 2544789993808): "\nBase: " [Línea: 19, Col: 13]
+    SALIDA (id: 2544789994096)
+      COUT (id: 2544789994048): cout [Línea: 20, Col: 5]
+      OPERADOR_SALIDA (id: 2544789993856): << [Línea: 20, Col: 10]
+      SALIDA_EXPR (id: 2544789993904)
+        Variable (id: 2544789994000): base [Línea: 20, Col: 13]
+    SALIDA (id: 2544789993952)
+      COUT (id: 2544789994144): cout [Línea: 21, Col: 5]
+      OPERADOR_SALIDA (id: 2544789994192): << [Línea: 21, Col: 10]
+      SALIDA_EXPR (id: 2544789994240)
+        CADENA (id: 2544789994288): "\nAltura: " [Línea: 21, Col: 13]
+    SALIDA (id: 2544789994960)
+      COUT (id: 2544789994912): cout [Línea: 22, Col: 5]
+      OPERADOR_SALIDA (id: 2544789994336): << [Línea: 22, Col: 10]
+      SALIDA_EXPR (id: 2544789994384)
+        Variable (id: 2544789994480): altura [Línea: 22, Col: 13]
+    SALIDA (id: 2544789994432)
+      COUT (id: 2544789994576): cout [Línea: 23, Col: 5]
+      OPERADOR_SALIDA (id: 2544789994528): << [Línea: 23, Col: 10]
+      SALIDA_EXPR (id: 2544789994672)
+        CADENA (id: 2544789994624): "\nPerimetro: " [Línea: 23, Col: 13]
+    SALIDA (id: 2544789994768)
+      COUT (id: 2544789994720): cout [Línea: 24, Col: 5]
+      OPERADOR_SALIDA (id: 2544789994864): << [Línea: 24, Col: 10]
+      SALIDA_EXPR (id: 2544789994816)
+        Variable (id: 2544789995008): perimetro [Línea: 24, Col: 13]
+    SALIDA (id: 2544789995056)
+      COUT (id: 2544789995104): cout [Línea: 25, Col: 5]
+      OPERADOR_SALIDA (id: 2544789995152): << [Línea: 25, Col: 10]
+      SALIDA_EXPR (id: 2544789995488)
+        CADENA (id: 2544789995248): "\nArea: " [Línea: 25, Col: 13]
+    SALIDA (id: 2544789995296)
+      COUT (id: 2544789995344): cout [Línea: 26, Col: 5]
+      OPERADOR_SALIDA (id: 2544789995392): << [Línea: 26, Col: 10]
+      SALIDA_EXPR (id: 2544789995200)
+        Variable (id: 2544789995440): area [Línea: 26, Col: 13]

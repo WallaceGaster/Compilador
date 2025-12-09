@@ -251,7 +251,8 @@ class PInterpreter:
                 if len(operands) >= 3:
                     dest, src1, src2 = operands
                     if self.registers[src2] != 0:
-                        self.registers[dest] = self.registers[src1] // self.registers[src2]
+                        # Usar división flotante en lugar de entera
+                        self.registers[dest] = self.registers[src1] / self.registers[src2]
                     else:
                         self.thread.error_signal.emit("División por cero")
                         self.running = False
@@ -309,13 +310,18 @@ class PInterpreter:
                 self.thread.input_request_signal.emit("Ingrese un valor para IN instruction:")
                 self.thread.waiting_for_input = True
                 
-                # Esperar por entrada (esto se maneja en el hilo principal)
+                # Esperar por entrada
                 while self.thread.waiting_for_input and not self.thread.should_stop:
                     self.thread.msleep(100)
                 
                 if self.thread.input_value is not None:
                     try:
-                        self.registers[reg] = int(self.thread.input_value)
+                        # Intentar convertir a float primero
+                        try:
+                            self.registers[reg] = float(self.thread.input_value)
+                        except ValueError:
+                            # Si falla, intentar como int
+                            self.registers[reg] = int(self.thread.input_value)
                     except ValueError:
                         self.thread.error_signal.emit(f"Valor inválido: {self.thread.input_value}")
                         self.registers[reg] = 0
@@ -369,47 +375,53 @@ class PInterpreter:
     
     def format_as_char(self, value):
         """Formatea un valor como carácter ASCII"""
-        if value == 10:  # Salto de línea
-            return "\n"
-        elif value == 13:  # Retorno de carro
-            return ""
-        elif value == 9:   # Tabulación
-            return "\t"
-        elif value == 32:  # Espacio 
-            return " "
-        elif 32 <= value <= 126:  # Caracteres imprimibles
-            return chr(value)
+        if isinstance(value, (int, float)):
+            if value == 10:  # Salto de línea
+                return "\n"
+            elif value == 13:  # Retorno de carro
+                return ""
+            elif value == 9:   # Tabulación
+                return "\t"
+            elif value == 32:  # Espacio 
+                return " "
+            elif 32 <= value <= 126:  # Caracteres imprimibles
+                return chr(int(value))
+            else:
+                # Si no es imprimible, mostrar como número
+                if isinstance(value, float):
+                    return f"{value:.2f} "
+                else:
+                    return str(value) + " "  
         else:
-            # Si no es imprimible, mostrar como número
-            return str(value) + " "  
+            return str(value)
     
     def format_output(self, value):
         """Formatea un valor para salida, manejando números negativos, ASCII, etc."""
         # Si es un valor negativo codificado (bit más alto activado)
-        if value >= 32768:
-            # Convertir de pseudo-complemento a 2 (valor codificado)
-            actual_value = value - 65536
-            return str(actual_value) + " "
-        
-        # Si es negativo directo
-        elif value < 0:
-            return str(value) + " "
-        
-        # Si es un valor ASCII imprimible
-        elif 32 <= value <= 126:
-            return chr(value)
-        
-        # Caracteres de control especiales
-        elif value == 10:  # Salto de línea
-            return "\n"
-        elif value == 13:  # Retorno de carro
-            return ""
-        elif value == 9:   # Tabulación
-            return "\t"
-        elif value == 32:  # Espacio
-            return " "
-        
-        # Cualquier otro número positivo
+        if isinstance(value, (int, float)):
+            if value >= 32768:
+                # Convertir de pseudo-complemento a 2 (valor codificado)
+                actual_value = value - 65536
+                return str(actual_value) + " "
+            elif value < 0:
+                return str(value) + " "
+            elif 32 <= value <= 126:
+                return chr(int(value))
+            elif value == 10:  # Salto de línea
+                return "\n"
+            elif value == 13:  # Retorno de carro
+                return ""
+            elif value == 9:   # Tabulación
+                return "\t"
+            elif value == 32:  # Espacio
+                return " "
+            else:
+                # Para números enteros o flotantes
+                if isinstance(value, float):
+                    # Mostrar con precisión decimal
+                    return f"{value:.2f} "
+                else:
+                    return str(value) + " "
         else:
             return str(value) + " "
 
@@ -2208,17 +2220,17 @@ class CodeGenerator:
             self.emit(f"LDC  {dest_reg},{int_value}(0)")
         elif node.tipo == "int":
             int_val = int(value)
-            # Si es negativo, podemos manejarlo directamente
-            if int_val < 0:
-                # Para números negativos, podemos usar complemento
-                # o simplemente cargar el valor negativo
-                # (dependiendo de cómo el intérprete maneje los negativos)
-                self.emit(f"LDC  {dest_reg},{int_val}(0)")
-            else:
-                self.emit(f"LDC  {dest_reg},{int_val}(0)")
+            self.emit(f"LDC  {dest_reg},{int_val}(0)")
         elif node.tipo == "float":
-            int_value = int(float(value))
-            self.emit(f"LDC  {dest_reg},{int_value}(0)")
+            # Para flotantes, necesitamos una representación especial
+            # Convertir a entero manteniendo la precisión
+            try:
+                float_val = float(value)
+                # Multiplicar por 100 para mantener 2 decimales
+                scaled_val = int(float_val * 100)
+                self.emit(f"LDC  {dest_reg},{scaled_val}(0)")
+            except ValueError:
+                self.emit(f"LDC  {dest_reg},0(0)")
         else:
             self.emit(f"LDC  {dest_reg},0(0)")
     
