@@ -73,8 +73,6 @@ class PInterpreter:
         self.registers[6] = 0  # Puntero de pila
         self.registers[7] = 0  # Registro de retorno
         
-        self.next_output_type = None  # 'string', 'number', o None
-        
     def parse_code(self):
         """Parsea el código P en instrucciones"""
         lines = self.code_text.strip().split('\n')
@@ -328,30 +326,12 @@ class PInterpreter:
             elif opcode == 'OUT':
                 reg = operands[0] if operands else 0
                 value = self.registers[reg]
+
+                # Determinar el tipo de salida basado en el valor
+                output = self.format_output(value)
                 
-                # Manejar códigos especiales
-                if self.next_output_type is not None:
-                    if self.next_output_type == 'string':
-                        # Mostrar como carácter
-                        output = self.format_as_char(value)
-                    else:  # 'number'
-                        # Mostrar como número
-                        output = str(value) + " "
-                    
-                    self.output_buffer.append(output)
-                    self.thread.output_signal.emit(output)
-                    self.next_output_type = None
-                elif value in [0, 1]:  # Códigos especiales
-                    if value == 0:
-                        self.next_output_type = 'string'
-                    else:  # value == 1
-                        self.next_output_type = 'number'
-                else:
-                    # Para compatibilidad con código viejo
-                    output = self.format_output(value)
-                    self.output_buffer.append(output)
-                    self.thread.output_signal.emit(output)
-                
+                self.output_buffer.append(output)
+                self.thread.output_signal.emit(output)
                 self.pc += 1
             
             # HALT: Terminar ejecución
@@ -366,46 +346,6 @@ class PInterpreter:
         except Exception as e:
             self.thread.error_signal.emit(f"Error ejecutando instrucción '{instr}': {str(e)}")
             self.running = False
-    
-    def format_as_char(self, value):
-        """Formatea un valor como carácter ASCII"""
-        if value == 10:  # Salto de línea
-            return "\n"
-        elif value == 13:  # Retorno de carro
-            return ""
-        elif value == 9:   # Tabulación
-            return "\t"
-        elif value == 32:  # Espacio
-            return " "
-        elif 32 <= value <= 126:  # Caracteres imprimibles
-            return chr(value)
-        else:
-            # Si no es imprimible, mostrar como número
-            return str(value) + " "
-    
-    def format_output(self, value):
-        """Formatea un valor para salida (para compatibilidad con código viejo)"""
-        # Si es un valor negativo codificado (bit más alto activado)
-        if value >= 32768:
-            actual_value = value - 65536
-            return str(actual_value) + " "
-        
-        # Si es negativo directo
-        elif value < 0:
-            return str(value) + " "
-        
-        # Caracteres de control especiales
-        if value == 10:  # Salto de línea
-            return "\n"
-        elif value == 13:  # Retorno de carro
-            return ""
-        elif value == 9:   # Tabulación
-            return "\t"
-        elif value == 32:  # Espacio
-            return " "
-        
-        # Para compatibilidad: mostrar como número
-        return str(value) + " "  
     
     def format_output(self, value):
         """Formatea un valor para salida, manejando números negativos, ASCII, etc."""
@@ -2531,8 +2471,6 @@ class CodeGenerator:
                     self.visit_output_expression(real_expr)
                 else:
                     self.emit(f"LDC  0,0(0)")
-                    self.emit(f"LDC  1,1(0)")  # Código para número
-                    self.emit(f"OUT  1,0,0")
                     self.emit(f"OUT  0,0,0")
             else:
                 # Si no es SALIDA_EXPR, asumir que es la expresión directamente
@@ -2540,42 +2478,29 @@ class CodeGenerator:
     
     def visit_output_expression(self, node):
         if node.node_type == "CADENA":
-            # Para cadenas, usar código especial 0 antes de cada carácter
-            self.visit_string_output_with_special_code(node)
+            self.visit_string_output(node)
         else:
-            # Para expresiones numéricas, usar código especial 1
-            self.visit_numeric_output_with_special_code(node)
-            
-    def visit_string_output_with_special_code(self, node):
-        """Genera código para imprimir una cadena con código especial 0"""
+            self.visit_expression(node, 0)
+            self.emit(f"OUT  0,0,0")
+    
+    def visit_string_output(self, node):
+        """Genera código para imprimir una cadena usando valores ASCII"""
+        # Extraer el valor de la cadena (sin comillas)
         if node.value.startswith('"') and node.value.endswith('"'):
             string_val = node.value[1:-1]
         elif node.value.startswith("'") and node.value.endswith("'"):
             string_val = node.value[1:-1]
         else:
             string_val = node.value
-        
-        # Manejar caracteres de escape
+    
+        # Manejar caracteres de escape básicos
         string_val = string_val.replace('\\n', '\n').replace('\\t', '\t').replace('\\\\', '\\')
-        
-        # Para cada carácter, enviar código 0 seguido del valor ASCII
+    
+        # Para cada carácter en la cadena, imprimir su valor ASCII
         for char in string_val:
             ascii_val = ord(char)
-            self.emit(f"LDC  0,0(0)")    # Código 0 = cadena
-            self.emit(f"OUT  0,0,0")
             self.emit(f"LDC  0,{ascii_val}(0)")
             self.emit(f"OUT  0,0,0")
-    
-    def visit_numeric_output_with_special_code(self, node):
-        """Genera código para imprimir un valor numérico con código especial 1"""
-        self.visit_expression(node, 0)
-        self.emit(f"LDC  1,1(0)")    # Código 1 = número
-        self.emit(f"OUT  1,0,0")
-        self.emit(f"OUT  0,0,0")     # Valor numérico
-    
-    def visit_string_output(self, node):
-        """Ahora usa la nueva función para cadenas"""
-        self.visit_string_output_with_special_code(node)
     
 class ASTNode:
     def __init__(self, node_type, value=None, line=None, col=None, error=False):
