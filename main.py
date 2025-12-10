@@ -2929,6 +2929,12 @@ class CompilerIDE(QMainWindow):
         
     def execute_p_code(self):
         """Ejecuta el código P generado"""
+        # Verificar si hay errores antes de ejecutar
+        if not self.can_execute_code():
+            QMessageBox.warning(self, "Errores detectados", 
+                "No se puede ejecutar código con errores léxicos, sintácticos o semánticos.")
+            return
+        
         # Obtener código P del panel de código intermedio o del archivo
         codigo_p = self.intermediate_code.toPlainText()
         
@@ -2968,6 +2974,70 @@ class CompilerIDE(QMainWindow):
             if self.tabs.tabText(i) == "Ejecución":
                 self.tabs.setCurrentIndex(i)
                 break
+
+    def can_generate_code(self):
+        """Verifica si se puede generar código intermedio"""
+        # Verificar errores léxicos
+        if os.path.exists("errors.txt"):
+            try:
+                with open("errors.txt", "r", encoding="utf-8") as f:
+                    errors_content = f.read().strip()
+                    if errors_content:
+                        # Si hay contenido, hay errores léxicos
+                        return False
+            except:
+                pass
+        
+        # Verificar errores sintácticos
+        if not hasattr(self, 'ast') or self.ast is None:
+            return False
+        
+        # Verificar errores semánticos
+        if os.path.exists("errores_semanticos.txt"):
+            try:
+                with open("errores_semanticos.txt", "r", encoding="utf-8") as f:
+                    errors_content = f.read().strip()
+                    if errors_content:
+                        # Si hay contenido, hay errores semánticos
+                        return False
+            except:
+                pass
+        
+        return True
+
+    def can_execute_code(self):
+        """Verifica si se puede ejecutar código"""
+        # Verificar que exista código P
+        if not os.path.exists("programa.P"):
+            QMessageBox.warning(self, "Código no encontrado", 
+                "No se ha generado código P para ejecutar.")
+            return False
+        
+        # Verificar errores léxicos, sintácticos y semánticos
+        if not self.can_generate_code():
+            return False
+        
+        return True
+    
+    def check_semantic_errors(self):
+        """Verifica si hay errores semánticos"""
+        if not hasattr(self, 'ast_anotado') or self.ast_anotado is None:
+            return 0
+        
+        # Contar nodos con errores en el AST anotado
+        error_count = self.count_errors_in_ast(self.ast_anotado)
+        return error_count
+    
+    def count_errors_in_ast(self, node):
+        """Cuenta los nodos con errores en el AST"""
+        count = 0
+        if node.is_error:
+            count += 1
+        
+        for child in node.children:
+            count += self.count_errors_in_ast(child)
+        
+        return count
     
     def stop_execution(self):
         """Detiene la ejecución del código"""
@@ -3310,11 +3380,25 @@ class CompilerIDE(QMainWindow):
         
     def run_intermediate(self):
         """Generar código intermedio P ejecutable a partir del AST anotado"""
+        # Verificar si hay errores léxicos o sintácticos antes de continuar
+        if not self.can_generate_code():
+            QMessageBox.warning(self, "Errores detectados", 
+                "No se puede generar código intermedio debido a errores en el análisis léxico o sintáctico.")
+            return
+
         if not hasattr(self, 'ast_anotado') or self.ast_anotado is None:
             self.error_list.addItem("Error: debe ejecutar análisis semántico primero")
             return
 
         try:
+            # Verificar si hay errores semánticos
+            semantic_errors = self.check_semantic_errors()
+            if semantic_errors:
+                self.error_list.addItem("No se puede generar código con errores semánticos")
+                QMessageBox.warning(self, "Errores semánticos", 
+                    f"No se puede generar código intermedio. Se encontraron {semantic_errors} errores semánticos.")
+                return
+
             # Crear generador de código
             generator = CodeGenerator()
 
@@ -3359,6 +3443,8 @@ class CompilerIDE(QMainWindow):
         # Verificar si hay errores léxicos
         if self.error_list.count() > 0:
             self.error_list.addItem("No se puede continuar con análisis sintáctico debido a errores léxicos")
+            QMessageBox.warning(self, "Errores léxicos", 
+                "Se encontraron errores léxicos. No se puede continuar con el análisis sintáctico.")
             return
             
         # Ejecutar análisis sintáctico
@@ -3367,13 +3453,26 @@ class CompilerIDE(QMainWindow):
         # Verificar si hay errores sintácticos
         if self.error_list.count() > 0:
             self.error_list.addItem("No se puede continuar con análisis semántico debido a errores sintácticos")
+            QMessageBox.warning(self, "Errores sintácticos", 
+                "Se encontraron errores sintácticos. No se puede continuar con el análisis semántico.")
             return
             
         # Ejecutar análisis semántico
         self.run_semantic()
         
+        # Verificar si hay errores semánticos
+        if self.error_list.count() > 0:
+            self.error_list.addItem("Análisis semántico completado con errores")
+            QMessageBox.warning(self, "Errores semánticos", 
+                "Se encontraron errores semánticos. No se puede generar código intermedio.")
+        
         # Mostrar mensaje de finalización
         self.statusBar().showMessage("Ejecución completada")
+        
+        # Si no hay errores, mostrar mensaje de éxito
+        if self.error_list.count() == 0:
+            QMessageBox.information(self, "Análisis completado", 
+                "Todos los análisis se completaron sin errores. Ahora puede generar código intermedio.")
         
 
 # Función principal
