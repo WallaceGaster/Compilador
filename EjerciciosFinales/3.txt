@@ -1,0 +1,23 @@
+main {
+    float a, b, c, mayor;
+    
+    // Lectura de los tres números
+    cin >> a;
+    cin >> b;
+    cin >> c;
+    
+    // Determinación del mayor
+    if a >= b && a >= c then
+        mayor = a;
+    else
+        if b >= a && b >= c then
+            mayor = b;
+        else
+            mayor = c;
+        end
+    end
+    
+    // Mostrar resultado
+    cout << "El numero mayor es: ";
+    cout << mayor;
+}

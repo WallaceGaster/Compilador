@@ -3,78 +3,60 @@ Programa
   Bloque
     DeclaracionVariable
       TIPO: float [Línea: 2, Col: 5]
-      Variable: base [Línea: 2, Col: 11]
-    DeclaracionVariable
-      TIPO: float [Línea: 3, Col: 5]
-      Variable: altura [Línea: 3, Col: 11]
-    DeclaracionVariable
-      TIPO: float [Línea: 4, Col: 5]
-      Variable: perimetro [Línea: 4, Col: 11]
-    DeclaracionVariable
-      TIPO: float [Línea: 5, Col: 5]
-      Variable: area [Línea: 5, Col: 11]
+      Variable: a [Línea: 2, Col: 11]
+      Variable: b [Línea: 2, Col: 14]
+      Variable: c [Línea: 2, Col: 17]
+      Variable: mayor [Línea: 2, Col: 20]
     ENTRADA
-      CIN: cin [Línea: 8, Col: 5]
-      OPERADOR_ENTRADA: >> [Línea: 8, Col: 9]
-      ID: base [Línea: 8, Col: 12]
+      CIN: cin [Línea: 5, Col: 5]
+      OPERADOR_ENTRADA: >> [Línea: 5, Col: 9]
+      ID: a [Línea: 5, Col: 12]
     ENTRADA
-      CIN: cin [Línea: 9, Col: 5]
-      OPERADOR_ENTRADA: >> [Línea: 9, Col: 9]
-      ID: altura [Línea: 9, Col: 12]
-    Asignacion [tipo: float] [Valor Calculado: 0]
-      ID: perimetro [tipo: float] [Línea: 12, Col: 5]
-      EXPRESION_BINARIA: * [tipo: float] [Valor Calculado: 0] [Línea: 12, Col: 19]
-        Literal: 2 [tipo: int] [Valor Calculado: 2] [Línea: 12, Col: 17]
-        EXPRESION_BINARIA: + [tipo: float] [Valor Calculado: 0] [Línea: 12, Col: 27]
-          Variable: base [tipo: float] [Valor Calculado: 0] [Línea: 12, Col: 22]
-          Variable: altura [tipo: float] [Valor Calculado: 0] [Línea: 12, Col: 29]
-    Asignacion [tipo: float] [Valor Calculado: 0]
-      ID: area [tipo: float] [Línea: 15, Col: 5]
-      EXPRESION_BINARIA: * [tipo: float] [Valor Calculado: 0] [Línea: 15, Col: 17]
-        Variable: base [tipo: float] [Valor Calculado: 0] [Línea: 15, Col: 12]
-        Variable: altura [tipo: float] [Valor Calculado: 0] [Línea: 15, Col: 19]
-    SALIDA
-      COUT: cout [Línea: 18, Col: 5]
-      OPERADOR_SALIDA: << [Línea: 18, Col: 10]
-      SALIDA_EXPR
-        CADENA: "Datos del rectangulo:" [Línea: 18, Col: 13]
-    SALIDA
-      COUT: cout [Línea: 19, Col: 5]
-      OPERADOR_SALIDA: << [Línea: 19, Col: 10]
-      SALIDA_EXPR
-        CADENA: "\nBase: " [Línea: 19, Col: 13]
-    SALIDA
-      COUT: cout [Línea: 20, Col: 5]
-      OPERADOR_SALIDA: << [Línea: 20, Col: 10]
-      SALIDA_EXPR
-        Variable: base [tipo: float] [Valor Calculado: 0] [Línea: 20, Col: 13]
+      CIN: cin [Línea: 6, Col: 5]
+      OPERADOR_ENTRADA: >> [Línea: 6, Col: 9]
+      ID: b [Línea: 6, Col: 12]
+    ENTRADA
+      CIN: cin [Línea: 7, Col: 5]
+      OPERADOR_ENTRADA: >> [Línea: 7, Col: 9]
+      ID: c [Línea: 7, Col: 12]
+    If [Línea: 10, Col: 5]
+      OperacionLogica: && [tipo: bool] [Valor Calculado: True] [Línea: 10, Col: 15]
+        EXPRESION_BINARIA: >= [tipo: bool] [Valor Calculado: True] [Línea: 10, Col: 10]
+          Variable: a [tipo: float] [Valor Calculado: 0] [Línea: 10, Col: 8]
+          Variable: b [tipo: float] [Valor Calculado: 0] [Línea: 10, Col: 13]
+        EXPRESION_BINARIA: >= [tipo: bool] [Valor Calculado: True] [Línea: 10, Col: 20]
+          Variable: a [tipo: float] [Valor Calculado: 0] [Línea: 10, Col: 18]
+          Variable: c [tipo: float] [Valor Calculado: 0] [Línea: 10, Col: 23]
+      LISTA_SENTENCIAS
+        Asignacion [tipo: float] [Valor Calculado: 0]
+          ID: mayor [tipo: float] [Línea: 11, Col: 9]
+          Variable: a [tipo: float] [Valor Calculado: 0] [Línea: 11, Col: 17]
+      Else [Línea: 12, Col: 5]
+        LISTA_SENTENCIAS
+          If [Línea: 13, Col: 9]
+            OperacionLogica: && [tipo: bool] [Valor Calculado: True] [Línea: 13, Col: 19]
+              EXPRESION_BINARIA: >= [tipo: bool] [Valor Calculado: True] [Línea: 13, Col: 14]
+                Variable: b [tipo: float] [Valor Calculado: 0] [Línea: 13, Col: 12]
+                Variable: a [tipo: float] [Valor Calculado: 0] [Línea: 13, Col: 17]
+              EXPRESION_BINARIA: >= [tipo: bool] [Valor Calculado: True] [Línea: 13, Col: 24]
+                Variable: b [tipo: float] [Valor Calculado: 0] [Línea: 13, Col: 22]
+                Variable: c [tipo: float] [Valor Calculado: 0] [Línea: 13, Col: 27]
+            LISTA_SENTENCIAS
+              Asignacion [tipo: float] [Valor Calculado: 0]
+                ID: mayor [tipo: float] [Línea: 14, Col: 13]
+                Variable: b [tipo: float] [Valor Calculado: 0] [Línea: 14, Col: 21]
+            Else [Línea: 15, Col: 9]
+              LISTA_SENTENCIAS
+                Asignacion [tipo: float] [Valor Calculado: 0]
+                  ID: mayor [tipo: float] [Línea: 16, Col: 13]
+                  Variable: c [tipo: float] [Valor Calculado: 0] [Línea: 16, Col: 21]
     SALIDA
       COUT: cout [Línea: 21, Col: 5]
       OPERADOR_SALIDA: << [Línea: 21, Col: 10]
       SALIDA_EXPR
-        CADENA: "\nAltura: " [Línea: 21, Col: 13]
+        CADENA: "El numero mayor es: " [Línea: 21, Col: 13]
     SALIDA
       COUT: cout [Línea: 22, Col: 5]
       OPERADOR_SALIDA: << [Línea: 22, Col: 10]
       SALIDA_EXPR
-        Variable: altura [tipo: float] [Valor Calculado: 0] [Línea: 22, Col: 13]
-    SALIDA
-      COUT: cout [Línea: 23, Col: 5]
-      OPERADOR_SALIDA: << [Línea: 23, Col: 10]
-      SALIDA_EXPR
-        CADENA: "\nPerimetro: " [Línea: 23, Col: 13]
-    SALIDA
-      COUT: cout [Línea: 24, Col: 5]
-      OPERADOR_SALIDA: << [Línea: 24, Col: 10]
-      SALIDA_EXPR
-        Variable: perimetro [tipo: float] [Valor Calculado: 0] [Línea: 24, Col: 13]
-    SALIDA
-      COUT: cout [Línea: 25, Col: 5]
-      OPERADOR_SALIDA: << [Línea: 25, Col: 10]
-      SALIDA_EXPR
-        CADENA: "\nArea: " [Línea: 25, Col: 13]
-    SALIDA
-      COUT: cout [Línea: 26, Col: 5]
-      OPERADOR_SALIDA: << [Línea: 26, Col: 10]
-      SALIDA_EXPR
-        Variable: area [tipo: float] [Valor Calculado: 0] [Línea: 26, Col: 13]
+        Variable: mayor [tipo: float] [Valor Calculado: 0] [Línea: 22, Col: 13]

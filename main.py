@@ -2312,7 +2312,7 @@ class CodeGenerator:
             elif op == '==': jump_instr = "JEQ"
             elif op == '!=': jump_instr = "JNE"
             
-            self.emit(f"{jump_instr}  0,3(7)") # if true, jump 3 instructions to the true case
+            self.emit(f"{jump_instr}  0,4(7)") # if true, jump 4 instructions to the true case
 
             # False case
             self.emit(f"LDC  {dest_reg},0(0)")
