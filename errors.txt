@@ -1,3 +1,2 @@
-Error sintáctico en línea 76, col 5: Sentencia inválida
-Error sintáctico en línea 85, col 1: Sentencia inválida
-Error sintáctico: Se esperaba '}' al final del programa
+Error sintáctico en línea 20, col 5: Sentencia inválida
+Error sintáctico en línea 30, col 9: Sentencia inválida

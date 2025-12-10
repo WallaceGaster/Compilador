@@ -14,19 +14,19 @@ main {
     total_anual = 0;
     i = 1;
     
-    // Leer número de fábricas
+    // Leer nï¿½mero de fï¿½bricas
     cout << "Ingresa cuantas fabricas se colocaran: ";
     cin >> N;
     cout << N;
     cout << "\n";
     
-    // Procesar cada fábrica
+    // Procesar cada fï¿½brica
     while i <= N && N <= 100
         clave = 0;
         total_anual = 0;
         
         cout << "Ingresa la clave de la fabrica: ";
-        // Leer clave de la fábrica
+        // Leer clave de la fï¿½brica
         cin >> clave;
         cout << clave;
         cout << "\n";
@@ -34,7 +34,7 @@ main {
         // Reiniciar contador de meses
         j = 1;
         
-        // Leer producción de los 12 meses
+        // Leer producciï¿½n de los 12 meses
         while j <= 12
 	   cout << "Ingresa la produccion de la fabrica ";
             cout << clave;
@@ -44,7 +44,7 @@ main {
             cout << "\n";
             total_anual = total_anual + produccion;
             
-            // Si es el mes de julio (mes 7), guardar producción
+            // Si es el mes de julio (mes 7), guardar producciï¿½n
             if j == 7 then
                 produccion_julio = produccion;
             end
@@ -52,20 +52,20 @@ main {
             j = j + 1;
         end
         
-        // Imprimir total anual de esta fábrica (requisito i)
+        // Imprimir total anual de esta fï¿½brica (requisito i)
         cout << "Fabrica ";
         cout << clave;
         cout << ": Total anual = ";
         cout << total_anual;
         cout << "\n";
         
-        // Verificar si es la fábrica con mayor producción (requisito ii)
+        // Verificar si es la fï¿½brica con mayor producciï¿½n (requisito ii)
         if total_anual > max_total then
             max_total = total_anual;
             clave_max = clave;
         end
         
-        // Verificar si superó los $3,000,000 en julio (requisito iii)
+        // Verificar si superï¿½ los $3,000,000 en julio (requisito iii)
         if produccion_julio > 3000000 then
             cout << "Fabrica con clave ";
             cout << clave;
@@ -75,7 +75,7 @@ main {
         i = i + 1;
     end
     
-    // Imprimir fábrica que más produjo (requisito ii completo)
+    // Imprimir fï¿½brica que mï¿½s produjo (requisito ii completo)
     cout << "\nFabrica que mas produjo: ";
     cout << clave_max;
     cout << "\n";
@@ -83,3 +83,4 @@ main {
     cout << max_total;
     cout << "\n";
 end
+}
