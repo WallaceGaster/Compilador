@@ -1,0 +1,77 @@
+main {
+    int N;
+    float produccion;
+    float total_fabrica;
+    float max_total;
+    int clave_max;
+    int clave;
+    int i;
+    int j;
+    float produccion_julio;
+    float total_anual;
+
+    max_total = 0;
+    total_anual = 0;
+    i = 1;
+    
+    // Leer número de fábricas
+    cin >> N;
+    
+    // Procesar cada fábrica
+    while i <= N
+        clave = 0;
+        total_anual = 0;
+        
+        cout << "Ingresa la clave de la fabrica: \n";
+        // Leer clave de la fábrica
+        cin >> clave;
+        cout << "\n";
+        
+        // Reiniciar contador de meses
+        j = 1;
+        
+        // Leer producción de los 12 meses
+        while j <= 12
+            cin >> produccion;
+            total_anual = total_anual + produccion;
+            
+            // Si es el mes de julio (mes 7), guardar producción
+            cout << "Entre";
+            if j == 7 then
+                produccion_julio = produccion;
+            end
+            
+            j = j + 1;
+        end
+        
+        // Imprimir total anual de esta fábrica (requisito i)
+        cout << "Fabrica ";
+        cout << clave;
+        cout << ": Total anual = ";
+        cout << total_anual;
+        cout << "\n";
+        
+        // Verificar si es la fábrica con mayor producción (requisito ii)
+        if total_anual > max_total then
+            max_total = total_anual;
+            clave_max = clave;
+        end
+        
+        // Verificar si superó los $3,000,000 en julio (requisito iii)
+        if produccion_julio > 3000000 then
+            cout << "Fabrica con clave ";
+            cout << clave;
+            cout << " supero $3,000,000 en julio\n";
+        end
+        
+        i = i + 1;
+    end
+    
+    // Imprimir fábrica que más produjo (requisito ii completo)
+    cout << "\nFabrica que mas produjo: ";
+    cout << clave_max;
+    cout << "\n";
+    cout << "Total de produccion: ";
+    cout << max_total;
+    cout << "\n";
+end
