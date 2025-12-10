@@ -14,19 +14,19 @@ main {
     total_anual = 0;
     i = 1;
     
-    // Leer n�mero de f�bricas
+    // Leer numero de fabricas
     cout << "Ingresa cuantas fabricas se colocaran: ";
     cin >> N;
     cout << N;
     cout << "\n";
     
-    // Procesar cada f�brica
+    // Procesar cada fabrica
     while i <= N && N <= 100
         clave = 0;
         total_anual = 0;
         
         cout << "Ingresa la clave de la fabrica: ";
-        // Leer clave de la f�brica
+        // Leer clave de la fabrica
         cin >> clave;
         cout << clave;
         cout << "\n";
@@ -38,7 +38,9 @@ main {
         while j <= 12
 	   cout << "Ingresa la produccion de la fabrica ";
             cout << clave;
-            cout << ": ";
+            cout << "para el mes ";
+	   cout << j;
+	   cout << ": ";
             cin >> produccion;
             cout << produccion;
             cout << "\n";
