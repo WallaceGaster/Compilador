@@ -997,14 +997,14 @@ class Parser:
         self.advance()
         
         # Bloque then
-        then_block = self.lista_sentencias()
+        then_block = self.lista_sentencias(terminators=['else', 'end'])
         node.add_child(then_block)
         
         # else (opcional)
         if self.match('PALABRA_RESERVADA', 'else'):
             else_token = self.current_token()  # <--- CAPTURAR TOKEN ANTES DE AVANZAR
             self.advance()
-            else_block = self.lista_sentencias() or ASTNode("BloqueElse", error=True)
+            else_block = self.lista_sentencias(terminators=['end']) or ASTNode("BloqueElse", error=True)
             else_node = ASTNode("Else", line=else_token[2], col=else_token[3])
             else_node.add_child(else_block)
             node.add_child(else_node)
@@ -1031,7 +1031,7 @@ class Parser:
         node.add_child(expr_node)
         
         # Cuerpo del while
-        body_node = self.lista_sentencias() or ASTNode("CuerpoWhile", error=True)
+        body_node = self.lista_sentencias(terminators=['end']) or ASTNode("CuerpoWhile", error=True)
         node.add_child(body_node)
         
         # end
@@ -1052,7 +1052,7 @@ class Parser:
             return node
         
         # Cuerpo del do-while
-        body_node = self.lista_sentencias() or ASTNode("CuerpoDoWhile", error=True)
+        body_node = self.lista_sentencias(terminators=['until', 'while']) or ASTNode("CuerpoDoWhile", error=True)
         node.add_child(body_node)
         
         # until o while
@@ -1211,27 +1211,15 @@ class Parser:
         
         return node
 
-    def lista_sentencias(self):
+    def lista_sentencias(self, terminators):
         """lista_sentencias → lista_sentencias sentencia | ε"""
         node = ASTNode("LISTA_SENTENCIAS")
-        stack = 0
         
         while self.current_token() and not self.match('SIMBOLOS', '}'):
             token = self.current_token()
-            token_type, lexeme, line, col = token
             
-            # Manejar inicio de bloques
-            if lexeme in ['if', 'while', 'do']:
-                stack += 1
-            # Manejar fin de bloques
-            elif lexeme == 'end':
-                if stack > 0:
-                    stack -= 1
-                else:
-                    break
-            
-            # Detenerse solo en palabras clave de cierre en nivel superior
-            if stack == 0 and lexeme in ['end', 'else', 'until', 'while', '}']:
+            # Detenerse en palabras clave de cierre de bloque
+            if token[1] in terminators:
                 break
             
             # Parsear sentencia
@@ -1244,7 +1232,7 @@ class Parser:
             except Exception as e:
                 self.error(f"Error procesando sentencia: {str(e)}")
                 # Insertar sentencia ficticia
-                node.add_child(ASTNode("SentenciaError", "error", line, col, error=True))
+                node.add_child(ASTNode("SentenciaError", "error", token[2], token[3], error=True))
                 self.synchronize()
                 if self.current_token():
                     self.advance()

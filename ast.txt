@@ -1,143 +1,80 @@
-Programa (id: 2116063177296)
-  Main (id: 2116063177344): main [Línea: 1, Col: 1]
-  Bloque (id: 2116063177392)
-    DeclaracionVariable (id: 2116063178256)
-      TIPO (id: 2116063178160): int [Línea: 2, Col: 5]
-      Variable (id: 2116063177488): A [Línea: 2, Col: 9]
-      Variable (id: 2116063177536): B [Línea: 2, Col: 12]
-      Variable (id: 2116063177440): C [Línea: 2, Col: 15]
-    DeclaracionVariable (id: 2116063177584)
-      TIPO (id: 2116063177632): int [Línea: 3, Col: 5]
-      Variable (id: 2116063177728): mayor [Línea: 3, Col: 9]
-      Variable (id: 2116063177776): medio [Línea: 3, Col: 16]
-      Variable (id: 2116063177680): menor [Línea: 3, Col: 23]
-    ENTRADA (id: 2116063177824)
-      CIN (id: 2116063177920): cin [Línea: 6, Col: 5]
-      OPERADOR_ENTRADA (id: 2116063177968): >> [Línea: 6, Col: 9]
-      ID (id: 2116063177872): A [Línea: 6, Col: 12]
-    ENTRADA (id: 2116063178064)
-      CIN (id: 2116063178016): cin [Línea: 7, Col: 5]
-      OPERADOR_ENTRADA (id: 2116063178112): >> [Línea: 7, Col: 9]
-      ID (id: 2116063178208): B [Línea: 7, Col: 12]
-    ENTRADA (id: 2116063178304)
-      CIN (id: 2116063178352): cin [Línea: 8, Col: 5]
-      OPERADOR_ENTRADA (id: 2116063178400): >> [Línea: 8, Col: 9]
-      ID (id: 2116063178448): C [Línea: 8, Col: 12]
-    If (id: 2116063178736) [Línea: 11, Col: 5]
-      OperacionLogica (id: 2116063178640): && [Línea: 11, Col: 14]
-        EXPRESION_BINARIA (id: 2116063178544): > [Línea: 11, Col: 10]
-          Variable (id: 2116063178688): A [Línea: 11, Col: 8]
-          Variable (id: 2116063178496): B [Línea: 11, Col: 12]
-        EXPRESION_BINARIA (id: 2116063178832): > [Línea: 11, Col: 19]
-          Variable (id: 2116063178592): A [Línea: 11, Col: 17]
-          Variable (id: 2116063178784): C [Línea: 11, Col: 21]
-      LISTA_SENTENCIAS (id: 2116063178880)
-        Asignacion (id: 2116063178928)
-          ID (id: 2116063179600): mayor [Línea: 12, Col: 9]
-          Variable (id: 2116063179552): A [Línea: 12, Col: 17]
-        If (id: 2116063178976) [Línea: 13, Col: 9]
-          EXPRESION_BINARIA (id: 2116063179072): > [Línea: 13, Col: 14]
-            Variable (id: 2116063179024): B [Línea: 13, Col: 12]
-            Variable (id: 2116063179120): C [Línea: 13, Col: 16]
-          LISTA_SENTENCIAS (id: 2116063179216)
-            Asignacion (id: 2116063179168)
-              ID (id: 2116063179312): medio [Línea: 14, Col: 13]
-              Variable (id: 2116063179264): B [Línea: 14, Col: 21]
-            Asignacion (id: 2116063179408)
-              ID (id: 2116063179360): menor [Línea: 15, Col: 13]
-              Variable (id: 2116063179504): C [Línea: 15, Col: 21]
-          Else (id: 2116063179888) [Línea: 16, Col: 9]
-            LISTA_SENTENCIAS (id: 2116063179456)
-              Asignacion (id: 2116063179648)
-                ID (id: 2116063179696): medio [Línea: 17, Col: 13]
-                Variable (id: 2116063179744): C [Línea: 17, Col: 21]
-              Asignacion (id: 2116063179792)
-                ID (id: 2116063180176): menor [Línea: 18, Col: 13]
-                Variable (id: 2116063180128): B [Línea: 18, Col: 21]
-      Else (id: 2116063232368) [Línea: 20, Col: 5]
-        LISTA_SENTENCIAS (id: 2116063179936)
-          If (id: 2116063179984) [Línea: 21, Col: 9]
-            OperacionLogica (id: 2116063180224): && [Línea: 21, Col: 18]
-              EXPRESION_BINARIA (id: 2116063180080): > [Línea: 21, Col: 14]
-                Variable (id: 2116063180032): B [Línea: 21, Col: 12]
-                Variable (id: 2116063179840): A [Línea: 21, Col: 16]
-              EXPRESION_BINARIA (id: 2116063180368): > [Línea: 21, Col: 23]
-                Variable (id: 2116063180272): B [Línea: 21, Col: 21]
-                Variable (id: 2116063180320): C [Línea: 21, Col: 25]
-            LISTA_SENTENCIAS (id: 2116063180416)
-              Asignacion (id: 2116063180464)
-                ID (id: 2116063182528): mayor [Línea: 22, Col: 13]
-                Variable (id: 2116063180512): B [Línea: 22, Col: 21]
-              If (id: 2116063180560) [Línea: 23, Col: 13]
-                EXPRESION_BINARIA (id: 2116063180656): > [Línea: 23, Col: 18]
-                  Variable (id: 2116063180848): A [Línea: 23, Col: 16]
-                  Variable (id: 2116063180800): C [Línea: 23, Col: 20]
-                LISTA_SENTENCIAS (id: 2116063180704)
-                  Asignacion (id: 2116063180752)
-                    ID (id: 2116063180608): medio [Línea: 24, Col: 17]
-                    Variable (id: 2116063180944): A [Línea: 24, Col: 25]
-                  Asignacion (id: 2116063180896)
-                    ID (id: 2116063182576): menor [Línea: 25, Col: 17]
-                    Variable (id: 2116063180992): C [Línea: 25, Col: 25]
-                Else (id: 2116063181424) [Línea: 26, Col: 13]
-                  LISTA_SENTENCIAS (id: 2116063181040)
-                    Asignacion (id: 2116063181328)
-                      ID (id: 2116063181280): medio [Línea: 27, Col: 17]
-                      Variable (id: 2116063181136): C [Línea: 27, Col: 25]
-                    Asignacion (id: 2116063181184)
-                      ID (id: 2116063181232): menor [Línea: 28, Col: 17]
-                      Variable (id: 2116063181088): A [Línea: 28, Col: 25]
-            Else (id: 2116063232320) [Línea: 30, Col: 9]
-              LISTA_SENTENCIAS (id: 2116063181376)
-                Asignacion (id: 2116063181520)
-                  ID (id: 2116063181568): mayor [Línea: 31, Col: 13]
-                  Variable (id: 2116063181616): C [Línea: 31, Col: 21]
-                If (id: 2116063181664) [Línea: 32, Col: 13]
-                  EXPRESION_BINARIA (id: 2116063181904): > [Línea: 32, Col: 18]
-                    Variable (id: 2116063181712): A [Línea: 32, Col: 16]
-                    Variable (id: 2116063181760): B [Línea: 32, Col: 20]
-                  LISTA_SENTENCIAS (id: 2116063181856)
-                    Asignacion (id: 2116063181952)
-                      ID (id: 2116063182000): medio [Línea: 33, Col: 17]
-                      Variable (id: 2116063173456): A [Línea: 33, Col: 25]
-                    Asignacion (id: 2116063182192)
-                      ID (id: 2116063182624): menor [Línea: 34, Col: 17]
-                      Variable (id: 2116063182672): B [Línea: 34, Col: 25]
-                  Else (id: 2116063232272) [Línea: 35, Col: 13]
-                    LISTA_SENTENCIAS (id: 2116063182816)
-                      Asignacion (id: 2116063182768)
-                        ID (id: 2116063182720): medio [Línea: 36, Col: 17]
-                        Variable (id: 2116063232080): B [Línea: 36, Col: 25]
-                      Asignacion (id: 2116063232128)
-                        ID (id: 2116063232176): menor [Línea: 37, Col: 17]
-                        Variable (id: 2116063232224): A [Línea: 37, Col: 25]
-    SALIDA (id: 2116063232416)
-      COUT (id: 2116063232464): cout [Línea: 43, Col: 5]
-      OPERADOR_SALIDA (id: 2116063232512): << [Línea: 43, Col: 10]
-      SALIDA_EXPR (id: 2116063232560)
-        CADENA (id: 2116063232608): "Numeros en orden descendente: " [Línea: 43, Col: 13]
-    SALIDA (id: 2116063232656)
-      COUT (id: 2116063232704): cout [Línea: 44, Col: 5]
-      OPERADOR_SALIDA (id: 2116063232752): << [Línea: 44, Col: 10]
-      SALIDA_EXPR (id: 2116063232800)
-        Variable (id: 2116063232848): mayor [Línea: 44, Col: 13]
-    SALIDA (id: 2116063232896)
-      COUT (id: 2116063232944): cout [Línea: 45, Col: 5]
-      OPERADOR_SALIDA (id: 2116063232992): << [Línea: 45, Col: 10]
-      SALIDA_EXPR (id: 2116063233040)
-        CADENA (id: 2116063233088): " " [Línea: 45, Col: 13]
-    SALIDA (id: 2116063233136)
-      COUT (id: 2116063233184): cout [Línea: 46, Col: 5]
-      OPERADOR_SALIDA (id: 2116063233232): << [Línea: 46, Col: 10]
-      SALIDA_EXPR (id: 2116063233280)
-        Variable (id: 2116063233328): medio [Línea: 46, Col: 13]
-    SALIDA (id: 2116063233376)
-      COUT (id: 2116063233424): cout [Línea: 47, Col: 5]
-      OPERADOR_SALIDA (id: 2116063233472): << [Línea: 47, Col: 10]
-      SALIDA_EXPR (id: 2116063233520)
-        CADENA (id: 2116063233568): " " [Línea: 47, Col: 13]
-    SALIDA (id: 2116063233616)
-      COUT (id: 2116063233664): cout [Línea: 48, Col: 5]
-      OPERADOR_SALIDA (id: 2116063233712): << [Línea: 48, Col: 10]
-      SALIDA_EXPR (id: 2116063233760)
-        Variable (id: 2116063233808): menor [Línea: 48, Col: 13]
+Programa (id: 2156865506240)
+  Main (id: 2156865504992): main [Línea: 1, Col: 1]
+  Bloque (id: 2156865504128)
+    DeclaracionVariable (id: 2156865506576)
+      TIPO (id: 2156865506480): float [Línea: 2, Col: 5]
+      Variable (id: 2156865506528): base [Línea: 2, Col: 11]
+    DeclaracionVariable (id: 2156865504032)
+      TIPO (id: 2156865504080): float [Línea: 3, Col: 5]
+      Variable (id: 2156865506624): altura [Línea: 3, Col: 11]
+    DeclaracionVariable (id: 2156865506672)
+      TIPO (id: 2156865506720): float [Línea: 4, Col: 5]
+      Variable (id: 2156865503888): perimetro [Línea: 4, Col: 11]
+    DeclaracionVariable (id: 2156865506768)
+      TIPO (id: 2156865507680): float [Línea: 5, Col: 5]
+      Variable (id: 2156865506816): area [Línea: 5, Col: 11]
+    ENTRADA (id: 2156865506864)
+      CIN (id: 2156865507056): cin [Línea: 8, Col: 5]
+      OPERADOR_ENTRADA (id: 2156865507008): >> [Línea: 8, Col: 9]
+      ID (id: 2156865506912): base [Línea: 8, Col: 12]
+    ENTRADA (id: 2156865506960)
+      CIN (id: 2156865504320): cin [Línea: 9, Col: 5]
+      OPERADOR_ENTRADA (id: 2156865507200): >> [Línea: 9, Col: 9]
+      ID (id: 2156865507104): altura [Línea: 9, Col: 12]
+    Asignacion (id: 2156865507152)
+      ID (id: 2156865504512): perimetro [Línea: 12, Col: 5]
+      EXPRESION_BINARIA (id: 2156865504368): * [Línea: 12, Col: 19]
+        Literal (id: 2156865504464): 2 [Línea: 12, Col: 17]
+        EXPRESION_BINARIA (id: 2156865507344): + [Línea: 12, Col: 27]
+          Variable (id: 2156865507248): base [Línea: 12, Col: 22]
+          Variable (id: 2156865507296): altura [Línea: 12, Col: 29]
+    Asignacion (id: 2156865507392)
+      ID (id: 2156865507632): area [Línea: 15, Col: 5]
+      EXPRESION_BINARIA (id: 2156865507536): * [Línea: 15, Col: 17]
+        Variable (id: 2156865507440): base [Línea: 15, Col: 12]
+        Variable (id: 2156865507488): altura [Línea: 15, Col: 19]
+    SALIDA (id: 2156865504608)
+      COUT (id: 2156865507584): cout [Línea: 18, Col: 5]
+      OPERADOR_SALIDA (id: 2156865507824): << [Línea: 18, Col: 10]
+      SALIDA_EXPR (id: 2156865507728)
+        CADENA (id: 2156865507776): "Datos del rectangulo:" [Línea: 18, Col: 13]
+    SALIDA (id: 2156865507872)
+      COUT (id: 2156865507920): cout [Línea: 19, Col: 5]
+      OPERADOR_SALIDA (id: 2156865507968): << [Línea: 19, Col: 10]
+      SALIDA_EXPR (id: 2156865508016)
+        CADENA (id: 2156865508064): "\nBase: " [Línea: 19, Col: 13]
+    SALIDA (id: 2156865508112)
+      COUT (id: 2156865508160): cout [Línea: 20, Col: 5]
+      OPERADOR_SALIDA (id: 2156865504944): << [Línea: 20, Col: 10]
+      SALIDA_EXPR (id: 2156865516800)
+        Variable (id: 2156865516848): base [Línea: 20, Col: 13]
+    SALIDA (id: 2156865516896)
+      COUT (id: 2156865517040): cout [Línea: 21, Col: 5]
+      OPERADOR_SALIDA (id: 2156865516944): << [Línea: 21, Col: 10]
+      SALIDA_EXPR (id: 2156865516992)
+        CADENA (id: 2156865517088): "\nAltura: " [Línea: 21, Col: 13]
+    SALIDA (id: 2156865517136)
+      COUT (id: 2156865517184): cout [Línea: 22, Col: 5]
+      OPERADOR_SALIDA (id: 2156865517232): << [Línea: 22, Col: 10]
+      SALIDA_EXPR (id: 2156865517280)
+        Variable (id: 2156865517328): altura [Línea: 22, Col: 13]
+    SALIDA (id: 2156865517376)
+      COUT (id: 2156865517760): cout [Línea: 23, Col: 5]
+      OPERADOR_SALIDA (id: 2156865517424): << [Línea: 23, Col: 10]
+      SALIDA_EXPR (id: 2156865517472)
+        CADENA (id: 2156865517520): "\nPerimetro: " [Línea: 23, Col: 13]
+    SALIDA (id: 2156865517568)
+      COUT (id: 2156865517616): cout [Línea: 24, Col: 5]
+      OPERADOR_SALIDA (id: 2156865517664): << [Línea: 24, Col: 10]
+      SALIDA_EXPR (id: 2156865517712)
+        Variable (id: 2156865518912): perimetro [Línea: 24, Col: 13]
+    SALIDA (id: 2156865517808)
+      COUT (id: 2156865517856): cout [Línea: 25, Col: 5]
+      OPERADOR_SALIDA (id: 2156865517904): << [Línea: 25, Col: 10]
+      SALIDA_EXPR (id: 2156865517952)
+        CADENA (id: 2156865518000): "\nArea: " [Línea: 25, Col: 13]
+    SALIDA (id: 2156865518144)
+      COUT (id: 2156865518048): cout [Línea: 26, Col: 5]
+      OPERADOR_SALIDA (id: 2156865518096): << [Línea: 26, Col: 10]
+      SALIDA_EXPR (id: 2156865518192)
+        Variable (id: 2156865518240): area [Línea: 26, Col: 13]

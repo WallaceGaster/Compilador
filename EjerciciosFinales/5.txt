@@ -34,7 +34,7 @@ main {
         // Reiniciar contador de meses
         j = 1;
         
-        // Leer producci�n de los 12 meses
+        // Leer produccion de los 12 meses
         while j <= 12
 	   cout << "Ingresa la produccion de la fabrica ";
             cout << clave;
@@ -82,5 +82,4 @@ main {
     cout << "Total de produccion: ";
     cout << max_total;
     cout << "\n";
-end
 }

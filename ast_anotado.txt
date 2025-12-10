@@ -3,239 +3,141 @@ Programa
   Bloque
     DeclaracionVariable
       TIPO: int [Línea: 2, Col: 5]
-      Variable: N [Línea: 2, Col: 9]
+      Variable: A [Línea: 2, Col: 9]
+      Variable: B [Línea: 2, Col: 12]
+      Variable: C [Línea: 2, Col: 15]
     DeclaracionVariable
-      TIPO: float [Línea: 3, Col: 5]
-      Variable: produccion [Línea: 3, Col: 11]
-    DeclaracionVariable
-      TIPO: float [Línea: 4, Col: 5]
-      Variable: total_fabrica [Línea: 4, Col: 11]
-    DeclaracionVariable
-      TIPO: float [Línea: 5, Col: 5]
-      Variable: max_total [Línea: 5, Col: 11]
-    DeclaracionVariable
-      TIPO: int [Línea: 6, Col: 5]
-      Variable: clave_max [Línea: 6, Col: 9]
-    DeclaracionVariable
-      TIPO: int [Línea: 7, Col: 5]
-      Variable: clave [Línea: 7, Col: 9]
-    DeclaracionVariable
-      TIPO: int [Línea: 8, Col: 5]
-      Variable: i [Línea: 8, Col: 9]
-    DeclaracionVariable
-      TIPO: int [Línea: 9, Col: 5]
-      Variable: j [Línea: 9, Col: 9]
-    DeclaracionVariable
-      TIPO: float [Línea: 10, Col: 5]
-      Variable: produccion_julio [Línea: 10, Col: 11]
-    DeclaracionVariable
-      TIPO: float [Línea: 11, Col: 5]
-      Variable: total_anual [Línea: 11, Col: 11]
-    Asignacion [tipo: float] [Valor Calculado: 0]
-      ID: max_total [tipo: float] [Línea: 13, Col: 5]
-      Literal: 0 [tipo: int] [Valor Calculado: 0] [Línea: 13, Col: 17]
-    Asignacion [tipo: float] [Valor Calculado: 0]
-      ID: total_anual [tipo: float] [Línea: 14, Col: 5]
-      Literal: 0 [tipo: int] [Valor Calculado: 0] [Línea: 14, Col: 19]
-    Asignacion [tipo: int] [Valor Calculado: 1]
-      ID: i [tipo: int] [Línea: 15, Col: 5]
-      Literal: 1 [tipo: int] [Valor Calculado: 1] [Línea: 15, Col: 9]
-    SALIDA
-      COUT: cout [Línea: 18, Col: 5]
-      OPERADOR_SALIDA: << [Línea: 18, Col: 10]
-      SALIDA_EXPR
-        CADENA: "Ingresa cuantas fabricas se colocaran: " [Línea: 18, Col: 13]
+      TIPO: int [Línea: 3, Col: 5]
+      Variable: mayor [Línea: 3, Col: 9]
+      Variable: medio [Línea: 3, Col: 16]
+      Variable: menor [Línea: 3, Col: 23]
     ENTRADA
-      CIN: cin [Línea: 19, Col: 5]
-      OPERADOR_ENTRADA: >> [Línea: 19, Col: 9]
-      ID: N [Línea: 19, Col: 12]
-    SALIDA
-      COUT: cout [Línea: 20, Col: 5]
-      OPERADOR_SALIDA: << [Línea: 20, Col: 10]
-      SALIDA_EXPR
-        Variable: N [tipo: int] [Valor Calculado: 0] [Línea: 20, Col: 13]
-    SALIDA
-      COUT: cout [Línea: 21, Col: 5]
-      OPERADOR_SALIDA: << [Línea: 21, Col: 10]
-      SALIDA_EXPR
-        CADENA: "\n" [Línea: 21, Col: 13]
-    While [Línea: 24, Col: 5]
-      OperacionLogica: && [tipo: bool] [Valor Calculado: False] [Línea: 24, Col: 18]
-        EXPRESION_BINARIA: <= [tipo: bool] [Valor Calculado: False] [Línea: 24, Col: 13]
-          Variable: i [tipo: int] [Valor Calculado: 1] [Línea: 24, Col: 11]
-          Variable: N [tipo: int] [Valor Calculado: 0] [Línea: 24, Col: 16]
-        EXPRESION_BINARIA: <= [tipo: bool] [Valor Calculado: True] [Línea: 24, Col: 23]
-          Variable: N [tipo: int] [Valor Calculado: 0] [Línea: 24, Col: 21]
-          Literal: 100 [tipo: int] [Valor Calculado: 100] [Línea: 24, Col: 26]
+      CIN: cin [Línea: 6, Col: 5]
+      OPERADOR_ENTRADA: >> [Línea: 6, Col: 9]
+      ID: A [Línea: 6, Col: 12]
+    ENTRADA
+      CIN: cin [Línea: 7, Col: 5]
+      OPERADOR_ENTRADA: >> [Línea: 7, Col: 9]
+      ID: B [Línea: 7, Col: 12]
+    ENTRADA
+      CIN: cin [Línea: 8, Col: 5]
+      OPERADOR_ENTRADA: >> [Línea: 8, Col: 9]
+      ID: C [Línea: 8, Col: 12]
+    If [Línea: 11, Col: 5]
+      OperacionLogica: && [tipo: bool] [Valor Calculado: False] [Línea: 11, Col: 14]
+        EXPRESION_BINARIA: > [tipo: bool] [Valor Calculado: False] [Línea: 11, Col: 10]
+          Variable: A [tipo: int] [Valor Calculado: 0] [Línea: 11, Col: 8]
+          Variable: B [tipo: int] [Valor Calculado: 0] [Línea: 11, Col: 12]
+        EXPRESION_BINARIA: > [tipo: bool] [Valor Calculado: False] [Línea: 11, Col: 19]
+          Variable: A [tipo: int] [Valor Calculado: 0] [Línea: 11, Col: 17]
+          Variable: C [tipo: int] [Valor Calculado: 0] [Línea: 11, Col: 21]
       LISTA_SENTENCIAS
         Asignacion [tipo: int] [Valor Calculado: 0]
-          ID: clave [tipo: int] [Línea: 25, Col: 9]
-          Literal: 0 [tipo: int] [Valor Calculado: 0] [Línea: 25, Col: 17]
-        Asignacion [tipo: float] [Valor Calculado: 0]
-          ID: total_anual [tipo: float] [Línea: 26, Col: 9]
-          Literal: 0 [tipo: int] [Valor Calculado: 0] [Línea: 26, Col: 23]
-        SALIDA
-          COUT: cout [Línea: 28, Col: 9]
-          OPERADOR_SALIDA: << [Línea: 28, Col: 14]
-          SALIDA_EXPR
-            CADENA: "Ingresa la clave de la fabrica: " [Línea: 28, Col: 17]
-        ENTRADA
-          CIN: cin [Línea: 30, Col: 9]
-          OPERADOR_ENTRADA: >> [Línea: 30, Col: 13]
-          ID: clave [Línea: 30, Col: 16]
-        SALIDA
-          COUT: cout [Línea: 31, Col: 9]
-          OPERADOR_SALIDA: << [Línea: 31, Col: 14]
-          SALIDA_EXPR
-            Variable: clave [tipo: int] [Valor Calculado: 0] [Línea: 31, Col: 17]
-        SALIDA
-          COUT: cout [Línea: 32, Col: 9]
-          OPERADOR_SALIDA: << [Línea: 32, Col: 14]
-          SALIDA_EXPR
-            CADENA: "\n" [Línea: 32, Col: 17]
-        Asignacion [tipo: int] [Valor Calculado: 1]
-          ID: j [tipo: int] [Línea: 35, Col: 9]
-          Literal: 1 [tipo: int] [Valor Calculado: 1] [Línea: 35, Col: 13]
-        While [Línea: 38, Col: 9]
-          EXPRESION_BINARIA: <= [tipo: bool] [Valor Calculado: True] [Línea: 38, Col: 17]
-            Variable: j [tipo: int] [Valor Calculado: 1] [Línea: 38, Col: 15]
-            Literal: 12 [tipo: int] [Valor Calculado: 12] [Línea: 38, Col: 20]
+          ID: mayor [tipo: int] [Línea: 12, Col: 9]
+          Variable: A [tipo: int] [Valor Calculado: 0] [Línea: 12, Col: 17]
+        If [Línea: 13, Col: 9]
+          EXPRESION_BINARIA: > [tipo: bool] [Valor Calculado: False] [Línea: 13, Col: 14]
+            Variable: B [tipo: int] [Valor Calculado: 0] [Línea: 13, Col: 12]
+            Variable: C [tipo: int] [Valor Calculado: 0] [Línea: 13, Col: 16]
           LISTA_SENTENCIAS
-            SALIDA
-              COUT: cout [Línea: 39, Col: 5]
-              OPERADOR_SALIDA: << [Línea: 39, Col: 10]
-              SALIDA_EXPR
-                CADENA: "Ingresa la produccion de la fabrica " [Línea: 39, Col: 13]
-            SALIDA
-              COUT: cout [Línea: 40, Col: 13]
-              OPERADOR_SALIDA: << [Línea: 40, Col: 18]
-              SALIDA_EXPR
-                Variable: clave [tipo: int] [Valor Calculado: 0] [Línea: 40, Col: 21]
-            SALIDA
-              COUT: cout [Línea: 41, Col: 13]
-              OPERADOR_SALIDA: << [Línea: 41, Col: 18]
-              SALIDA_EXPR
-                CADENA: ": " [Línea: 41, Col: 21]
-            ENTRADA
-              CIN: cin [Línea: 42, Col: 13]
-              OPERADOR_ENTRADA: >> [Línea: 42, Col: 17]
-              ID: produccion [Línea: 42, Col: 20]
-            SALIDA
-              COUT: cout [Línea: 43, Col: 13]
-              OPERADOR_SALIDA: << [Línea: 43, Col: 18]
-              SALIDA_EXPR
-                Variable: produccion [tipo: float] [Valor Calculado: 0] [Línea: 43, Col: 21]
-            SALIDA
-              COUT: cout [Línea: 44, Col: 13]
-              OPERADOR_SALIDA: << [Línea: 44, Col: 18]
-              SALIDA_EXPR
-                CADENA: "\n" [Línea: 44, Col: 21]
-            Asignacion [tipo: float] [Valor Calculado: 0]
-              ID: total_anual [tipo: float] [Línea: 45, Col: 13]
-              EXPRESION_BINARIA: + [tipo: float] [Valor Calculado: 0] [Línea: 45, Col: 39]
-                Variable: total_anual [tipo: float] [Valor Calculado: 0] [Línea: 45, Col: 27]
-                Variable: produccion [tipo: float] [Valor Calculado: 0] [Línea: 45, Col: 41]
-            If [Línea: 48, Col: 13]
-              EXPRESION_BINARIA: == [tipo: bool] [Valor Calculado: False] [Línea: 48, Col: 18]
-                Variable: j [tipo: int] [Valor Calculado: 1] [Línea: 48, Col: 16]
-                Literal: 7 [tipo: int] [Valor Calculado: 7] [Línea: 48, Col: 21]
-              LISTA_SENTENCIAS
-                Asignacion [tipo: float] [Valor Calculado: 0]
-                  ID: produccion_julio [tipo: float] [Línea: 49, Col: 17]
-                  Variable: produccion [tipo: float] [Valor Calculado: 0] [Línea: 49, Col: 36]
-            Asignacion [tipo: int] [Valor Calculado: 2]
-              ID: j [tipo: int] [Línea: 52, Col: 13]
-              EXPRESION_BINARIA: + [tipo: int] [Valor Calculado: 2] [Línea: 52, Col: 19]
-                Variable: j [tipo: int] [Valor Calculado: 1] [Línea: 52, Col: 17]
-                Literal: 1 [tipo: int] [Valor Calculado: 1] [Línea: 52, Col: 21]
-        SALIDA
-          COUT: cout [Línea: 56, Col: 9]
-          OPERADOR_SALIDA: << [Línea: 56, Col: 14]
-          SALIDA_EXPR
-            CADENA: "Fabrica " [Línea: 56, Col: 17]
-        SALIDA
-          COUT: cout [Línea: 57, Col: 9]
-          OPERADOR_SALIDA: << [Línea: 57, Col: 14]
-          SALIDA_EXPR
-            Variable: clave [tipo: int] [Valor Calculado: 0] [Línea: 57, Col: 17]
-        SALIDA
-          COUT: cout [Línea: 58, Col: 9]
-          OPERADOR_SALIDA: << [Línea: 58, Col: 14]
-          SALIDA_EXPR
-            CADENA: ": Total anual = " [Línea: 58, Col: 17]
-        SALIDA
-          COUT: cout [Línea: 59, Col: 9]
-          OPERADOR_SALIDA: << [Línea: 59, Col: 14]
-          SALIDA_EXPR
-            Variable: total_anual [tipo: float] [Valor Calculado: 0] [Línea: 59, Col: 17]
-        SALIDA
-          COUT: cout [Línea: 60, Col: 9]
-          OPERADOR_SALIDA: << [Línea: 60, Col: 14]
-          SALIDA_EXPR
-            CADENA: "\n" [Línea: 60, Col: 17]
-        If [Línea: 63, Col: 9]
-          EXPRESION_BINARIA: > [tipo: bool] [Valor Calculado: False] [Línea: 63, Col: 24]
-            Variable: total_anual [tipo: float] [Valor Calculado: 0] [Línea: 63, Col: 12]
-            Variable: max_total [tipo: float] [Valor Calculado: 0] [Línea: 63, Col: 26]
-          LISTA_SENTENCIAS
-            Asignacion [tipo: float] [Valor Calculado: 0]
-              ID: max_total [tipo: float] [Línea: 64, Col: 13]
-              Variable: total_anual [tipo: float] [Valor Calculado: 0] [Línea: 64, Col: 25]
             Asignacion [tipo: int] [Valor Calculado: 0]
-              ID: clave_max [tipo: int] [Línea: 65, Col: 13]
-              Variable: clave [tipo: int] [Valor Calculado: 0] [Línea: 65, Col: 25]
-        If [Línea: 69, Col: 9]
-          EXPRESION_BINARIA: > [tipo: bool] [Valor Calculado: False] [Línea: 69, Col: 29]
-            Variable: produccion_julio [tipo: float] [Valor Calculado: 0] [Línea: 69, Col: 12]
-            Literal: 3000000 [tipo: int] [Valor Calculado: 3000000] [Línea: 69, Col: 31]
-          LISTA_SENTENCIAS
-            SALIDA
-              COUT: cout [Línea: 70, Col: 13]
-              OPERADOR_SALIDA: << [Línea: 70, Col: 18]
-              SALIDA_EXPR
-                CADENA: "Fabrica con clave " [Línea: 70, Col: 21]
-            SALIDA
-              COUT: cout [Línea: 71, Col: 13]
-              OPERADOR_SALIDA: << [Línea: 71, Col: 18]
-              SALIDA_EXPR
-                Variable: clave [tipo: int] [Valor Calculado: 0] [Línea: 71, Col: 21]
-            SALIDA
-              COUT: cout [Línea: 72, Col: 13]
-              OPERADOR_SALIDA: << [Línea: 72, Col: 18]
-              SALIDA_EXPR
-                CADENA: " supero $3,000,000 en julio\n" [Línea: 72, Col: 21]
-        Asignacion [tipo: int] [Valor Calculado: 2]
-          ID: i [tipo: int] [Línea: 75, Col: 9]
-          EXPRESION_BINARIA: + [tipo: int] [Valor Calculado: 2] [Línea: 75, Col: 15]
-            Variable: i [tipo: int] [Valor Calculado: 1] [Línea: 75, Col: 13]
-            Literal: 1 [tipo: int] [Valor Calculado: 1] [Línea: 75, Col: 17]
+              ID: medio [tipo: int] [Línea: 14, Col: 13]
+              Variable: B [tipo: int] [Valor Calculado: 0] [Línea: 14, Col: 21]
+            Asignacion [tipo: int] [Valor Calculado: 0]
+              ID: menor [tipo: int] [Línea: 15, Col: 13]
+              Variable: C [tipo: int] [Valor Calculado: 0] [Línea: 15, Col: 21]
+          Else [Línea: 16, Col: 9]
+            LISTA_SENTENCIAS
+              Asignacion [tipo: int] [Valor Calculado: 0]
+                ID: medio [tipo: int] [Línea: 17, Col: 13]
+                Variable: C [tipo: int] [Valor Calculado: 0] [Línea: 17, Col: 21]
+              Asignacion [tipo: int] [Valor Calculado: 0]
+                ID: menor [tipo: int] [Línea: 18, Col: 13]
+                Variable: B [tipo: int] [Valor Calculado: 0] [Línea: 18, Col: 21]
+      Else [Línea: 20, Col: 5]
+        LISTA_SENTENCIAS
+          If [Línea: 21, Col: 9]
+            OperacionLogica: && [tipo: bool] [Valor Calculado: False] [Línea: 21, Col: 18]
+              EXPRESION_BINARIA: > [tipo: bool] [Valor Calculado: False] [Línea: 21, Col: 14]
+                Variable: B [tipo: int] [Valor Calculado: 0] [Línea: 21, Col: 12]
+                Variable: A [tipo: int] [Valor Calculado: 0] [Línea: 21, Col: 16]
+              EXPRESION_BINARIA: > [tipo: bool] [Valor Calculado: False] [Línea: 21, Col: 23]
+                Variable: B [tipo: int] [Valor Calculado: 0] [Línea: 21, Col: 21]
+                Variable: C [tipo: int] [Valor Calculado: 0] [Línea: 21, Col: 25]
+            LISTA_SENTENCIAS
+              Asignacion [tipo: int] [Valor Calculado: 0]
+                ID: mayor [tipo: int] [Línea: 22, Col: 13]
+                Variable: B [tipo: int] [Valor Calculado: 0] [Línea: 22, Col: 21]
+              If [Línea: 23, Col: 13]
+                EXPRESION_BINARIA: > [tipo: bool] [Valor Calculado: False] [Línea: 23, Col: 18]
+                  Variable: A [tipo: int] [Valor Calculado: 0] [Línea: 23, Col: 16]
+                  Variable: C [tipo: int] [Valor Calculado: 0] [Línea: 23, Col: 20]
+                LISTA_SENTENCIAS
+                  Asignacion [tipo: int] [Valor Calculado: 0]
+                    ID: medio [tipo: int] [Línea: 24, Col: 17]
+                    Variable: A [tipo: int] [Valor Calculado: 0] [Línea: 24, Col: 25]
+                  Asignacion [tipo: int] [Valor Calculado: 0]
+                    ID: menor [tipo: int] [Línea: 25, Col: 17]
+                    Variable: C [tipo: int] [Valor Calculado: 0] [Línea: 25, Col: 25]
+                Else [Línea: 26, Col: 13]
+                  LISTA_SENTENCIAS
+                    Asignacion [tipo: int] [Valor Calculado: 0]
+                      ID: medio [tipo: int] [Línea: 27, Col: 17]
+                      Variable: C [tipo: int] [Valor Calculado: 0] [Línea: 27, Col: 25]
+                    Asignacion [tipo: int] [Valor Calculado: 0]
+                      ID: menor [tipo: int] [Línea: 28, Col: 17]
+                      Variable: A [tipo: int] [Valor Calculado: 0] [Línea: 28, Col: 25]
+            Else [Línea: 30, Col: 9]
+              LISTA_SENTENCIAS
+                Asignacion [tipo: int] [Valor Calculado: 0]
+                  ID: mayor [tipo: int] [Línea: 31, Col: 13]
+                  Variable: C [tipo: int] [Valor Calculado: 0] [Línea: 31, Col: 21]
+                If [Línea: 32, Col: 13]
+                  EXPRESION_BINARIA: > [tipo: bool] [Valor Calculado: False] [Línea: 32, Col: 18]
+                    Variable: A [tipo: int] [Valor Calculado: 0] [Línea: 32, Col: 16]
+                    Variable: B [tipo: int] [Valor Calculado: 0] [Línea: 32, Col: 20]
+                  LISTA_SENTENCIAS
+                    Asignacion [tipo: int] [Valor Calculado: 0]
+                      ID: medio [tipo: int] [Línea: 33, Col: 17]
+                      Variable: A [tipo: int] [Valor Calculado: 0] [Línea: 33, Col: 25]
+                    Asignacion [tipo: int] [Valor Calculado: 0]
+                      ID: menor [tipo: int] [Línea: 34, Col: 17]
+                      Variable: B [tipo: int] [Valor Calculado: 0] [Línea: 34, Col: 25]
+                  Else [Línea: 35, Col: 13]
+                    LISTA_SENTENCIAS
+                      Asignacion [tipo: int] [Valor Calculado: 0]
+                        ID: medio [tipo: int] [Línea: 36, Col: 17]
+                        Variable: B [tipo: int] [Valor Calculado: 0] [Línea: 36, Col: 25]
+                      Asignacion [tipo: int] [Valor Calculado: 0]
+                        ID: menor [tipo: int] [Línea: 37, Col: 17]
+                        Variable: A [tipo: int] [Valor Calculado: 0] [Línea: 37, Col: 25]
     SALIDA
-      COUT: cout [Línea: 79, Col: 5]
-      OPERADOR_SALIDA: << [Línea: 79, Col: 10]
+      COUT: cout [Línea: 43, Col: 5]
+      OPERADOR_SALIDA: << [Línea: 43, Col: 10]
       SALIDA_EXPR
-        CADENA: "\nFabrica que mas produjo: " [Línea: 79, Col: 13]
+        CADENA: "Numeros en orden descendente: " [Línea: 43, Col: 13]
     SALIDA
-      COUT: cout [Línea: 80, Col: 5]
-      OPERADOR_SALIDA: << [Línea: 80, Col: 10]
+      COUT: cout [Línea: 44, Col: 5]
+      OPERADOR_SALIDA: << [Línea: 44, Col: 10]
       SALIDA_EXPR
-        Variable: clave_max [tipo: int] [Valor Calculado: 0] [Línea: 80, Col: 13]
+        Variable: mayor [tipo: int] [Valor Calculado: 0] [Línea: 44, Col: 13]
     SALIDA
-      COUT: cout [Línea: 81, Col: 5]
-      OPERADOR_SALIDA: << [Línea: 81, Col: 10]
+      COUT: cout [Línea: 45, Col: 5]
+      OPERADOR_SALIDA: << [Línea: 45, Col: 10]
       SALIDA_EXPR
-        CADENA: "\n" [Línea: 81, Col: 13]
+        CADENA: " " [Línea: 45, Col: 13]
     SALIDA
-      COUT: cout [Línea: 82, Col: 5]
-      OPERADOR_SALIDA: << [Línea: 82, Col: 10]
+      COUT: cout [Línea: 46, Col: 5]
+      OPERADOR_SALIDA: << [Línea: 46, Col: 10]
       SALIDA_EXPR
-        CADENA: "Total de produccion: " [Línea: 82, Col: 13]
+        Variable: medio [tipo: int] [Valor Calculado: 0] [Línea: 46, Col: 13]
     SALIDA
-      COUT: cout [Línea: 83, Col: 5]
-      OPERADOR_SALIDA: << [Línea: 83, Col: 10]
+      COUT: cout [Línea: 47, Col: 5]
+      OPERADOR_SALIDA: << [Línea: 47, Col: 10]
       SALIDA_EXPR
-        Variable: max_total [tipo: float] [Valor Calculado: 0] [Línea: 83, Col: 13]
+        CADENA: " " [Línea: 47, Col: 13]
     SALIDA
-      COUT: cout [Línea: 84, Col: 5]
-      OPERADOR_SALIDA: << [Línea: 84, Col: 10]
+      COUT: cout [Línea: 48, Col: 5]
+      OPERADOR_SALIDA: << [Línea: 48, Col: 10]
       SALIDA_EXPR
-        CADENA: "\n" [Línea: 84, Col: 13]
+        Variable: menor [tipo: int] [Valor Calculado: 0] [Línea: 48, Col: 13]
