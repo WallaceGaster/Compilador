@@ -153,11 +153,9 @@ Programa
                 Asignacion [tipo: float] [Valor Calculado: 0]
                   ID: produccion_julio [tipo: float] [Línea: 51, Col: 17]
                   Variable: produccion [tipo: float] [Valor Calculado: 0] [Línea: 51, Col: 36]
-            Asignacion [tipo: int] [Valor Calculado: 2]
+            Asignacion [tipo: int] [Valor Calculado: 1]
               ID: j [tipo: int] [Línea: 54, Col: 13]
-              EXPRESION_BINARIA: + [tipo: int] [Valor Calculado: 2] [Línea: 54, Col: 19]
-                Variable: j [tipo: int] [Valor Calculado: 1] [Línea: 54, Col: 17]
-                Literal: 1 [tipo: int] [Valor Calculado: 1] [Línea: 54, Col: 21]
+              Variable: j [tipo: int] [Valor Calculado: 1] [Línea: 54, Col: 17]
         SALIDA
           COUT: cout [Línea: 58, Col: 9]
           OPERADOR_SALIDA: << [Línea: 58, Col: 14]
