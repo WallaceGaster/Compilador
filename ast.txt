@@ -1,236 +1,241 @@
-Programa (id: 2950017546768)
-  Main (id: 2950017546816): main [Línea: 1, Col: 1]
-  Bloque (id: 2950017547056)
-    DeclaracionVariable (id: 2950017547104)
-      TIPO (id: 2950017541584): int [Línea: 2, Col: 5]
-      Variable (id: 2950017547152): N [Línea: 2, Col: 9]
-    DeclaracionVariable (id: 2950017547200)
-      TIPO (id: 2950017547248): float [Línea: 3, Col: 5]
-      Variable (id: 2950017541632): produccion [Línea: 3, Col: 11]
-    DeclaracionVariable (id: 2950017547296)
-      TIPO (id: 2950017547680): float [Línea: 4, Col: 5]
-      Variable (id: 2950017547344): total_fabrica [Línea: 4, Col: 11]
-    DeclaracionVariable (id: 2950017547392)
-      TIPO (id: 2950017547440): float [Línea: 5, Col: 5]
-      Variable (id: 2950017541728): max_total [Línea: 5, Col: 11]
-    DeclaracionVariable (id: 2950017547488)
-      TIPO (id: 2950017547536): int [Línea: 6, Col: 5]
-      Variable (id: 2950017547584): clave_max [Línea: 6, Col: 9]
-    DeclaracionVariable (id: 2950017541776)
-      TIPO (id: 2950017547632): int [Línea: 7, Col: 5]
-      Variable (id: 2950017547728): clave [Línea: 7, Col: 9]
-    DeclaracionVariable (id: 2950017547776)
-      TIPO (id: 2950017547824): int [Línea: 8, Col: 5]
-      Variable (id: 2950017542016): i [Línea: 8, Col: 9]
-    DeclaracionVariable (id: 2950017547872)
-      TIPO (id: 2950017547920): int [Línea: 9, Col: 5]
-      Variable (id: 2950017548064): j [Línea: 9, Col: 9]
-    DeclaracionVariable (id: 2950017547968)
-      TIPO (id: 2950017548016): float [Línea: 10, Col: 5]
-      Variable (id: 2950017548112): produccion_julio [Línea: 10, Col: 11]
-    DeclaracionVariable (id: 2950017548160)
-      TIPO (id: 2950017548208): float [Línea: 11, Col: 5]
-      Variable (id: 2950017541920): total_anual [Línea: 11, Col: 11]
-    Asignacion (id: 2950017548256)
-      ID (id: 2950017542160): max_total [Línea: 13, Col: 5]
-      Literal (id: 2950017542208): 0 [Línea: 13, Col: 17]
-    Asignacion (id: 2950017542256)
-      ID (id: 2950017542736): total_anual [Línea: 14, Col: 5]
-      Literal (id: 2950017542880): 0 [Línea: 14, Col: 19]
-    Asignacion (id: 2950017543024)
-      ID (id: 2950017543216): i [Línea: 15, Col: 5]
-      Literal (id: 2950017539856): 1 [Línea: 15, Col: 9]
-    SALIDA (id: 2950017543360)
-      COUT (id: 2950017540000): cout [Línea: 18, Col: 5]
-      OPERADOR_SALIDA (id: 2950017540864): << [Línea: 18, Col: 10]
-      SALIDA_EXPR (id: 2950017541200)
-        CADENA (id: 2950017541248): "Ingresa cuantas fabricas se colocaran: " [Línea: 18, Col: 13]
-    ENTRADA (id: 2950017541296)
-      CIN (id: 2950017543408): cin [Línea: 19, Col: 5]
-      OPERADOR_ENTRADA (id: 2950017540576): >> [Línea: 19, Col: 9]
-      ID (id: 2950017540240): N [Línea: 19, Col: 12]
-    SALIDA (id: 2950017541392)
-      COUT (id: 2950017540912): cout [Línea: 20, Col: 5]
-      OPERADOR_SALIDA (id: 2950017541488): << [Línea: 20, Col: 10]
-      SALIDA_EXPR (id: 2950017541536)
-        Variable (id: 2950017541872): N [Línea: 20, Col: 13]
-    While (id: 2950017541680) [Línea: 23, Col: 5]
-      OperacionLogica (id: 2950017542064): && [Línea: 23, Col: 18]
-        EXPRESION_BINARIA (id: 2950017542304): <= [Línea: 23, Col: 13]
-          Variable (id: 2950017541968): i [Línea: 23, Col: 11]
-          Variable (id: 2950017541824): N [Línea: 23, Col: 16]
-        EXPRESION_BINARIA (id: 2950017542496): <= [Línea: 23, Col: 23]
-          Variable (id: 2950017542112): N [Línea: 23, Col: 21]
-          Literal (id: 2950017542352): 100 [Línea: 23, Col: 26]
-      LISTA_SENTENCIAS (id: 2950017542448)
-        Asignacion (id: 2950017542400)
-          ID (id: 2950017542544): clave [Línea: 24, Col: 9]
-          Literal (id: 2950017542592): 0 [Línea: 24, Col: 17]
-        Asignacion (id: 2950017542640)
-          ID (id: 2950017542832): total_anual [Línea: 25, Col: 9]
-          Literal (id: 2950017542688): 0 [Línea: 25, Col: 23]
-        SALIDA (id: 2950017542976)
-          COUT (id: 2950017542784): cout [Línea: 27, Col: 9]
-          OPERADOR_SALIDA (id: 2950017539952): << [Línea: 27, Col: 14]
-          SALIDA_EXPR (id: 2950017542928)
-            CADENA (id: 2950017543168): "Ingresa la clave de la fabrica: " [Línea: 27, Col: 17]
-        ENTRADA (id: 2950017543072)
-          CIN (id: 2950017543456): cin [Línea: 29, Col: 9]
-          OPERADOR_ENTRADA (id: 2950017543264): >> [Línea: 29, Col: 13]
-          ID (id: 2950017543312): clave [Línea: 29, Col: 16]
-        SALIDA (id: 2950017540144)
-          COUT (id: 2950126157904): cout [Línea: 30, Col: 9]
-          OPERADOR_SALIDA (id: 2950126157952): << [Línea: 30, Col: 14]
-          SALIDA_EXPR (id: 2950126158000)
-            Variable (id: 2950126158048): clave [Línea: 30, Col: 17]
-        SALIDA (id: 2950126158096)
-          COUT (id: 2950126158144): cout [Línea: 31, Col: 9]
-          OPERADOR_SALIDA (id: 2950126158192): << [Línea: 31, Col: 14]
-          SALIDA_EXPR (id: 2950126158240)
-            CADENA (id: 2950126158288): "\n" [Línea: 31, Col: 17]
-        Asignacion (id: 2950126158336)
-          ID (id: 2950126158384): j [Línea: 34, Col: 9]
-          Literal (id: 2950126158432): 1 [Línea: 34, Col: 13]
-        While (id: 2950126158480) [Línea: 37, Col: 9]
-          EXPRESION_BINARIA (id: 2950126158624): <= [Línea: 37, Col: 17]
-            Variable (id: 2950126158528): j [Línea: 37, Col: 15]
-            Literal (id: 2950126158576): 12 [Línea: 37, Col: 20]
-          LISTA_SENTENCIAS (id: 2950126158672)
-            SALIDA (id: 2950126158720)
-              COUT (id: 2950126158768): cout [Línea: 38, Col: 5]
-              OPERADOR_SALIDA (id: 2950126158816): << [Línea: 38, Col: 10]
-              SALIDA_EXPR (id: 2950126158864)
-                CADENA (id: 2950126158912): "Ingresa la produccion de la fabrica " [Línea: 38, Col: 13]
-            SALIDA (id: 2950126158960)
-              COUT (id: 2950126159008): cout [Línea: 39, Col: 13]
-              OPERADOR_SALIDA (id: 2950126159056): << [Línea: 39, Col: 18]
-              SALIDA_EXPR (id: 2950126159104)
-                Variable (id: 2950126159152): clave [Línea: 39, Col: 21]
-            SALIDA (id: 2950126159200)
-              COUT (id: 2950126159248): cout [Línea: 40, Col: 13]
-              OPERADOR_SALIDA (id: 2950126159296): << [Línea: 40, Col: 18]
-              SALIDA_EXPR (id: 2950126159344)
-                CADENA (id: 2950126159392): ": " [Línea: 40, Col: 21]
-            ENTRADA (id: 2950126159440)
-              CIN (id: 2950126159488): cin [Línea: 41, Col: 13]
-              OPERADOR_ENTRADA (id: 2950126159536): >> [Línea: 41, Col: 17]
-              ID (id: 2950126159584): produccion [Línea: 41, Col: 20]
-            SALIDA (id: 2950126159632)
-              COUT (id: 2950126159680): cout [Línea: 42, Col: 13]
-              OPERADOR_SALIDA (id: 2950126159728): << [Línea: 42, Col: 18]
-              SALIDA_EXPR (id: 2950126159776)
-                Variable (id: 2950126159824): produccion [Línea: 42, Col: 21]
-            SALIDA (id: 2950126159872)
-              COUT (id: 2950126159920): cout [Línea: 43, Col: 13]
-              OPERADOR_SALIDA (id: 2950126159968): << [Línea: 43, Col: 18]
-              SALIDA_EXPR (id: 2950126160016)
-                CADENA (id: 2950126160064): "\n" [Línea: 43, Col: 21]
-            Asignacion (id: 2950126160112)
-              ID (id: 2950126160160): total_anual [Línea: 44, Col: 13]
-              EXPRESION_BINARIA (id: 2950126160304): + [Línea: 44, Col: 39]
-                Variable (id: 2950126160208): total_anual [Línea: 44, Col: 27]
-                Variable (id: 2950126160256): produccion [Línea: 44, Col: 41]
-            If (id: 2950126160352) [Línea: 47, Col: 13]
-              EXPRESION_BINARIA (id: 2950126160496): == [Línea: 47, Col: 18]
-                Variable (id: 2950126160400): j [Línea: 47, Col: 16]
-                Literal (id: 2950126160448): 7 [Línea: 47, Col: 21]
-              LISTA_SENTENCIAS (id: 2950126160544)
-                Asignacion (id: 2950126160592)
-                  ID (id: 2950126160640): produccion_julio [Línea: 48, Col: 17]
-                  Variable (id: 2950126160688): produccion [Línea: 48, Col: 36]
-            Asignacion (id: 2950126160736)
-              ID (id: 2950126160784): j [Línea: 51, Col: 13]
-              EXPRESION_BINARIA (id: 2950126160928): + [Línea: 51, Col: 19]
-                Variable (id: 2950126160832): j [Línea: 51, Col: 17]
-                Literal (id: 2950126160880): 1 [Línea: 51, Col: 21]
-        SALIDA (id: 2950126160976)
-          COUT (id: 2950126161024): cout [Línea: 55, Col: 9]
-          OPERADOR_SALIDA (id: 2950126161072): << [Línea: 55, Col: 14]
-          SALIDA_EXPR (id: 2950126161120)
-            CADENA (id: 2950126161168): "Fabrica " [Línea: 55, Col: 17]
-        SALIDA (id: 2950126161216)
-          COUT (id: 2950126161264): cout [Línea: 56, Col: 9]
-          OPERADOR_SALIDA (id: 2950126161312): << [Línea: 56, Col: 14]
-          SALIDA_EXPR (id: 2950126161360)
-            Variable (id: 2950126161408): clave [Línea: 56, Col: 17]
-        SALIDA (id: 2950126161456)
-          COUT (id: 2950126161504): cout [Línea: 57, Col: 9]
-          OPERADOR_SALIDA (id: 2950126161552): << [Línea: 57, Col: 14]
-          SALIDA_EXPR (id: 2950126161600)
-            CADENA (id: 2950126161648): ": Total anual = " [Línea: 57, Col: 17]
-        SALIDA (id: 2950126161696)
-          COUT (id: 2950126161744): cout [Línea: 58, Col: 9]
-          OPERADOR_SALIDA (id: 2950126161792): << [Línea: 58, Col: 14]
-          SALIDA_EXPR (id: 2950126161840)
-            Variable (id: 2950126161888): total_anual [Línea: 58, Col: 17]
-        SALIDA (id: 2950126161936)
-          COUT (id: 2950126161984): cout [Línea: 59, Col: 9]
-          OPERADOR_SALIDA (id: 2950126162032): << [Línea: 59, Col: 14]
-          SALIDA_EXPR (id: 2950126162080)
-            CADENA (id: 2950126162128): "\n" [Línea: 59, Col: 17]
-        If (id: 2950126162176) [Línea: 62, Col: 9]
-          EXPRESION_BINARIA (id: 2950126162320): > [Línea: 62, Col: 24]
-            Variable (id: 2950126162224): total_anual [Línea: 62, Col: 12]
-            Variable (id: 2950126162272): max_total [Línea: 62, Col: 26]
-          LISTA_SENTENCIAS (id: 2949973250112)
-            Asignacion (id: 2950017493296)
-              ID (id: 2950017492960): max_total [Línea: 63, Col: 13]
-              Variable (id: 2950017492912): total_anual [Línea: 63, Col: 25]
-            Asignacion (id: 2950017490464)
-              ID (id: 2950017493008): clave_max [Línea: 64, Col: 13]
-              Variable (id: 2950126162368): clave [Línea: 64, Col: 25]
-        If (id: 2950126162416) [Línea: 68, Col: 9]
-          EXPRESION_BINARIA (id: 2950126162560): > [Línea: 68, Col: 29]
-            Variable (id: 2950126162464): produccion_julio [Línea: 68, Col: 12]
-            Literal (id: 2950126162512): 3000000 [Línea: 68, Col: 31]
-          LISTA_SENTENCIAS (id: 2950126162608)
-            SALIDA (id: 2950126162656)
-              COUT (id: 2950126162704): cout [Línea: 69, Col: 13]
-              OPERADOR_SALIDA (id: 2950126162752): << [Línea: 69, Col: 18]
-              SALIDA_EXPR (id: 2950126162800)
-                CADENA (id: 2950126162848): "Fabrica con clave " [Línea: 69, Col: 21]
-            SALIDA (id: 2950126162896)
-              COUT (id: 2950126162944): cout [Línea: 70, Col: 13]
-              OPERADOR_SALIDA (id: 2950126162992): << [Línea: 70, Col: 18]
-              SALIDA_EXPR (id: 2950126163040)
-                Variable (id: 2950126163088): clave [Línea: 70, Col: 21]
-            SALIDA (id: 2950126163136)
-              COUT (id: 2950126163184): cout [Línea: 71, Col: 13]
-              OPERADOR_SALIDA (id: 2950126163232): << [Línea: 71, Col: 18]
-              SALIDA_EXPR (id: 2950126163280)
-                CADENA (id: 2950126163328): " supero $3,000,000 en julio\n" [Línea: 71, Col: 21]
-        Asignacion (id: 2950126163376)
-          ID (id: 2950126163424): i [Línea: 74, Col: 9]
-          EXPRESION_BINARIA (id: 2950126163568): + [Línea: 74, Col: 15]
-            Variable (id: 2950126163472): i [Línea: 74, Col: 13]
-            Literal (id: 2950126163520): 1 [Línea: 74, Col: 17]
-    SALIDA (id: 2950126163616)
-      COUT (id: 2950126163664): cout [Línea: 78, Col: 5]
-      OPERADOR_SALIDA (id: 2950126163712): << [Línea: 78, Col: 10]
-      SALIDA_EXPR (id: 2950126163760)
-        CADENA (id: 2950126163808): "\nFabrica que mas produjo: " [Línea: 78, Col: 13]
-    SALIDA (id: 2950126163856)
-      COUT (id: 2950126163904): cout [Línea: 79, Col: 5]
-      OPERADOR_SALIDA (id: 2950126163952): << [Línea: 79, Col: 10]
-      SALIDA_EXPR (id: 2950126164000)
-        Variable (id: 2950126164048): clave_max [Línea: 79, Col: 13]
-    SALIDA (id: 2950126164096)
-      COUT (id: 2950126164144): cout [Línea: 80, Col: 5]
-      OPERADOR_SALIDA (id: 2950126164192): << [Línea: 80, Col: 10]
-      SALIDA_EXPR (id: 2950126164240)
-        CADENA (id: 2950126164288): "\n" [Línea: 80, Col: 13]
-    SALIDA (id: 2950126164336)
-      COUT (id: 2950126164384): cout [Línea: 81, Col: 5]
-      OPERADOR_SALIDA (id: 2950126164432): << [Línea: 81, Col: 10]
-      SALIDA_EXPR (id: 2950126164480)
-        CADENA (id: 2950126164528): "Total de produccion: " [Línea: 81, Col: 13]
-    SALIDA (id: 2950126164576)
-      COUT (id: 2950126164624): cout [Línea: 82, Col: 5]
-      OPERADOR_SALIDA (id: 2950126164672): << [Línea: 82, Col: 10]
-      SALIDA_EXPR (id: 2950126164720)
-        Variable (id: 2950126164768): max_total [Línea: 82, Col: 13]
-    SALIDA (id: 2950126164816)
-      COUT (id: 2950126164864): cout [Línea: 83, Col: 5]
-      OPERADOR_SALIDA (id: 2950126164912): << [Línea: 83, Col: 10]
-      SALIDA_EXPR (id: 2950126164960)
-        CADENA (id: 2950126165008): "\n" [Línea: 83, Col: 13]
+Programa (id: 2670348579424)
+  Main (id: 2670348582592): main [Línea: 1, Col: 1]
+  Bloque (id: 2670348579616)
+    DeclaracionVariable (id: 2670348579568)
+      TIPO (id: 2670348579712): int [Línea: 2, Col: 5]
+      Variable (id: 2670348579664): N [Línea: 2, Col: 9]
+    DeclaracionVariable (id: 2670348579808)
+      TIPO (id: 2670348579760): float [Línea: 3, Col: 5]
+      Variable (id: 2670348579904): produccion [Línea: 3, Col: 11]
+    DeclaracionVariable (id: 2670348579856)
+      TIPO (id: 2670348580000): float [Línea: 4, Col: 5]
+      Variable (id: 2670348579952): total_fabrica [Línea: 4, Col: 11]
+    DeclaracionVariable (id: 2670348580144)
+      TIPO (id: 2670348580192): float [Línea: 5, Col: 5]
+      Variable (id: 2670348580240): max_total [Línea: 5, Col: 11]
+    DeclaracionVariable (id: 2670348580288)
+      TIPO (id: 2670348580672): int [Línea: 6, Col: 5]
+      Variable (id: 2670348580624): clave_max [Línea: 6, Col: 9]
+    DeclaracionVariable (id: 2670348580384)
+      TIPO (id: 2670348580432): int [Línea: 7, Col: 5]
+      Variable (id: 2670348580480): clave [Línea: 7, Col: 9]
+    DeclaracionVariable (id: 2670348580528)
+      TIPO (id: 2670348580336): int [Línea: 8, Col: 5]
+      Variable (id: 2670348580576): i [Línea: 8, Col: 9]
+    DeclaracionVariable (id: 2670348580720)
+      TIPO (id: 2670348580768): int [Línea: 9, Col: 5]
+      Variable (id: 2670348580816): j [Línea: 9, Col: 9]
+    DeclaracionVariable (id: 2670348580864)
+      TIPO (id: 2670348580912): float [Línea: 10, Col: 5]
+      Variable (id: 2670348580960): produccion_julio [Línea: 10, Col: 11]
+    DeclaracionVariable (id: 2670348581008)
+      TIPO (id: 2670348581056): float [Línea: 11, Col: 5]
+      Variable (id: 2670348581344): total_anual [Línea: 11, Col: 11]
+    Asignacion (id: 2670348581296)
+      ID (id: 2670348581152): max_total [Línea: 13, Col: 5]
+      Literal (id: 2670348581200): 0 [Línea: 13, Col: 17]
+    Asignacion (id: 2670348581248)
+      ID (id: 2670348581104): total_anual [Línea: 14, Col: 5]
+      Literal (id: 2670348581440): 0 [Línea: 14, Col: 19]
+    Asignacion (id: 2670348581392)
+      ID (id: 2670348581488): i [Línea: 15, Col: 5]
+      Literal (id: 2670348581536): 1 [Línea: 15, Col: 9]
+    SALIDA (id: 2670348581824)
+      COUT (id: 2670348581776): cout [Línea: 18, Col: 5]
+      OPERADOR_SALIDA (id: 2670348581632): << [Línea: 18, Col: 10]
+      SALIDA_EXPR (id: 2670348581680)
+        CADENA (id: 2670348581728): "Ingresa cuantas fabricas se colocaran: " [Línea: 18, Col: 13]
+    ENTRADA (id: 2670348581584)
+      CIN (id: 2670348581920): cin [Línea: 19, Col: 5]
+      OPERADOR_ENTRADA (id: 2670348581872): >> [Línea: 19, Col: 9]
+      ID (id: 2670348582016): N [Línea: 19, Col: 12]
+    SALIDA (id: 2670348582064)
+      COUT (id: 2670348582112): cout [Línea: 20, Col: 5]
+      OPERADOR_SALIDA (id: 2670348582160): << [Línea: 20, Col: 10]
+      SALIDA_EXPR (id: 2670348582208)
+        Variable (id: 2670348582256): N [Línea: 20, Col: 13]
+    SALIDA (id: 2670348582400)
+      COUT (id: 2670348582352): cout [Línea: 21, Col: 5]
+      OPERADOR_SALIDA (id: 2670348582448): << [Línea: 21, Col: 10]
+      SALIDA_EXPR (id: 2670348582496)
+        CADENA (id: 2670348573952): "\n" [Línea: 21, Col: 13]
+    While (id: 2670348582688) [Línea: 24, Col: 5]
+      OperacionLogica (id: 2670348648672): && [Línea: 24, Col: 18]
+        EXPRESION_BINARIA (id: 2670348648624): <= [Línea: 24, Col: 13]
+          Variable (id: 2670348648528): i [Línea: 24, Col: 11]
+          Variable (id: 2670348648576): N [Línea: 24, Col: 16]
+        EXPRESION_BINARIA (id: 2670348648816): <= [Línea: 24, Col: 23]
+          Variable (id: 2670348648720): N [Línea: 24, Col: 21]
+          Literal (id: 2670348648768): 100 [Línea: 24, Col: 26]
+      LISTA_SENTENCIAS (id: 2670348648864)
+        Asignacion (id: 2670348648912)
+          ID (id: 2670348648960): clave [Línea: 25, Col: 9]
+          Literal (id: 2670348649008): 0 [Línea: 25, Col: 17]
+        Asignacion (id: 2670348649056)
+          ID (id: 2670348649104): total_anual [Línea: 26, Col: 9]
+          Literal (id: 2670348649152): 0 [Línea: 26, Col: 23]
+        SALIDA (id: 2670348649200)
+          COUT (id: 2670348649248): cout [Línea: 28, Col: 9]
+          OPERADOR_SALIDA (id: 2670348649296): << [Línea: 28, Col: 14]
+          SALIDA_EXPR (id: 2670348649344)
+            CADENA (id: 2670348649392): "Ingresa la clave de la fabrica: " [Línea: 28, Col: 17]
+        ENTRADA (id: 2670348649440)
+          CIN (id: 2670348649488): cin [Línea: 30, Col: 9]
+          OPERADOR_ENTRADA (id: 2670348649536): >> [Línea: 30, Col: 13]
+          ID (id: 2670348649584): clave [Línea: 30, Col: 16]
+        SALIDA (id: 2670348649632)
+          COUT (id: 2670348649680): cout [Línea: 31, Col: 9]
+          OPERADOR_SALIDA (id: 2670348649728): << [Línea: 31, Col: 14]
+          SALIDA_EXPR (id: 2670348649776)
+            Variable (id: 2670348649824): clave [Línea: 31, Col: 17]
+        SALIDA (id: 2670348649872)
+          COUT (id: 2670348649920): cout [Línea: 32, Col: 9]
+          OPERADOR_SALIDA (id: 2670348649968): << [Línea: 32, Col: 14]
+          SALIDA_EXPR (id: 2670348650016)
+            CADENA (id: 2670348650064): "\n" [Línea: 32, Col: 17]
+        Asignacion (id: 2670348650112)
+          ID (id: 2670348650160): j [Línea: 35, Col: 9]
+          Literal (id: 2670348650208): 1 [Línea: 35, Col: 13]
+        While (id: 2670348650256) [Línea: 38, Col: 9]
+          EXPRESION_BINARIA (id: 2670348650400): <= [Línea: 38, Col: 17]
+            Variable (id: 2670348650304): j [Línea: 38, Col: 15]
+            Literal (id: 2670348650352): 12 [Línea: 38, Col: 20]
+          LISTA_SENTENCIAS (id: 2670348650448)
+            SALIDA (id: 2670348650496)
+              COUT (id: 2670348650544): cout [Línea: 39, Col: 5]
+              OPERADOR_SALIDA (id: 2670348650592): << [Línea: 39, Col: 10]
+              SALIDA_EXPR (id: 2670348650640)
+                CADENA (id: 2670348650688): "Ingresa la produccion de la fabrica " [Línea: 39, Col: 13]
+            SALIDA (id: 2670348650736)
+              COUT (id: 2670348650784): cout [Línea: 40, Col: 13]
+              OPERADOR_SALIDA (id: 2670348650832): << [Línea: 40, Col: 18]
+              SALIDA_EXPR (id: 2670348650880)
+                Variable (id: 2670348650928): clave [Línea: 40, Col: 21]
+            SALIDA (id: 2670348650976)
+              COUT (id: 2670348651024): cout [Línea: 41, Col: 13]
+              OPERADOR_SALIDA (id: 2670348651072): << [Línea: 41, Col: 18]
+              SALIDA_EXPR (id: 2670348651120)
+                CADENA (id: 2670348651168): ": " [Línea: 41, Col: 21]
+            ENTRADA (id: 2670348651216)
+              CIN (id: 2670348651264): cin [Línea: 42, Col: 13]
+              OPERADOR_ENTRADA (id: 2670348651312): >> [Línea: 42, Col: 17]
+              ID (id: 2670348651360): produccion [Línea: 42, Col: 20]
+            SALIDA (id: 2670348651408)
+              COUT (id: 2670348651456): cout [Línea: 43, Col: 13]
+              OPERADOR_SALIDA (id: 2670348651504): << [Línea: 43, Col: 18]
+              SALIDA_EXPR (id: 2670348651552)
+                Variable (id: 2670348651600): produccion [Línea: 43, Col: 21]
+            SALIDA (id: 2670348651648)
+              COUT (id: 2670348651696): cout [Línea: 44, Col: 13]
+              OPERADOR_SALIDA (id: 2670348651744): << [Línea: 44, Col: 18]
+              SALIDA_EXPR (id: 2670348651792)
+                CADENA (id: 2670348651840): "\n" [Línea: 44, Col: 21]
+            Asignacion (id: 2670348651888)
+              ID (id: 2670348651936): total_anual [Línea: 45, Col: 13]
+              EXPRESION_BINARIA (id: 2670348652080): + [Línea: 45, Col: 39]
+                Variable (id: 2670348651984): total_anual [Línea: 45, Col: 27]
+                Variable (id: 2670348652032): produccion [Línea: 45, Col: 41]
+            If (id: 2670348652128) [Línea: 48, Col: 13]
+              EXPRESION_BINARIA (id: 2670348652272): == [Línea: 48, Col: 18]
+                Variable (id: 2670348652176): j [Línea: 48, Col: 16]
+                Literal (id: 2670348652224): 7 [Línea: 48, Col: 21]
+              LISTA_SENTENCIAS (id: 2670348652320)
+                Asignacion (id: 2670348652368)
+                  ID (id: 2670348652416): produccion_julio [Línea: 49, Col: 17]
+                  Variable (id: 2670348652464): produccion [Línea: 49, Col: 36]
+            Asignacion (id: 2670348652512)
+              ID (id: 2670348652560): j [Línea: 52, Col: 13]
+              EXPRESION_BINARIA (id: 2670348652704): + [Línea: 52, Col: 19]
+                Variable (id: 2670348652608): j [Línea: 52, Col: 17]
+                Literal (id: 2670348652656): 1 [Línea: 52, Col: 21]
+        SALIDA (id: 2670348652752)
+          COUT (id: 2670348652800): cout [Línea: 56, Col: 9]
+          OPERADOR_SALIDA (id: 2670348652848): << [Línea: 56, Col: 14]
+          SALIDA_EXPR (id: 2670348652896)
+            CADENA (id: 2670348652944): "Fabrica " [Línea: 56, Col: 17]
+        SALIDA (id: 2670348652992)
+          COUT (id: 2670348653040): cout [Línea: 57, Col: 9]
+          OPERADOR_SALIDA (id: 2670348653088): << [Línea: 57, Col: 14]
+          SALIDA_EXPR (id: 2670348653136)
+            Variable (id: 2670348653184): clave [Línea: 57, Col: 17]
+        SALIDA (id: 2670348653232)
+          COUT (id: 2670348653280): cout [Línea: 58, Col: 9]
+          OPERADOR_SALIDA (id: 2670348653328): << [Línea: 58, Col: 14]
+          SALIDA_EXPR (id: 2670348653376)
+            CADENA (id: 2670348653424): ": Total anual = " [Línea: 58, Col: 17]
+        SALIDA (id: 2670348653472)
+          COUT (id: 2670348653520): cout [Línea: 59, Col: 9]
+          OPERADOR_SALIDA (id: 2670348653568): << [Línea: 59, Col: 14]
+          SALIDA_EXPR (id: 2670348653616)
+            Variable (id: 2670348653664): total_anual [Línea: 59, Col: 17]
+        SALIDA (id: 2670348653712)
+          COUT (id: 2670348653760): cout [Línea: 60, Col: 9]
+          OPERADOR_SALIDA (id: 2670348653808): << [Línea: 60, Col: 14]
+          SALIDA_EXPR (id: 2670348653856)
+            CADENA (id: 2670348653904): "\n" [Línea: 60, Col: 17]
+        If (id: 2670348653952) [Línea: 63, Col: 9]
+          EXPRESION_BINARIA (id: 2670348654096): > [Línea: 63, Col: 24]
+            Variable (id: 2670348654000): total_anual [Línea: 63, Col: 12]
+            Variable (id: 2670348654048): max_total [Línea: 63, Col: 26]
+          LISTA_SENTENCIAS (id: 2670348654144)
+            Asignacion (id: 2670348654192)
+              ID (id: 2670348654240): max_total [Línea: 64, Col: 13]
+              Variable (id: 2670348654288): total_anual [Línea: 64, Col: 25]
+            Asignacion (id: 2670348654336)
+              ID (id: 2670348654384): clave_max [Línea: 65, Col: 13]
+              Variable (id: 2670348654432): clave [Línea: 65, Col: 25]
+        If (id: 2670348654480) [Línea: 69, Col: 9]
+          EXPRESION_BINARIA (id: 2670348654624): > [Línea: 69, Col: 29]
+            Variable (id: 2670348654528): produccion_julio [Línea: 69, Col: 12]
+            Literal (id: 2670348654576): 3000000 [Línea: 69, Col: 31]
+          LISTA_SENTENCIAS (id: 2670348654672)
+            SALIDA (id: 2670348654720)
+              COUT (id: 2670348654768): cout [Línea: 70, Col: 13]
+              OPERADOR_SALIDA (id: 2670348654816): << [Línea: 70, Col: 18]
+              SALIDA_EXPR (id: 2670348654864)
+                CADENA (id: 2670348654912): "Fabrica con clave " [Línea: 70, Col: 21]
+            SALIDA (id: 2670348654960)
+              COUT (id: 2670348655008): cout [Línea: 71, Col: 13]
+              OPERADOR_SALIDA (id: 2670348655056): << [Línea: 71, Col: 18]
+              SALIDA_EXPR (id: 2670348655104)
+                Variable (id: 2670348655152): clave [Línea: 71, Col: 21]
+            SALIDA (id: 2670348655200)
+              COUT (id: 2670348655248): cout [Línea: 72, Col: 13]
+              OPERADOR_SALIDA (id: 2670348655296): << [Línea: 72, Col: 18]
+              SALIDA_EXPR (id: 2670348655344)
+                CADENA (id: 2670348655392): " supero $3,000,000 en julio\n" [Línea: 72, Col: 21]
+        Asignacion (id: 2670348655440)
+          ID (id: 2670348655488): i [Línea: 75, Col: 9]
+          EXPRESION_BINARIA (id: 2670348655632): + [Línea: 75, Col: 15]
+            Variable (id: 2670348655536): i [Línea: 75, Col: 13]
+            Literal (id: 2670348655584): 1 [Línea: 75, Col: 17]
+    SALIDA (id: 2670348655680)
+      COUT (id: 2670348655728): cout [Línea: 79, Col: 5]
+      OPERADOR_SALIDA (id: 2670348655776): << [Línea: 79, Col: 10]
+      SALIDA_EXPR (id: 2670348655824)
+        CADENA (id: 2670348655872): "\nFabrica que mas produjo: " [Línea: 79, Col: 13]
+    SALIDA (id: 2670348655920)
+      COUT (id: 2670348655968): cout [Línea: 80, Col: 5]
+      OPERADOR_SALIDA (id: 2670348656016): << [Línea: 80, Col: 10]
+      SALIDA_EXPR (id: 2670348656064)
+        Variable (id: 2670348656112): clave_max [Línea: 80, Col: 13]
+    SALIDA (id: 2670348656160)
+      COUT (id: 2670348656208): cout [Línea: 81, Col: 5]
+      OPERADOR_SALIDA (id: 2670348656256): << [Línea: 81, Col: 10]
+      SALIDA_EXPR (id: 2670348656304)
+        CADENA (id: 2670348656352): "\n" [Línea: 81, Col: 13]
+    SALIDA (id: 2670348656400)
+      COUT (id: 2670348656448): cout [Línea: 82, Col: 5]
+      OPERADOR_SALIDA (id: 2670348656496): << [Línea: 82, Col: 10]
+      SALIDA_EXPR (id: 2670348656544)
+        CADENA (id: 2670348656592): "Total de produccion: " [Línea: 82, Col: 13]
+    SALIDA (id: 2670348656640)
+      COUT (id: 2670348656688): cout [Línea: 83, Col: 5]
+      OPERADOR_SALIDA (id: 2670348656736): << [Línea: 83, Col: 10]
+      SALIDA_EXPR (id: 2670348656784)
+        Variable (id: 2670348656832): max_total [Línea: 83, Col: 13]
+    SALIDA (id: 2670348656880)
+      COUT (id: 2670348656928): cout [Línea: 84, Col: 5]
+      OPERADOR_SALIDA (id: 2670348656976): << [Línea: 84, Col: 10]
+      SALIDA_EXPR (id: 2670348657024)
+        CADENA (id: 2670348657072): "\n" [Línea: 84, Col: 13]

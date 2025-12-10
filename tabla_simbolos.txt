@@ -1,13 +1,13 @@
 TABLA DE SÍMBOLOS:
 Nombre	Tipo	Líneas	Dirección
 --------------------------------------------------
-N	int	2, 20, 23, 23	1
-produccion	float	3, 41, 42, 44, 48	2
+N	int	2, 20, 24, 24	1
+produccion	float	3, 42, 43, 45, 49	2
 total_fabrica	float	4	3
-max_total	float	5, 13, 62, 63, 82	4
-clave_max	int	6, 64, 79	5
-clave	int	7, 24, 29, 30, 39, 56, 64, 70	6
-i	int	8, 15, 23, 74, 74	7
-j	int	9, 34, 37, 47, 51, 51	8
-produccion_julio	float	10, 48, 68	9
-total_anual	float	11, 14, 25, 44, 44, 58, 62, 63	10
+max_total	float	5, 13, 63, 64, 83	4
+clave_max	int	6, 65, 80	5
+clave	int	7, 25, 30, 31, 40, 57, 65, 71	6
+i	int	8, 15, 24, 75, 75	7
+j	int	9, 35, 38, 48, 52, 52	8
+produccion_julio	float	10, 49, 69	9
+total_anual	float	11, 14, 26, 45, 45, 59, 63, 64	10

@@ -24,7 +24,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import QThread, pyqtSignal
 
 class PInterpreterThread(QThread):
-    """Hilo para ejecutar el intérprete de código P sin bloquear la interfaz"""
+    """Hilo para ejecutar el intérprete de código sin bloquear la interfaz"""
     output_signal = pyqtSignal(str)
     input_request_signal = pyqtSignal(str)
     execution_finished = pyqtSignal()
@@ -53,7 +53,7 @@ class PInterpreterThread(QThread):
         self.waiting_for_input = False
 
 class PInterpreter:
-    """Intérprete de código P con soporte completo y parsing corregido"""
+    """Intérprete de código con soporte completo y parsing corregido"""
     
     def __init__(self, code_text, thread):
         self.code_text = code_text
@@ -77,7 +77,7 @@ class PInterpreter:
         self.next_output_type = None  # 'string', 'number', o None
         
     def parse_code(self):
-        """Parsea el código P en instrucciones"""
+        """Parsea el código en instrucciones"""
         lines = self.code_text.strip().split('\n')
         for line in lines:
             line = line.strip()
@@ -2049,7 +2049,7 @@ class CodeGenerator:
         self.string_counter = 0
         
     def generate(self, ast_node):
-        """Genera código P ejecutable a partir del AST anotado"""
+        """Genera código ejecutable a partir del AST anotado"""
         self.code = []
         self.var_addresses = {}
         self.current_address = 0
@@ -2057,7 +2057,7 @@ class CodeGenerator:
         self.string_data = []
         self.string_counter = 0
         
-        # Inicialización estándar del código P
+        # Inicialización estándar del código
         self.emit("LD  6,0(0)")  # Inicializar puntero de pila
         self.emit("ST  0,0(0)")   # Inicialización
         
@@ -2866,7 +2866,7 @@ class CompilerIDE(QMainWindow):
         self.tabs.addTab(self.ast_anotado_viewer, "Árbol AST Anotado")
         self.tabs.addTab(self.intermediate_code, "Código Intermedio")
         self.tabs.addTab(self.symbol_table, "Tabla de Símbolos")
-        self.tabs.addTab(self.execution_output, "Ejecución P")
+        self.tabs.addTab(self.execution_output, "Ejecución")
         self.tabs.addTab(self.error_list, "Errores")
         
         # Configuración del panel de pestañas
@@ -2907,7 +2907,7 @@ class CompilerIDE(QMainWindow):
         compile_menu.addAction("Generar Código Intermedio", self.run_intermediate)
         compile_menu.addAction("Ejecutar", self.run_execution)
         execute_menu = menubar.addMenu("Ejecutar")
-        execute_menu.addAction("Ejecutar Código P", self.execute_p_code)
+        execute_menu.addAction("Ejecutar Código", self.execute_p_code)
         execute_menu.addAction("Detener Ejecución", self.stop_execution)
     
     # Función para crear la barra de herramientas
@@ -2970,19 +2970,19 @@ class CompilerIDE(QMainWindow):
         self.interpreter_thread.error_signal.connect(self.handle_interpreter_error)
         
         # Configurar botón de detener
-        self.statusBar().showMessage("Ejecutando código P...")
+        self.statusBar().showMessage("Ejecutando código...")
         
         # Iniciar ejecución
         self.interpreter_thread.start()
         
         # Cambiar a pestaña de ejecución
         for i in range(self.tabs.count()):
-            if self.tabs.tabText(i) == "Ejecución P":
+            if self.tabs.tabText(i) == "Ejecución":
                 self.tabs.setCurrentIndex(i)
                 break
     
     def stop_execution(self):
-        """Detiene la ejecución del código P"""
+        """Detiene la ejecución del código"""
         if self.interpreter_thread and self.interpreter_thread.isRunning():
             self.interpreter_thread.should_stop = True
             self.interpreter_thread.wait()
@@ -3330,7 +3330,7 @@ class CompilerIDE(QMainWindow):
             # Crear generador de código
             generator = CodeGenerator()
 
-            # Generar código P ejecutable
+            # Generar código ejecutable
             codigo_p = generator.generate(self.ast_anotado)
 
             # Mostrar en el panel de código intermedio
