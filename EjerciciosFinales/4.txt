@@ -1,0 +1,32 @@
+main {
+    int n, i, j, potencia, suma;
+    
+    // Leer el valor de N
+    cin >> n;
+    
+    // Inicializar variables
+    suma = 0;
+    i = 1;
+    
+    // Ciclo principal para calcular la serie
+    while i <= n
+        // Calcular i^i
+        potencia = 1;
+        j = 1;
+        
+        while j <= i
+            potencia = potencia * i;
+            j = j + 1;
+        end
+        
+        // Sumar a la acumulación
+        suma = suma + potencia;
+        
+        // Incrementar contador
+        i = i + 1;
+    end
+    
+    // Mostrar resultado
+    cout << "La suma de la serie es: ";
+    cout << suma;
+}

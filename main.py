@@ -2462,7 +2462,7 @@ class CodeGenerator:
         # Salto incondicional al inicio
         self.emit("LDC 1,0(0)")
         jump_to_start_offset = label_start - (len(self.code))
-        self.emit(f"JEQ 1, {jump_to_start_offset}(7)")
+        self.emit(f"JEQ 1,{jump_to_start_offset}(7)")
 
         # Final
         end_addr = len(self.code)

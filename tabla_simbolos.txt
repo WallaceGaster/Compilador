@@ -1,7 +1,10 @@
 TABLA DE SÍMBOLOS:
 Nombre	Tipo	Líneas	Dirección
 --------------------------------------------------
-a	float	2, 10, 10, 11, 13	1
-b	float	2, 10, 13, 13, 14	2
-c	float	2, 10, 13, 16	3
-mayor	float	2, 11, 14, 16, 22	4
+N	int	2, 15	1
+produccion	float	3, 28, 32	2
+total_fabrica	float	4	3
+max_total	float	5, 42, 43, 57	4
+i	int	7, 15, 52, 52	5
+produccion_julio	float	9, 32, 48	6
+total_anual	float	17, 28, 28, 42, 43	7

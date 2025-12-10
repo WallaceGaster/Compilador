@@ -1,0 +1,40 @@
+Error sintáctico en línea 5, col 21: Se insertó virtualmente: ';'
+Error sintáctico en línea 5, col 23: Sentencia inválida
+Error sintáctico en línea 6, col 18: Se esperaba '='
+Error sintáctico en línea 7, col 5: Componente inválido
+Error sintáctico en línea 7, col 5: Se esperaba ';'
+Error sintáctico en línea 7, col 11: Se insertó virtualmente: ';'
+Error sintáctico en línea 7, col 13: Sentencia inválida
+Error sintáctico en línea 8, col 10: Se esperaba '='
+Error sintáctico en línea 9, col 5: Componente inválido
+Error sintáctico en línea 9, col 5: Se esperaba ';'
+Error sintáctico en línea 16, col 9: Sentencia inválida
+Error sintáctico en línea 16, col 9: Se esperaba 'end' para cerrar while
+Error sintáctico en línea 16, col 18: Se esperaba '='
+Error sintáctico en línea 17, col 9: Componente inválido
+Error sintáctico en línea 17, col 9: Se esperaba ';'
+Error sintáctico en línea 17, col 27: Se insertó virtualmente: ';'
+Error sintáctico en línea 17, col 29: Sentencia inválida
+Error sintáctico en línea 20, col 13: Sentencia inválida
+Error sintáctico en línea 20, col 21: Sentencia inválida
+Error sintáctico en línea 23, col 11: Sentencia inválida
+Error sintáctico en línea 26, col 17: Se esperaba '='
+Error sintáctico en línea 27, col 13: Componente inválido
+Error sintáctico en línea 27, col 13: Se esperaba ';'
+Error sintáctico en línea 36, col 9: Sentencia inválida
+Error sintáctico en línea 39, col 28: Se esperaba ';'
+Error sintáctico en línea 39, col 37: Se esperaba '='
+Error sintáctico en línea 39, col 74: Se esperaba ';'
+Error sintáctico en línea 49, col 42: Se esperaba ';'
+Error sintáctico en línea 49, col 51: Se esperaba '='
+Error sintáctico en línea 50, col 9: Componente inválido
+Error sintáctico en línea 50, col 9: Se esperaba ';'
+Error sintáctico en línea 53, col 5: Sentencia inválida
+Error sintáctico en línea 56, col 43: Se esperaba ';'
+Error sintáctico en línea 56, col 56: Se esperaba '='
+Error sintáctico en línea 57, col 5: Componente inválido
+Error sintáctico en línea 57, col 5: Se esperaba ';'
+Error sintáctico en línea 57, col 37: Se esperaba ';'
+Error sintáctico en línea 57, col 50: Se esperaba '='
+Error sintáctico: Se esperaba ';'
+Error sintáctico: Se esperaba '}' al final del programa

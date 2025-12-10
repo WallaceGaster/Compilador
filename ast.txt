@@ -1,62 +1,120 @@
-Programa (id: 2495993785728)
-  Main (id: 2495993785680): main [Línea: 1, Col: 1]
-  Bloque (id: 2495993782320)
-    DeclaracionVariable (id: 2495993785920)
-      TIPO (id: 2495993786112): float [Línea: 2, Col: 5]
-      Variable (id: 2495993785968): a [Línea: 2, Col: 11]
-      Variable (id: 2495993786160): b [Línea: 2, Col: 14]
-      Variable (id: 2495993782464): c [Línea: 2, Col: 17]
-      Variable (id: 2495993786016): mayor [Línea: 2, Col: 20]
-    ENTRADA (id: 2495993786256)
-      CIN (id: 2495993786064): cin [Línea: 5, Col: 5]
-      OPERADOR_ENTRADA (id: 2495993786304): >> [Línea: 5, Col: 9]
-      ID (id: 2495993786208): a [Línea: 5, Col: 12]
-    ENTRADA (id: 2495993786448)
-      CIN (id: 2495993786400): cin [Línea: 6, Col: 5]
-      OPERADOR_ENTRADA (id: 2495993786736): >> [Línea: 6, Col: 9]
-      ID (id: 2495993786592): b [Línea: 6, Col: 12]
-    ENTRADA (id: 2495993786544)
-      CIN (id: 2495993786784): cin [Línea: 7, Col: 5]
-      OPERADOR_ENTRADA (id: 2495993786688): >> [Línea: 7, Col: 9]
-      ID (id: 2495993787024): c [Línea: 7, Col: 12]
-    If (id: 2495993783664) [Línea: 10, Col: 5]
-      OperacionLogica (id: 2495993784240): && [Línea: 10, Col: 15]
-        EXPRESION_BINARIA (id: 2495993781408): >= [Línea: 10, Col: 10]
-          Variable (id: 2495993783904): a [Línea: 10, Col: 8]
-          Variable (id: 2495993783856): b [Línea: 10, Col: 13]
-        EXPRESION_BINARIA (id: 2495993784384): >= [Línea: 10, Col: 20]
-          Variable (id: 2495993784672): a [Línea: 10, Col: 18]
-          Variable (id: 2495993784336): c [Línea: 10, Col: 23]
-      LISTA_SENTENCIAS (id: 2495993785008)
-        Asignacion (id: 2495993781696)
-          ID (id: 2495993790240): mayor [Línea: 11, Col: 9]
-          Variable (id: 2495993787456): a [Línea: 11, Col: 17]
-      Else (id: 2495993789232) [Línea: 12, Col: 5]
-        LISTA_SENTENCIAS (id: 2495993787840)
-          If (id: 2495993787936) [Línea: 13, Col: 9]
-            OperacionLogica (id: 2495993787984): && [Línea: 13, Col: 19]
-              EXPRESION_BINARIA (id: 2495993788176): >= [Línea: 13, Col: 14]
-                Variable (id: 2495993787312): b [Línea: 13, Col: 12]
-                Variable (id: 2495993787744): a [Línea: 13, Col: 17]
-              EXPRESION_BINARIA (id: 2495993788464): >= [Línea: 13, Col: 24]
-                Variable (id: 2495993787792): b [Línea: 13, Col: 22]
-                Variable (id: 2495993788080): c [Línea: 13, Col: 27]
-            LISTA_SENTENCIAS (id: 2495993788512)
-              Asignacion (id: 2495993788320)
-                ID (id: 2495993788608): mayor [Línea: 14, Col: 13]
-                Variable (id: 2495993788752): b [Línea: 14, Col: 21]
-            Else (id: 2495993788848) [Línea: 15, Col: 9]
-              LISTA_SENTENCIAS (id: 2495993785248)
-                Asignacion (id: 2495993789136)
-                  ID (id: 2495993788704): mayor [Línea: 16, Col: 13]
-                  Variable (id: 2495993788896): c [Línea: 16, Col: 21]
-    SALIDA (id: 2495993789040)
-      COUT (id: 2495993789184): cout [Línea: 21, Col: 5]
-      OPERADOR_SALIDA (id: 2495993789424): << [Línea: 21, Col: 10]
-      SALIDA_EXPR (id: 2495993789712)
-        CADENA (id: 2495993789664): "El numero mayor es: " [Línea: 21, Col: 13]
-    SALIDA (id: 2495993781456)
-      COUT (id: 2495993789376): cout [Línea: 22, Col: 5]
-      OPERADOR_SALIDA (id: 2495993789472): << [Línea: 22, Col: 10]
-      SALIDA_EXPR (id: 2495993789520)
-        Variable (id: 2495993789568): mayor [Línea: 22, Col: 13]
+Programa (id: 3142201349792)
+  Main (id: 3142201353488): main [Línea: 1, Col: 1]
+  Bloque (id: 3142201353680)
+    DeclaracionVariable (id: 3142201353584)
+      TIPO (id: 3142201350848): int [Línea: 2, Col: 5]
+      Variable (id: 3142201350896): N [Línea: 2, Col: 9]
+    DeclaracionVariable (id: 3142201353776)
+      TIPO (id: 3142201353536): float [Línea: 3, Col: 5]
+      Variable (id: 3142201353632): produccion [Línea: 3, Col: 11]
+    DeclaracionVariable (id: 3142201353728)
+      TIPO (id: 3142201353872): float [Línea: 4, Col: 5]
+      Variable (id: 3142201353824): total_fabrica [Línea: 4, Col: 11]
+    DeclaracionVariable (id: 3142201353968)
+      TIPO (id: 3142201344464): float [Línea: 5, Col: 5]
+      Variable (id: 3142201344512): max_total [Línea: 5, Col: 11]
+    Asignacion (id: 3142201349504)
+      ID (id: 3142201349456): clave_max [Línea: 6, Col: 9]
+      Error Componente (id: 3142201349552): 0 [Línea: 7, Col: 5]
+    DeclaracionVariable (id: 3142201349648)
+      TIPO (id: 3142201349744): int [Línea: 7, Col: 5]
+      Variable (id: 3142201349408): i [Línea: 7, Col: 9]
+    Asignacion (id: 3142201354208)
+      ID (id: 3142201354112): j [Línea: 8, Col: 9]
+      Error Componente (id: 3142201354160): 0 [Línea: 9, Col: 5]
+    DeclaracionVariable (id: 3142201354256)
+      TIPO (id: 3142201354304): float [Línea: 9, Col: 5]
+      Variable (id: 3142201354352): produccion_julio [Línea: 9, Col: 11]
+    ENTRADA (id: 3142201354400)
+      CIN (id: 3142201354448): cin [Línea: 12, Col: 5]
+      OPERADOR_ENTRADA (id: 3142201354496): >> [Línea: 12, Col: 9]
+      ID (id: 3142201354544): N [Línea: 12, Col: 12]
+    While (id: 3142201354592) [Línea: 15, Col: 5]
+      EXPRESION_BINARIA (id: 3142201351424): <= [Línea: 15, Col: 13]
+        Variable (id: 3142201354640): i [Línea: 15, Col: 11]
+        Variable (id: 3142201354688): N [Línea: 15, Col: 16]
+      LISTA_SENTENCIAS (id: 3142201351184)
+    Asignacion (id: 3142201351376)
+      ID (id: 3142201349888): clave [Línea: 16, Col: 13]
+      Error Componente (id: 3142201351136): 0 [Línea: 17, Col: 9]
+    DeclaracionVariable (id: 3142201351088)
+      TIPO (id: 3142201351328): float [Línea: 17, Col: 9]
+      Variable (id: 3142201351280): total_anual [Línea: 17, Col: 15]
+    Asignacion (id: 3142201351472)
+      ID (id: 3142201355840): j [Línea: 26, Col: 15]
+      Error Componente (id: 3142201355792): 0 [Línea: 27, Col: 13]
+    ENTRADA (id: 3142201355936)
+      CIN (id: 3142201355744): cin [Línea: 27, Col: 13]
+      OPERADOR_ENTRADA (id: 3142201355888): >> [Línea: 27, Col: 17]
+      ID (id: 3142201356032): produccion [Línea: 27, Col: 20]
+    Asignacion (id: 3142201356080)
+      ID (id: 3142201355984): total_anual [Línea: 28, Col: 13]
+      EXPRESION_BINARIA (id: 3142201356176): + [Línea: 28, Col: 39]
+        Variable (id: 3142201356128): total_anual [Línea: 28, Col: 27]
+        Variable (id: 3142201356224): produccion [Línea: 28, Col: 41]
+    If (id: 3142201356272) [Línea: 31, Col: 13]
+      EXPRESION_BINARIA (id: 3142201356416): == [Línea: 31, Col: 18]
+        Variable (id: 3142201356320): j [Línea: 31, Col: 16]
+        Literal (id: 3142201356368): 7 [Línea: 31, Col: 21]
+      LISTA_SENTENCIAS (id: 3142201356464)
+        Asignacion (id: 3142201356512)
+          ID (id: 3142201356560): produccion_julio [Línea: 32, Col: 17]
+          Variable (id: 3142201356608): produccion [Línea: 32, Col: 36]
+    Asignacion (id: 3142201356656)
+      ID (id: 3142201356704): j [Línea: 35, Col: 13]
+      EXPRESION_BINARIA (id: 3142201356848): + [Línea: 35, Col: 19]
+        Variable (id: 3142201356752): j [Línea: 35, Col: 17]
+        Literal (id: 3142201356800): 1 [Línea: 35, Col: 21]
+    SALIDA (id: 3142201356896)
+      COUT (id: 3142201356944): cout [Línea: 39, Col: 9]
+      OPERADOR_SALIDA (id: 3142201356992): << [Línea: 39, Col: 14]
+      SALIDA_EXPR (id: 3142201357040)
+        CADENA (id: 3142201357088): "Fabrica " [Línea: 39, Col: 17]
+    Asignacion (id: 3142201357136)
+      ID (id: 3142201357184): clave [Línea: 39, Col: 31]
+      Variable (id: 3142201357232): total_anual [Línea: 39, Col: 62]
+    If (id: 3142201357280) [Línea: 42, Col: 9]
+      EXPRESION_BINARIA (id: 3142201357424): > [Línea: 42, Col: 24]
+        Variable (id: 3142201357328): total_anual [Línea: 42, Col: 12]
+        Variable (id: 3142201357376): max_total [Línea: 42, Col: 26]
+      LISTA_SENTENCIAS (id: 3142201357472)
+        Asignacion (id: 3142201357520)
+          ID (id: 3142201357568): max_total [Línea: 43, Col: 13]
+          Variable (id: 3142201357616): total_anual [Línea: 43, Col: 25]
+        Asignacion (id: 3142201357664)
+          ID (id: 3142201357712): clave_max [Línea: 44, Col: 13]
+          Variable (id: 3142201357760): clave [Línea: 44, Col: 25]
+    If (id: 3142201357808) [Línea: 48, Col: 9]
+      EXPRESION_BINARIA (id: 3142201357952): > [Línea: 48, Col: 29]
+        Variable (id: 3142201357856): produccion_julio [Línea: 48, Col: 12]
+        Literal (id: 3142201357904): 3000000 [Línea: 48, Col: 31]
+      LISTA_SENTENCIAS (id: 3142201358000)
+        SALIDA (id: 3142201358048)
+          COUT (id: 3142201358096): cout [Línea: 49, Col: 13]
+          OPERADOR_SALIDA (id: 3142201358144): << [Línea: 49, Col: 18]
+          SALIDA_EXPR (id: 3142201358192)
+            CADENA (id: 3142201358240): "Fabrica con clave " [Línea: 49, Col: 21]
+        Asignacion (id: 3142201358288)
+          ID (id: 3142201358336): clave [Línea: 49, Col: 45]
+          Error Componente (id: 3142201358384): 0 [Línea: 50, Col: 9]
+    Asignacion (id: 3142201358432)
+      ID (id: 3142201358480): i [Línea: 52, Col: 9]
+      EXPRESION_BINARIA (id: 3142201358624): + [Línea: 52, Col: 15]
+        Variable (id: 3142201358528): i [Línea: 52, Col: 13]
+        Literal (id: 3142201358576): 1 [Línea: 52, Col: 17]
+    SALIDA (id: 3142201358672)
+      COUT (id: 3142201358720): cout [Línea: 56, Col: 5]
+      OPERADOR_SALIDA (id: 3142201358768): << [Línea: 56, Col: 10]
+      SALIDA_EXPR (id: 3142201358816)
+        CADENA (id: 3142201358864): "\nFabrica que mas produjo: " [Línea: 56, Col: 13]
+    Asignacion (id: 3142201358912)
+      ID (id: 3142201358960): clave_max [Línea: 56, Col: 46]
+      Error Componente (id: 3142201359008): 0 [Línea: 57, Col: 5]
+    SALIDA (id: 3142201359056)
+      COUT (id: 3142201359104): cout [Línea: 57, Col: 5]
+      OPERADOR_SALIDA (id: 3142201359152): << [Línea: 57, Col: 10]
+      SALIDA_EXPR (id: 3142201359200)
+        CADENA (id: 3142201359248): "Total de produccion: " [Línea: 57, Col: 13]
+    Asignacion (id: 3142201359296)
+      ID (id: 3142201359344): max_total [Línea: 57, Col: 40]
+      Componente (id: 3142201359392)
