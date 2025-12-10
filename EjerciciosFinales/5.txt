@@ -15,16 +15,20 @@ main {
     i = 1;
     
     // Leer número de fábricas
+    cout << "Ingresa cuantas fabricas se colocaran: ";
     cin >> N;
+    cout << N;
+    cout << "\n";
     
     // Procesar cada fábrica
-    while i <= N
+    while i <= N && N <= 100
         clave = 0;
         total_anual = 0;
         
-        cout << "Ingresa la clave de la fabrica: \n";
+        cout << "Ingresa la clave de la fabrica: ";
         // Leer clave de la fábrica
         cin >> clave;
+        cout << clave;
         cout << "\n";
         
         // Reiniciar contador de meses
@@ -32,11 +36,15 @@ main {
         
         // Leer producción de los 12 meses
         while j <= 12
+	   cout << "Ingresa la produccion de la fabrica ";
+            cout << clave;
+            cout << ": ";
             cin >> produccion;
+            cout << produccion;
+            cout << "\n";
             total_anual = total_anual + produccion;
             
             // Si es el mes de julio (mes 7), guardar producción
-            cout << "Entre";
             if j == 7 then
                 produccion_julio = produccion;
             end
