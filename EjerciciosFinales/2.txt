@@ -9,10 +9,8 @@ main {
     
     // Determinar el mayor
     if A > B && A > C then
-        cout << "Aqui no deberia entrar\n";
         mayor = A;
         if B > C then
-            cout << "Aqui menos\n";
             medio = B;
             menor = C;
         else
@@ -20,9 +18,7 @@ main {
             menor = B;
         end
     else
-        cout << "Aqui entre else\n";
         if B > A && B > C then
-            cout << "Aqui si entro\n";
             mayor = B;
             if A > C then
                 medio = A;

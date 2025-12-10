@@ -315,7 +315,7 @@ class PInterpreter:
                 
                 if not self.input_buffer:
                     # Si el buffer está vacío, solicitar nueva entrada
-                    self.thread.input_request_signal.emit("Ingrese un valor (o varios separados por espacio):")
+                    self.thread.input_request_signal.emit("Ingrese un valor:")
                     self.thread.waiting_for_input = True
                     
                     # Esperar por entrada
@@ -378,7 +378,7 @@ class PInterpreter:
             # HALT: Terminar ejecución
             elif opcode == 'HALT':
                 self.running = False
-                self.thread.output_signal.emit("\n--- Ejecución finalizada ---")
+                self.thread.output_signal.emit("\n")
             
             else:
                 self.thread.error_signal.emit(f"Opcode desconocido: {opcode}")
@@ -2930,6 +2930,7 @@ class CompilerIDE(QMainWindow):
         toolbar.addAction("Léxico", self.run_lexical)
         toolbar.addAction("Sintáctico", self.run_syntax)
         toolbar.addAction("Semántico", self.run_semantic)
+        toolbar.addAction("Codigo intermedio", self.run_intermediate)
         
         # Icono de Ejecutar
         execute_icon = self.style().standardIcon(QStyle.SP_MediaPlay)
@@ -2955,7 +2956,7 @@ class CompilerIDE(QMainWindow):
         
         # Limpiar panel de ejecución
         self.execution_output.clear()
-        self.execution_output.append("=== INICIANDO EJECUCIÓN DE CÓDIGO P ===\n")
+        self.execution_output.append("=== INICIANDO EJECUCIÓN ===\n")
         
         # Detener ejecución anterior si existe
         if self.interpreter_thread and self.interpreter_thread.isRunning():
