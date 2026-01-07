@@ -54,20 +54,20 @@ main {
             j = j + 1;
         end
         
-        // Imprimir total anual de esta f�brica (requisito i)
+        // Imprimir total anual de esta fabrica (requisito i)
         cout << "Fabrica ";
         cout << clave;
         cout << ": Total anual = ";
         cout << total_anual;
         cout << "\n";
         
-        // Verificar si es la f�brica con mayor producci�n (requisito ii)
+        // Verificar si es la fabrica con mayor producci�n (requisito ii)
         if total_anual > max_total then
             max_total = total_anual;
             clave_max = clave;
         end
         
-        // Verificar si super� los $3,000,000 en julio (requisito iii)
+        // Verificar si es superior los $3,000,000 en julio (requisito iii)
         if produccion_julio > 3000000 then
             cout << "Fabrica con clave ";
             cout << clave;
@@ -77,7 +77,7 @@ main {
         i = i + 1;
     end
     
-    // Imprimir f�brica que m�s produjo (requisito ii completo)
+    // Imprimir fabrica que mas produjo (requisito ii completo)
     cout << "\nFabrica que mas produjo: ";
     cout << clave_max;
     cout << "\n";

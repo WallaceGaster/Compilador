@@ -3,9 +3,16 @@ main {
     int mayor, medio, menor;
     
     // Leer los tres números
+    cout << "Ingrese los tres numeros: \n";
     cin >> A; //5
+    cout << A;
+    cout << "\n";
     cin >> B; //9
+    cout << B;
+    cout << "\n";
     cin >> C; //4
+    cout << C;
+    cout << "\n";
     
     // Determinar el mayor
     if A > B && A > C then

@@ -1,10 +1,17 @@
 main {
     float a, b, c, mayor;
     
+    cout << "Ingresa los tres numeros:\n";
     // Lectura de los tres números
     cin >> a;
+    cout << a;
+    cout << "\n";
     cin >> b;
+    cout << b;
+    cout << "\n";
     cin >> c;
+    cout << c;
+    cout << "\n";
     
     // Determinación del mayor
     if a >= b && a >= c then

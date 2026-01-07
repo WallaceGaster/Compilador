@@ -1,8 +1,11 @@
 main {
     int n, i, j, potencia, suma;
-    
+
+    cout << "Ingrese el numero que sacar el calculo: ";    
     // Leer el valor de N
     cin >> n;
+    cout << n;
+    cout << "\n";
     
     // Inicializar variables
     suma = 0;
@@ -10,12 +13,20 @@ main {
     
     // Ciclo principal para calcular la serie
     while i <= n
+	if i > 1 then
+         cout << " + ";
+         end 
         // Calcular i^i
         potencia = 1;
         j = 1;
         
         while j <= i
             potencia = potencia * i;
+            if potencia == i then
+	   cout << potencia;
+            cout << "^";
+            cout << i;
+            end
             j = j + 1;
         end
         
@@ -27,6 +38,6 @@ main {
     end
     
     // Mostrar resultado
-    cout << "La suma de la serie es: ";
+    cout << "\nLa suma de la serie es: ";
     cout << suma;
 }

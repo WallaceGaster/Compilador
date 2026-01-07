@@ -5,8 +5,14 @@ main {
     float area;
 
     // Leer la base y altura
+    cout << "Ingrese la base: ";
     cin >> base;
+    cout << base;
+    cout << "\n";
+    cout << "Ingrese la altura: ";
     cin >> altura;
+    cout << altura;
+    cout << "\n";
 
     // Calcular perímetro: P = 2(base + altura)
     perimetro = 2 * (base + altura);
